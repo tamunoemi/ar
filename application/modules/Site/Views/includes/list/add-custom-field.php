@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      VARIABLES                       //
@@ -16,7 +16,7 @@
 	//                      FUNCTIONS                       //
 	//------------------------------------------------------//
 	
-	$q = 'SELECT custom_fields FROM lists WHERE id = '.$list_id;
+	$q = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$list_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
@@ -32,7 +32,7 @@
 		    $cf_array = explode(':', $cf);
 		    if(strtolower($cf_array[0])==strtolower($the_field) || strtolower($the_field)=='name' || strtolower($the_field)=='email')
 		    {
-			    header("Location: ".get_app_info('path')."/custom-fields?i=$app&l=$list_id&e=1");
+			    header("Location: ".get_app_info('path')."/index.php/site/custom-fields?i=$app&l=$list_id&e=1");
 			    exit;
 		    }
 	    }
@@ -45,7 +45,7 @@
 		    $c_field = $custom_fields.'%s%'.$the_field.':'.$type;
 	    }
 	    //update custom_fields column
-	    $q2 = 'UPDATE lists SET custom_fields = "'.$c_field.'" WHERE id = '.$list_id;
+	    $q2 = 'UPDATE '.LISTS.' SET custom_fields = "'.$c_field.'" WHERE id = '.$list_id;
 	    $r2 = mysqli_query($mysqli, $q2);
 	    if ($r2){}
 	    
@@ -54,7 +54,7 @@
 	    	$c_field2 = '';
 	    else
 	    {	    	
-	    	$q3 = 'SELECT id, custom_fields FROM subscribers WHERE list = '.$list_id;
+	    	$q3 = 'SELECT id, custom_fields FROM '.SUBSCRIBERS.' WHERE list = '.$list_id;
 	    	$r3 = mysqli_query($mysqli, $q3);
 	    	if ($r3)
 	    	{
@@ -66,12 +66,12 @@
 	    			$c_field2 = $custom_fields.'%s%';
 	    			
 	    			//update custom_fields column
-				    $q4 = 'UPDATE subscribers SET custom_fields = "'.$c_field2.'" WHERE list = '.$list_id.' AND id = '.$s_id;
+				    $q4 = 'UPDATE '.SUBSCRIBERS.' SET custom_fields = "'.$c_field2.'" WHERE list = '.$list_id.' AND id = '.$s_id;
 				    $r4 = mysqli_query($mysqli, $q4);
 	    	    }  
 	    	}
 	    }
 	}
 	
-	header("Location: ".get_app_info('path')."/custom-fields?i=$app&l=$list_id");
+	header("Location: ".get_app_info('path')."/index.php/site/custom-fields?i=$app&l=$list_id");
 ?>

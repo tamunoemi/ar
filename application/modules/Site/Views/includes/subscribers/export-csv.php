@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 
 /********************************/
@@ -10,13 +10,13 @@ $listID = isset($_GET['l']) && is_numeric($_GET['l']) ? mysqli_real_escape_strin
 //Check if sub user is trying to download CSVs from other brands
 if(get_app_info('is_sub_user')) 
 {
-	$q = 'SELECT app FROM lists WHERE id = '.$listID;
+	$q = 'SELECT app FROM '.LISTS.' WHERE id = '.$listID;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $app_attached_to_listID = $row['app'];
 
 	if(get_app_info('app')!=get_app_info('restricted_to_app') || $app_attached_to_listID!=get_app_info('restricted_to_app'))
 	{
-		echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/list?i='.get_app_info('restricted_to_app').'"</script>';
+		echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/list?i='.get_app_info('restricted_to_app').'"</script>';
 		exit;
 	}
 }
@@ -58,7 +58,7 @@ else
 }
 /********************************/
 
-$q = 'SELECT name, custom_fields FROM lists WHERE id = '.$listID.' AND userID = '.$userID;
+$q = 'SELECT name, custom_fields FROM '.LISTS.' WHERE id = '.$listID.' AND userID = '.$userID;
 $r = mysqli_query($mysqli, $q);
 if ($r && mysqli_num_rows($r) > 0)
 {
@@ -71,7 +71,7 @@ if ($r && mysqli_num_rows($r) > 0)
     }  
 }
 
-$q2 = 'SELECT name, email, custom_fields, join_date, timestamp, ip, country, referrer, method, added_via, unsubscribed, bounced, complaint, confirmed, gdpr FROM subscribers WHERE list = '.$listID.' '.$additional.' AND userID = '.$userID.' ORDER BY timestamp DESC';
+$q2 = 'SELECT name, email, custom_fields, join_date, timestamp, ip, country, referrer, method, added_via, unsubscribed, bounced, complaint, confirmed, gdpr FROM '.SUBSCRIBERS.' WHERE list = '.$listID.' '.$additional.' AND userID = '.$userID.' ORDER BY timestamp DESC';
 $r2 = mysqli_query($mysqli, $q2);
 if ($r2 && mysqli_num_rows($r2) > 0)
 {

@@ -1,4 +1,4 @@
-<?php //include('includes/functions.php');?>
+<?php include('includes/functions.php');?>
 <?php if(isset($_COOKIE['logged_in'])){start_app();}?>
 
 <!DOCTYPE html>

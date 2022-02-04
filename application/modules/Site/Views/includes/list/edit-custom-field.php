@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      VARIABLES                       //
@@ -14,7 +14,7 @@
 	//                      FUNCTIONS                       //
 	//------------------------------------------------------//
 	
-	$q = 'SELECT custom_fields FROM lists WHERE id = '.$list_id;
+	$q = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$list_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
@@ -32,7 +32,7 @@
 		    $cf_array = explode(':', $cf);
 		    if(strtolower($cf_array[0])==strtolower($field_name) || strtolower($field_name)=='name' || strtolower($field_name)=='email')
 		    {
-		    	header("Location: ".get_app_info('path')."/custom-fields?i=$app&l=$list_id&e=1");
+		    	header("Location: ".get_app_info('path')."/index.php/site/custom-fields?i=$app&l=$list_id&e=1");
 			    exit;
 		    }
 	    }
@@ -45,21 +45,21 @@
 	    $c_field = implode('%s%', $custom_fields_array);
 	    
 	    //check autoresponders
-	    $q3 = 'SELECT id FROM ares WHERE custom_field = "'.$custom_field_old.'" AND list = '.$list_id;
+	    $q3 = 'SELECT id FROM '.ARES.' WHERE custom_field = "'.$custom_field_old.'" AND list = '.$list_id;
 	    $r3 = mysqli_query($mysqli, $q3);
 	    if (mysqli_num_rows($r3) > 0)
 	    {
 	    	while($row = mysqli_fetch_array($r3)) $ares_id = $row['id'];
 		    
-	        $q4 = 'UPDATE ares SET custom_field = "'.$field_name.'" WHERE id = '.$ares_id;
+	        $q4 = 'UPDATE '.ARES.' SET custom_field = "'.$field_name.'" WHERE id = '.$ares_id;
 	        $r4 = mysqli_query($mysqli, $q4);
 	        if ($r4){}
 	    }
 	    
 	    //update custom_fields column
-	    $q2 = 'UPDATE lists SET custom_fields = "'.$c_field.'" WHERE id = '.$list_id;
+	    $q2 = 'UPDATE '.LISTS.' SET custom_fields = "'.$c_field.'" WHERE id = '.$list_id;
 	    $r2 = mysqli_query($mysqli, $q2);
 	    if ($r2)
-	    	header("Location: ".get_app_info('path')."/custom-fields?i=$app&l=$list_id");
+	    	header("Location: ".get_app_info('path')."/index.php/site/custom-fields?i=$app&l=$list_id");
 	}
 ?>

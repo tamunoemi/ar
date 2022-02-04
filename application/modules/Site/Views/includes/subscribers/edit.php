@@ -1,6 +1,6 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
-<?php require_once('../helpers/EmailAddressValidator.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
+<?php require_once('includes/helpers/EmailAddressValidator.php');?>
 <?php 
 	$subscriber_id = isset($_POST['sid']) && is_numeric($_POST['sid']) ? mysqli_real_escape_string($mysqli, (int)$_POST['sid']) : exit;
 	$name = isset($_POST['name']) ? mysqli_real_escape_string($mysqli, $_POST['name']) : '';
@@ -30,7 +30,7 @@
 	//update name
 	if($name!='')
 	{
-		$q = 'UPDATE subscribers SET name = "'.$name.'" WHERE id = '.$subscriber_id;
+		$q = 'UPDATE '.SUBSCRIBERS.' SET name = "'.$name.'" WHERE id = '.$subscriber_id;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) echo true;
 		else echo _('Oops! Unable to save, please try again later.');
@@ -42,7 +42,7 @@
 		//Get app ID
 		$app = isset($_POST['app']) && is_numeric($_POST['app']) ? mysqli_real_escape_string($mysqli, (int)$_POST['app']) : '';
 		
-		$q2 = 'SELECT list FROM subscribers WHERE id = '.$subscriber_id;
+		$q2 = 'SELECT list FROM '.SUBSCRIBERS.' WHERE id = '.$subscriber_id;
 		$r2 = mysqli_query($mysqli, $q2);
 		if ($r2)
 		{
@@ -50,7 +50,7 @@
 		    	$list_id = $row['list'];
 		}
 		
-		$q = 'SELECT email FROM subscribers WHERE email = "'.$email.'" AND list = '.$list_id;
+		$q = 'SELECT email FROM '.SUBSCRIBERS.' WHERE email = "'.$email.'" AND list = '.$list_id;
 		$r = mysqli_query($mysqli, $q);
 		if (mysqli_num_rows($r) > 0)
 		{
@@ -66,11 +66,11 @@
 			$validator = new EmailAddressValidator;
 			if ($validator->check_email_address($email))
 			{
-				$q2 = '(SELECT id FROM suppression_list WHERE email = "'.trim($email).'" AND app = '.$app.') UNION (SELECT id FROM blocked_domains WHERE domain = "'.$email_domain.'" AND app = '.$app.')';
+				$q2 = '(SELECT id FROM '.SUPPRESSION_LIST.' WHERE email = "'.trim($email).'" AND app = '.$app.') UNION (SELECT id FROM '.BLOCKED_DOMAINS.' WHERE domain = "'.$email_domain.'" AND app = '.$app.')';
 				$r2 = mysqli_query($mysqli, $q2);
 				if (mysqli_num_rows($r2) == 0)
 				{
-					$q = 'UPDATE subscribers SET email = "'.$email.'" WHERE id = '.$subscriber_id;
+					$q = 'UPDATE '.SUBSCRIBERS.' SET email = "'.$email.'" WHERE id = '.$subscriber_id;
 					$r = mysqli_query($mysqli, $q);
 					if ($r) echo true;
 					else echo _('Oops! Unable to save, please try again later.');
@@ -78,8 +78,8 @@
 				else
 				{
 					//Update block_attempts count				
-					$q3 = 'UPDATE suppression_list SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE email = "'.trim($email).'" AND app = '.$app;
-					$q4 = 'UPDATE blocked_domains SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE domain = "'.$email_domain.'" AND app = '.$app;
+					$q3 = 'UPDATE '.SUPPRESSION_LIST.' SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE email = "'.trim($email).'" AND app = '.$app;
+					$q4 = 'UPDATE '.BLOCKED_DOMAINS.' SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE domain = "'.$email_domain.'" AND app = '.$app;
 					mysqli_query($mysqli, $q3);
 					mysqli_query($mysqli, $q4);
 					
@@ -93,7 +93,7 @@
 	
 	else if(isset($_POST['note']))
 	{
-		$q = 'UPDATE subscribers SET notes = "'.$note.'" WHERE id = '.$subscriber_id;
+		$q = 'UPDATE '.SUBSCRIBERS.' SET notes = "'.$note.'" WHERE id = '.$subscriber_id;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) echo true;
 		else echo _('Oops! Unable to save, please try again later.');
@@ -102,7 +102,7 @@
 	//if it is a custom field
 	else
 	{		
-		$q = 'SELECT lists.custom_fields as list_custom_fields, subscribers.custom_fields as subscriber_custom_fields FROM lists, subscribers WHERE subscribers.id = '.$subscriber_id.' AND subscribers.list = lists.id';
+		$q = 'SELECT '.LISTS.'.custom_fields as list_custom_fields, '.SUBSCRIBERS.'.custom_fields as subscriber_custom_fields FROM '.LISTS.', '.SUBSCRIBERS.' WHERE '.SUBSCRIBERS.'.id = '.$subscriber_id.' AND '.SUBSCRIBERS.'.list = '.LISTS.'.id';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -141,7 +141,7 @@
 		    $cf_vals = substr($cf_vals, 0, -3);
 		    
 		    //update subscribers table
-		    $q2 = 'UPDATE subscribers SET custom_fields = "'.$cf_vals.'" WHERE id = '.$subscriber_id;
+		    $q2 = 'UPDATE '.SUBSCRIBERS.' SET custom_fields = "'.$cf_vals.'" WHERE id = '.$subscriber_id;
 		    $r2 = mysqli_query($mysqli, $q2);
 		    if ($r2) echo true; 
 		    else echo _('Oops! Unable to save, please try again later.');

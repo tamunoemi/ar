@@ -6,7 +6,7 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/autoresponders-edit?i='.get_app_info('restricted_to_app').'&a='.$_GET['a'].'&ae='.$_GET['ae'].'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/autoresponders-edit?i='.get_app_info('restricted_to_app').'&a='.$_GET['a'].'&ae='.$_GET['ae'].'"</script>';
 			exit;
 		}
 	}
@@ -109,14 +109,14 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 	    	</div>
-	    	<h2><?php echo _('Create autoresponder email');?></h2><?php echo _('For');?>: <a href="<?php echo get_app_info('path')?>/autoresponders-list?i=<?php echo get_app_info('app')?>&l=<?php echo get_ares_data('list')?>" title=""><span class="label label-info"><?php echo get_ares_data('name');?></span></a> <span>(<?php echo get_ares_type_name('type');?>)</span> <br/><br/>
+	    	<h2><?php echo _('Create autoresponder email');?></h2><?php echo _('For');?>: <a href="<?php echo get_app_info('path')?>/index.php/site/autoresponders-list?i=<?php echo get_app_info('app')?>&l=<?php echo get_ares_data('list')?>" title=""><span class="label label-info"><?php echo get_ares_data('name');?></span></a> <span>(<?php echo get_ares_type_name('type');?>)</span> <br/><br/>
     	</div>
     	
-    	<form action="<?php echo get_app_info('path')?>/includes/ares/save-autoresponder-email.php?i=<?php echo get_app_info('app')?>&a=<?php echo $_GET['a']?>&ae=<?php echo $_GET['ae']?>&edit=true" method="POST" accept-charset="utf-8" class="form-vertical" id="edit-form" enctype="multipart/form-data">
+    	<form action="<?php echo get_app_info('path')?>/index.php/site/ares/save-autoresponder-email?i=<?php echo get_app_info('app')?>&a=<?php echo $_GET['a']?>&ae=<?php echo $_GET['ae']?>&edit=true" method="POST" accept-charset="utf-8" class="form-vertical" id="edit-form" enctype="multipart/form-data">
     	
     	<div class="row-fluid">
     		<div class="span12 well">
@@ -299,9 +299,9 @@
 		        <?php endif;?>
 		        
 		        <?php 
-			        if (file_exists('uploads/attachments/a'.$_GET['ae']))
+			        if (file_exists('././././uploads/attachments/a'.$_GET['ae']))
 					{
-						if($handle = opendir('uploads/attachments/a'.$_GET['ae']))
+						if($handle = opendir('././././uploads/attachments/a'.$_GET['ae']))
 						{
 							$i = -1;
 						    while (false !== ($file = readdir($handle))) 
@@ -315,8 +315,8 @@
 												if(strlen($filen)>30) $filen = substr($file, 0, 30).'...';
 												echo $filen;
 											?> 
-											(<?php echo round((filesize('uploads/attachments/a'.$_GET['ae'].'/'.$file)/1000000), 2);?>MB) 
-											<a href="<?php echo get_app_info('path');?>/includes/ares/delete-attachment.php" data-filename="<?php echo $file;?>" title="<?php echo _('Delete');?>" id="delete<?php echo $i;?>"><i class="icon icon-trash"></i></a>
+											(<?php echo round((filesize('././././uploads/attachments/a'.$_GET['ae'].'/'.$file)/1000000), 2);?>MB) 
+											<a href="<?php echo get_app_info('path');?>/index.php/site/ares/delete-attachment" data-filename="<?php echo $file;?>" title="<?php echo _('Delete');?>" id="delete<?php echo $i;?>"><i class="icon icon-trash"></i></a>
 											<script type="text/javascript">
 												$("#delete<?php echo $i?>").click(function(e){
 													e.preventDefault();
@@ -425,7 +425,7 @@
 		        <a href="javascript:void(0)" id="autoresponder-save-only-btn" class="btn"><i class="icon-ok icon-white"></i> <?php echo _('Save');?></a>
 		        <button type="submit" class="btn btn-inverse"><i class="icon-ok icon-white"></i> <?php echo _('Save & exit');?></button>
 		        <br/><br/>
-		        <a href="<?php echo get_app_info('path');?>/autoresponders-emails?i=<?php echo $_GET['i']?>&a=<?php echo get_ares_data('id');?>" title=""><i class="icon icon-chevron-left"></i> <?php echo _('Back to autoresponder email list');?></a>
+		        <a href="<?php echo get_app_info('path');?>/index.php/site/autoresponders-emails?i=<?php echo $_GET['i']?>&a=<?php echo get_ares_data('id');?>" title=""><i class="icon icon-chevron-left"></i> <?php echo _('Back to autoresponder email list');?></a>
 		        
 		    </div>   
 		    <div class="span9">
@@ -469,7 +469,7 @@
 							$("#html").rules("remove");
 							if($("#subject").val()=="") $("#subject").val("<?php echo _('Untitled');?>");
 							
-							$.post('<?php echo get_app_info('path');?>/includes/ares/toggle-wysiwyg.php', { toggle: $("#toggle-wysiwyg").text(), ae: "<?php echo $_GET['ae'];?>" },
+							$.post('<?php echo get_app_info('path');?>/index.php/site/ares/toggle-wysiwyg', { toggle: $("#toggle-wysiwyg").text(), ae: "<?php echo $_GET['ae'];?>" },
 							  function(data) {
 							      if(data)
 							      {

@@ -12,9 +12,8 @@ class Auth extends MY_Controller
 		parent::__construct();
 		$this->load->database();
 		$this->load->library(array('ion_auth', 'form_validation'));
-		$this->load->helper(array('url', 'language', 'functions'));
+		$this->load->helper(array('url', 'language'));
 		$this->load->model('user_model');
-		//echo "testur"; exit();
 
 		$this->form_validation->set_error_delimiters($this->config->item('error_start_delimiter', 'ion_auth'), $this->config->item('error_end_delimiter', 'ion_auth'));
 
@@ -73,6 +72,7 @@ class Auth extends MY_Controller
 				$data['pass'] = $pass;
 				$data['redirect'] = $redirect;
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
+				//echo get_include_path(); exit();
 				$this->load->view("site/includes/login/main", $data);
 				//redirect('site/includes/login/main', 'refresh'); //take the user to products
 			}
@@ -107,6 +107,10 @@ class Auth extends MY_Controller
 		}
 	}
 
+	public function two_factor(){
+		$this->load->view("site/includes/login/two-factor");
+	}
+
 	/**
 	 * Log the user out
 	 */
@@ -116,11 +120,11 @@ class Auth extends MY_Controller
 
 		// log the user out
 		$logout = $this->ion_auth->logout();
-		unlog_session();
 
 		// redirect them to the login page
 		$this->session->set_flashdata('message', $this->ion_auth->messages());
-		redirect('http://localhost/sendy_igniter/index.php/auth/login', 'refresh');
+		$this->load->view("site/logout");
+		//redirect('http://localhost/sendy_igniter/index.php/auth/login', 'refresh');
 	}
 
 	/**

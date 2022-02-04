@@ -39,7 +39,7 @@
 	$campaign_id = is_numeric($_GET['c']) ? $_GET['c'] : exit;
 	
 	//Set language
-	$q = 'SELECT login.language FROM campaigns, login WHERE campaigns.id = '.$campaign_id.' AND login.app = campaigns.app';
+	$q = 'SELECT '.LOGIN.'.language FROM '.CAMPAIGNS.', '.LOGIN.' WHERE '.CAMPAIGNS.'.id = '.$campaign_id.' AND '.LOGIN.'.app = '.CAMPAIGNS.'.app';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $language = $row['language'];
 	set_locale($language);
@@ -96,7 +96,7 @@
 		#top-pattern{
 			margin-top: -8px;
 			height: 8px;
-			background: url("img/top-pattern2.gif") repeat-x 0 0;
+			background: url("<?php echo get_app_info('path') ?>img/top-pattern2.gif") repeat-x 0 0;
 			background-size: auto 8px;
 		}
 	</style>
@@ -104,7 +104,7 @@
 		<div id="top-pattern"></div>
 		<div id="wrapper">
 			<h2><?php echo _('Your reconsent tag<br/>is working');?></h2>
-			<p><img src="img/tick.jpg" height="92" /></p>
+			<p><img src="<?php echo get_app_info('path') ?>/img/tick.jpg" height="92" /></p>
 			<p><?php echo _('Your reconsent tag will be converted to a real reconsent link when you send out your campaign.');?></p>
 		</div>
 	</body>

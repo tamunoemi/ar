@@ -1,6 +1,6 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
-<?php require_once('../helpers/EmailAddressValidator.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
+<?php require_once('includes/helpers/EmailAddressValidator.php');?>
 <?php
 
 /********************************/
@@ -13,11 +13,11 @@ $time = time();
 /********************************/
 
 //Empty skipped_emails table
-$q = 'DELETE FROM skipped_emails WHERE list = '.$listID;
+$q = 'DELETE FROM '.SKIPPED_EMAILS.' WHERE list = '.$listID;
 mysqli_query($mysqli, $q);
 
 //get comma separated lists belonging to this app
-$q2 = 'SELECT id FROM lists WHERE app = '.$app;
+$q2 = 'SELECT id FROM '.LISTS.' WHERE app = '.$app;
 $r2 = mysqli_query($mysqli, $q2);
 if ($r2)
 {
@@ -30,7 +30,7 @@ if ($r2)
 if($line=='')
 {
 	//show error msg
-	header("Location: ".get_app_info('path').'/update-list?i='.$app.'&l='.$listID.'&e=2'); 
+	header("Location: ".get_app_info('path').'/index.php/site/update-list?i='.$app.'&l='.$listID.'&e=2'); 
 	exit;
 }
 
@@ -57,7 +57,7 @@ for($i=0;$i<count($line_array);$i++)
 	$email_explode = explode('@', trim($email));
 	$email_domain = $email_explode[1];
 	
-	$q = 'SELECT custom_fields FROM subscribers WHERE list = '.$listID.' AND email = "'.trim($email).'" AND userID = '.$userID;
+	$q = 'SELECT custom_fields FROM '.SUBSCRIBERS.' WHERE list = '.$listID.' AND email = "'.trim($email).'" AND userID = '.$userID;
 	$r = mysqli_query($mysqli, $q);
 	if (mysqli_num_rows($r) > 0) //if so, update subscriber
 	{
@@ -85,9 +85,9 @@ for($i=0;$i<count($line_array);$i++)
 		$email = filter_var($email,FILTER_SANITIZE_EMAIL);
 	    
 		if(!isset($name) || $name=='')
-			$q = 'UPDATE subscribers SET '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
+			$q = 'UPDATE '.SUBSCRIBERS.' SET '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
 		else
-			$q = 'UPDATE subscribers SET name = "'.$name.'" '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
+			$q = 'UPDATE '.SUBSCRIBERS.' SET name = "'.$name.'" '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
 
 		mysqli_query($mysqli, $q);
 		
@@ -96,7 +96,7 @@ for($i=0;$i<count($line_array);$i++)
 	else
 	{
 		//Check if user set the list to unsubscribe from all lists
-		$q = 'SELECT unsubscribe_all_list FROM lists WHERE id = '.$listID;
+		$q = 'SELECT unsubscribe_all_list FROM '.LISTS.' WHERE id = '.$listID;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) $unsubscribe_all_list = $row['unsubscribe_all_list'];
 		
@@ -104,11 +104,11 @@ for($i=0;$i<count($line_array);$i++)
 		$unsubscribe_line = $unsubscribe_all_list ? '(complaint = 1 OR unsubscribed = 1)' : 'complaint = 1';
 		
 		//Check if this email is previously marked as bounced, if so, we shouldn't add it
-		$q = 'SELECT email from subscribers WHERE ( email = "'.trim($email).'" AND bounced = 1 ) OR ( email = "'.trim($email).'" AND list IN ('.$all_lists.') AND '.$unsubscribe_line.' )';
+		$q = 'SELECT email from '.SUBSCRIBERS.' WHERE ( email = "'.trim($email).'" AND bounced = 1 ) OR ( email = "'.trim($email).'" AND list IN ('.$all_lists.') AND '.$unsubscribe_line.' )';
 		$r = mysqli_query($mysqli, $q);
 		if (mysqli_num_rows($r) == 0)
 		{
-			$q2 = '(SELECT id FROM suppression_list WHERE email = "'.trim($email).'" AND app = '.$app.') UNION (SELECT id FROM blocked_domains WHERE domain = "'.$email_domain.'" AND app = '.$app.')';
+			$q2 = '(SELECT id FROM '.SUPPRESSION_LIST.' WHERE email = "'.trim($email).'" AND app = '.$app.') UNION (SELECT id FROM '.BLOCKED_DOMAINS.' WHERE domain = "'.$email_domain.'" AND app = '.$app.')';
 			$r2 = mysqli_query($mysqli, $q2);
 			if (mysqli_num_rows($r2) == 0)
 			{
@@ -116,7 +116,7 @@ for($i=0;$i<count($line_array);$i++)
 				if ($validator->check_email_address(trim($email))) 
 				{
 					$email = filter_var($email,FILTER_SANITIZE_EMAIL);
-					$q = 'INSERT INTO subscribers (userID, name, email, list, timestamp, gdpr) values('.$userID.', "'.$name.'", "'.trim($email).'", '.$listID.', '.$time.', '.$gdpr_tag.')';
+					$q = 'INSERT INTO '.SUBSCRIBERS.' (userID, name, email, list, timestamp, gdpr) values('.$userID.', "'.$name.'", "'.trim($email).'", '.$listID.', '.$time.', '.$gdpr_tag.')';
 					mysqli_query($mysqli, $q);
 				}
 				else skipped_emails(trim($email), 'Malformed');
@@ -124,8 +124,8 @@ for($i=0;$i<count($line_array);$i++)
 			else
 			{
 				//Update block_attempts count				
-				$q3 = 'UPDATE suppression_list SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE email = "'.trim($email).'" AND app = '.$app;
-				$q4 = 'UPDATE blocked_domains SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE domain = "'.$email_domain.'" AND app = '.$app;
+				$q3 = 'UPDATE '.SUPPRESSION_LIST.' SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE email = "'.trim($email).'" AND app = '.$app;
+				$q4 = 'UPDATE '.BLOCKED_DOMAINS.' SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE domain = "'.$email_domain.'" AND app = '.$app;
 				mysqli_query($mysqli, $q3);
 				mysqli_query($mysqli, $q4);
 				
@@ -149,10 +149,10 @@ function skipped_emails($email, $reason)
 	if($reason=='Exists') $reason = 3;
 	if($reason=='Suppressed') $reason = 4;
 	
-	$q = 'INSERT INTO skipped_emails (app, list, email, reason) VALUES ('.$app.', '.$listID.', "'.$email.'", '.$reason.')';
+	$q = 'INSERT INTO '.SKIPPED_EMAILS.' (app, list, email, reason) VALUES ('.$app.', '.$listID.', "'.$email.'", '.$reason.')';
 	mysqli_query($mysqli, $q);
 }
 
-header("Location: ".get_app_info('path').'/subscribers?i='.$app.'&l='.$listID); 
+header("Location: ".get_app_info('path').'/index.php/site/subscribers?i='.$app.'&l='.$listID); 
 
 ?>

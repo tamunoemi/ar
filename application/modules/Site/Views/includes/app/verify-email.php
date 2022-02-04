@@ -1,7 +1,7 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
-<?php require_once('../helpers/ses.php'); ?>
-<?php require_once('../helpers/EmailAddressValidator.php'); ?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
+<?php require_once('includes/helpers/ses.php'); ?>
+<?php require_once('includes/helpers/EmailAddressValidator.php'); ?>
 <?php 
 	//------------------------------------------------------//
 	//                      VARIABLES                       //
@@ -35,7 +35,7 @@
 		//Create custom verification email template
 		$ses = new SimpleEmailService(get_app_info('s3_key'), get_app_info('s3_secret'), get_app_info('ses_endpoint'));
 		$ses->deleteCustomVerificationEmailTemplate('SendyVerificationTemplate');
-		$ses->createCustomVerificationEmailTemplate(get_app_info('email'), get_app_info('path'), $content_title, $content_body);
+		$ses->createCustomVerificationEmailTemplate(get_app_info('email'), get_app_info('path').'/index.php/site', $content_title, $content_body);
 		
 		//Send custom verification email
 		if($ses->sendCustomVerificationEmail($from_email))

@@ -37,20 +37,20 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 		    	</div>
 		    	<h2><?php echo _('Custom fields');?></h2>
 				<br/>
-		    	<p class="well"><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" title=""><span class="label label-info"><?php echo get_lists_data('name', $lid);?></span></a> | <a href="<?php echo get_app_info('path')?>/list?i=<?php echo get_app_info('app');?>" title=""><?php echo _('Back to lists');?></a>
+		    	<p class="well"><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/index.php/site/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" title=""><span class="label label-info"><?php echo get_lists_data('name', $lid);?></span></a> | <a href="<?php echo get_app_info('path')?>/list?i=<?php echo get_app_info('app');?>" title=""><?php echo _('Back to lists');?></a>
 		    	</p><br/>
 	    	</div>
 	    </div>
 	    
 	    <div class="row-fluid">
 	    	<div class="span12">
-				<form method="POST" action="<?php echo get_app_info('path');?>/includes/list/add-custom-field.php" id="add-custom-field-form">
+				<form method="POST" action="<?php echo get_app_info('path');?>/index.php/site/list/add-custom-field" id="add-custom-field-form">
 				  <h3><?php echo _('Add a field');?></h3><hr/>
 				  <label for="c_field"><?php echo _('Field name');?></label>
 				  <?php 
@@ -112,7 +112,7 @@
 	                </tr>
 	                
 	                <?php 
-		                $q = 'SELECT custom_fields FROM lists WHERE id = '.$lid;
+		                $q = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$lid;
 		                $r = mysqli_query($mysqli, $q);
 		                if ($r)
 		                {
@@ -143,7 +143,7 @@
 										c = confirm("'._('All data belonging to this custom field will also be deleted.').' '._('Confirm delete').' '.$f_array[0].'?");
 										if(c)
 										{
-											$.post("includes/list/delete-custom-field.php", { index: '.$i.', list: '.$lid.' },
+											$.post("index.php/site/list/delete-custom-field", { index: '.$i.', list: '.$lid.' },
 											  function(data) {
 											      if(data)
 											      {
@@ -154,7 +154,7 @@
 											      	else
 											      	{
 												      	$("#'.$i.'").fadeOut();
-												      	window.location = "'.get_app_info('path').'/custom-fields?i='.get_app_info('app').'&l='.$lid.'";
+												      	window.location = "'.get_app_info('path').'/index.php/site/custom-fields?i='.get_app_info('app').'&l='.$lid.'";
 												    }
 											      }
 											      else
@@ -186,7 +186,7 @@
       <h3><?php echo _('Edit custom field');?></h3>
     </div>
     <div class="modal-body">
-    	<form action="<?php echo get_app_info('path')?>/includes/list/edit-custom-field.php" method="POST" id="edit-form">
+    	<form action="<?php echo get_app_info('path')?>/index.php/site/list/edit-custom-field.php" method="POST" id="edit-form">
     		<label for="field_name"><?php echo _('Field name');?></label>
 			<input type="text" value="" name="field_name" id="field_name">
 			<input type="hidden" value="" name="field_index" id="field_index">

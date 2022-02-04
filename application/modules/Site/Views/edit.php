@@ -10,10 +10,10 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/app?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/app?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
-		$q = 'SELECT app FROM campaigns WHERE id = '.$cid;
+		$q = 'SELECT app FROM '.CAMPAIGNS.' WHERE id = '.$cid;
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
@@ -23,7 +23,7 @@
 		    }  
 		    if($a!=get_app_info('restricted_to_app'))
 		    {
-			    echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/app?i='.get_app_info('restricted_to_app').'"</script>';
+			    echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/app?i='.get_app_info('restricted_to_app').'"</script>';
 				exit;
 		    }
 		}
@@ -95,7 +95,7 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 		    	</div>
@@ -104,7 +104,7 @@
 	    </div>
 	    
 	    <div class="row-fluid">
-	    	<form action="<?php echo get_app_info('path')?>/includes/create/save-campaign.php?i=<?php echo get_app_info('app')?>&c=<?php echo $cid;?>&edit=true" method="POST" accept-charset="utf-8" class="form-vertical" id="edit-form" enctype="multipart/form-data">
+	    	<form action="<?php echo get_app_info('path')?>/index.php/site/create/save-campaign?i=<?php echo get_app_info('app')?>&c=<?php echo $cid;?>&edit=true" method="POST" accept-charset="utf-8" class="form-vertical" id="edit-form" enctype="multipart/form-data">
 			    <div class="span3">
 				    
 				    <div id="campaign-title-field" style="<?php if(get_saved_data('label')=='') echo 'display:none;'?>">
@@ -158,7 +158,7 @@
 				    	<div class="controls">
 					      <?php 
 						      //Get main user's login email address
-						      $q = 'SELECT username FROM login WHERE id = '.get_app_info('main_userID');
+						      $q = 'SELECT username FROM '.LOGIN.' WHERE id = '.get_app_info('main_userID');
 						      $r = mysqli_query($mysqli, $q);
 						      if ($r) while($row = mysqli_fetch_array($r)) $main_email = $row['username'];
 					      ?>
@@ -203,9 +203,9 @@
 			        <?php endif;?>
 			        
 			        <?php 
-				        if (file_exists('uploads/attachments/'.$cid))
+				        if (file_exists('././././uploads/attachments/'.$cid))
 						{
-							if($handle = opendir('uploads/attachments/'.$cid))
+							if($handle = opendir('././././uploads/attachments/'.$cid))
 							{
 								$i = -1;
 							    while (false !== ($file = readdir($handle))) 
@@ -219,8 +219,8 @@
 													if(strlen($filen)>30) $filen = substr($file, 0, 30).'...';
 													echo $filen;
 												?> 
-												(<?php echo round((filesize('uploads/attachments/'.$cid.'/'.$file)/1000000), 2);?>MB) 
-												<a href="<?php echo get_app_info('path');?>/includes/create/delete-attachment.php" data-filename="<?php echo $file;?>" title="<?php echo _('Delete');?>" id="delete<?php echo $i;?>"><i class="icon icon-trash"></i></a>
+												(<?php echo round((filesize('././././uploads/attachments/'.$cid.'/'.$file)/1000000), 2);?>MB) 
+												<a href="<?php echo get_app_info('path');?>/index.php/site/create/delete-attachment" data-filename="<?php echo $file;?>" title="<?php echo _('Delete');?>" id="delete<?php echo $i;?>"><i class="icon icon-trash"></i></a>
 												<script type="text/javascript">
 													$("#delete<?php echo $i?>").click(function(e){
 														e.preventDefault();
@@ -331,7 +331,7 @@
 			    <div class="span9">
 				    <!-- Grammarly error -->
 				    <?php 
-					    $app_path_no_http_array = explode('/', get_app_info('path'));
+					    $app_path_no_http_array = explode('/', get_app_info('path') . '/index.php/site');
 					    $app_path_no_http = $app_path_no_http_array[2];
 				    ?>
 				    <div class="alert alert-error" id="grammarly-error" style="display:none;">
@@ -369,7 +369,7 @@
 								$("#html").rules("remove");
 								if($("#subject").val()=="") $("#subject").val("<?php echo _('Untitled');?>");
 								
-								$.post('<?php echo get_app_info('path');?>/includes/create/toggle-wysiwyg.php', { toggle: $("#toggle-wysiwyg").text(), i:"<?php echo get_app_info('app');?>", c: "<?php echo $cid;?>" },
+								$.post('<?php echo get_app_info('path');?>/index.php/site/create/toggle-wysiwyg', { toggle: $("#toggle-wysiwyg").text(), i:"<?php echo get_app_info('app');?>", c: "<?php echo $cid;?>" },
 								  function(data) {
 								      if(data)
 								      {

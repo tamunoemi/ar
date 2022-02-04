@@ -1,5 +1,5 @@
 <?php 
-	include('../config.php');
+	include('includes/config.php');
 	//--------------------------------------------------------------//
 	function dbConnect() { //Connect to database
 	//--------------------------------------------------------------//
@@ -65,18 +65,18 @@
 			{
 				if(filter_var($from_email,FILTER_VALIDATE_EMAIL))
 				{
-					mysqli_query($mysqli, 'UPDATE apps SET complaint_setup=1 WHERE from_email = "'.$from_email.'"');
-					mysqli_query($mysqli, 'UPDATE campaigns SET complaint_setup=1 WHERE from_email = "'.$from_email.'"');
+					mysqli_query($mysqli, 'UPDATE '.APPS.' SET complaint_setup=1 WHERE from_email = "'.$from_email.'"');
+					mysqli_query($mysqli, 'UPDATE '.CAMPAIGNS.' SET complaint_setup=1 WHERE from_email = "'.$from_email.'"');
 				}
 			}
 			
 			//Get app ID of this complaint email
-			$q = 'SELECT lists.app FROM lists, subscribers WHERE subscribers.messageID = "'.mysqli_real_escape_string($mysqli, $messageId).'" AND subscribers.list = lists.id';
+			$q = 'SELECT '.LISTS.'.app FROM lists, '.SUBSCRIBERS.' WHERE '.SUBSCRIBERS.'.messageID = "'.mysqli_real_escape_string($mysqli, $messageId).'" AND '.SUBSCRIBERS.'.list = '.LISTS.'.id';
 			$r = mysqli_query($mysqli, $q);
 			if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $app = $row['app'];
 			
 			//get comma separated lists belonging to this app
-			$q = 'SELECT id FROM lists WHERE app = '.$app;
+			$q = 'SELECT id FROM '.LISTS.' WHERE app = '.$app;
 			$r = mysqli_query($mysqli, $q);
 			if ($r)
 			{
@@ -86,7 +86,7 @@
 			}
 			
 			//Mark as spam in ALL lists in the brand for this email
-			$q = 'UPDATE subscribers SET unsubscribed = 0, bounced = 0, complaint = 1, timestamp = '.$time.' WHERE email = "'.$problem_email.'" AND list IN ('.$all_lists.')';
+			$q = 'UPDATE '.SUBSCRIBERS.' SET unsubscribed = 0, bounced = 0, complaint = 1, timestamp = '.$time.' WHERE email = "'.$problem_email.'" AND list IN ('.$all_lists.')';
 			mysqli_query($mysqli, $q);
 		}
 	}

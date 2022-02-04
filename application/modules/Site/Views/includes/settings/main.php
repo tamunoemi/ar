@@ -8,7 +8,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM login WHERE id = '.get_app_info('userID');
+		$q = 'SELECT '.$val.' FROM '.LOGIN.' WHERE id = '.get_app_info('userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -24,7 +24,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM apps WHERE id = "'.get_app_info('restricted_to_app').'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = "'.get_app_info('restricted_to_app').'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{

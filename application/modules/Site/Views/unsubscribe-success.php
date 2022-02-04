@@ -39,7 +39,7 @@
 	$campaign_id = is_numeric($_GET['c']) ? $_GET['c'] : exit;
 	
 	//Set language
-	$q = 'SELECT login.language FROM campaigns, login WHERE campaigns.id = '.$campaign_id.' AND login.app = campaigns.app';
+	$q = 'SELECT '.LOGIN.'.language FROM '.CAMPAIGNS.', login WHERE campaigns.id = '.$campaign_id.' AND '.LOGIN.'.app = campaigns.app';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $language = $row['language'];
 	set_locale($language);

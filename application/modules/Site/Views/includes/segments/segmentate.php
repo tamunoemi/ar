@@ -1,7 +1,7 @@
 <?php ini_set('display_errors', 0);?>
 <?php include('main.php');?>
 <?php 
-	include('../config.php');
+	include('includes/config.php');
 	//--------------------------------------------------------------//
 	function dbConnect() { //Connect to database
 	//--------------------------------------------------------------//
@@ -35,7 +35,7 @@
 	// connect to database
 	dbConnect();
 ?>
-<?php include('../helpers/locale.php');?>
+<?php include('includes/helpers/locale.php');?>
 <?php 
 	//Vars
 	$lid = isset($_GET['l']) && is_numeric($_GET['l']) ? mysqli_real_escape_string($mysqli, (int)$_GET['l']) : exit;
@@ -62,7 +62,7 @@
 		global $sid;
 		
 		//Delete all subscribers from segment
-	    $q = 'DELETE FROM subscribers_seg WHERE seg_id = '.$sid;
+	    $q = 'DELETE FROM '.SUBSCRIBERS_SEG.' WHERE seg_id = '.$sid;
 	    $r = mysqli_query($mysqli, $q);
 	    if (!$r) echo _('Error: Can\'t delete all subscribers from segment. '); 
 	}
@@ -72,11 +72,11 @@
 		global $mysqli;
 		global $sid;
 		
-		$q = 'SELECT seg_id FROM subscribers_seg WHERE seg_id = '.$sid.' AND subscriber_id = '.$subscriber_id;
+		$q = 'SELECT seg_id FROM '.SUBSCRIBERS_SEG.' WHERE seg_id = '.$sid.' AND subscriber_id = '.$subscriber_id;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r)==0)
 		{
-		    $q2 = 'INSERT INTO subscribers_seg (seg_id, subscriber_id) VALUES ('.$sid.', '.$subscriber_id.')';
+		    $q2 = 'INSERT INTO '.SUBSCRIBERS_SEG.' (seg_id, subscriber_id) VALUES ('.$sid.', '.$subscriber_id.')';
 			$r2 = mysqli_query($mysqli, $q2);
 			if (!$r2) _('Error: Can\'t insert subscriber into segment.'); 
 		}
@@ -104,7 +104,7 @@
 			$cf_value = $cf_array[2];
 			
 			//Get the array's position of custom field
-			$q5 = 'SELECT custom_fields FROM lists WHERE id = '.$lid;
+			$q5 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$lid;
 			$r5 = mysqli_query($mysqli, $q5);
 			if ($r5)
 			{
@@ -129,9 +129,9 @@
 			}
 			//check if custom field condition is satisfied, if so, INSERT subscriber into subscribers_seg 
 			if($first_cf_condition) //Check if custom field condition is the first condition
-				$q = 'SELECT id, custom_fields FROM subscribers WHERE list in ('.$lid.') AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
+				$q = 'SELECT id, custom_fields FROM '.SUBSCRIBERS.' WHERE list in ('.$lid.') AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
 			else
-				$q = 'SELECT subscribers.id as id, subscribers.custom_fields as custom_fields FROM subscribers LEFT JOIN subscribers_seg ON (subscribers.id = subscribers_seg.subscriber_id) WHERE subscribers.list in ('.$lid.') AND subscribers.unsubscribed = 0 AND subscribers.bounced = 0 AND subscribers.complaint = 0 AND subscribers.confirmed = 1 AND subscribers_seg.seg_id = '.$sid;
+				$q = 'SELECT '.SUBSCRIBERS.'.id as id, '.SUBSCRIBERS.'.custom_fields as custom_fields FROM '.SUBSCRIBERS.' LEFT JOIN '.SUBSCRIBERS_SEG.' ON ('.SUBSCRIBERS.'.id = '.SUBSCRIBERS_SEG.'.subscriber_id) WHERE '.SUBSCRIBERS.'.list in ('.$lid.') AND '.SUBSCRIBERS.'.unsubscribed = 0 AND '.SUBSCRIBERS.'.bounced = 0 AND '.SUBSCRIBERS.'.complaint = 0 AND subscribers.confirmed = 1 AND subscribers_seg.seg_id = '.$sid;
 			$r = mysqli_query($mysqli, $q);
 			if ($r && mysqli_num_rows($r) > 0)
 			{
@@ -195,7 +195,7 @@
 	        global $sid;
 	        $arrays = array_chunk($array, 5000);
 	        foreach ($arrays as $chunk) {
-	            $q2 = 'INSERT IGNORE INTO subscribers_seg (seg_id, subscriber_id) VALUES ';
+	            $q2 = 'INSERT IGNORE INTO '.SUBSCRIBERS_SEG.' (seg_id, subscriber_id) VALUES ';
 	            foreach ($chunk as $subscriber_id) {
 	                $q2 .= '('.$sid.', '.$subscriber_id.'),';
 	            }
@@ -218,13 +218,13 @@
 		    
     //Get segmentation conditions
 	$q = 'SELECT 
-			seg_cons.id as id,
-    		seg_cons.grouping as grouping, 
-    		seg_cons.operator as operator,
-    		seg_cons.field as field,
-    		seg_cons.comparison as comparison,
-    		seg_cons.val as val  
-    	FROM seg, seg_cons WHERE seg_cons.seg_id = seg.id AND seg.list = '.$lid.' AND seg_id = '.$sid.' ORDER BY grouping ASC';
+			'.SEG_CONS.'.id as id,
+    		'.SEG_CONS.'.grouping as grouping, 
+    		'.SEG_CONS.'.operator as operator,
+    		'.SEG_CONS.'.field as field,
+    		'.SEG_CONS.'.comparison as comparison,
+    		'.SEG_CONS.'.val as val  
+    	FROM '.SEG.', '.SEG_CONS.' WHERE '.SEG_CONS.'.seg_id = '.SEG.'.id AND '.SEG.'.list = '.$lid.' AND seg_id = '.$sid.' ORDER BY grouping ASC';
     $r = mysqli_query($mysqli, $q);
     if ($r && mysqli_num_rows($r) > 0)
     {
@@ -262,7 +262,7 @@
 		    		}
 			    	
 			    	//Add quotes around the query's value only if comparison is not 'BETWEEN'
-		    		$conditions = $comparison=='BETWEEN' ? $operator.' subscribers.'.$field.' '.$comparison.' '.$val.' ' : $operator.' subscribers.'.$field.' '.$comparison.' "'.$val.'" ';
+		    		$conditions = $comparison=='BETWEEN' ? $operator.' '.SUBSCRIBERS.'.'.$field.' '.$comparison.' '.$val.' ' : $operator.' '.SUBSCRIBERS.'.'.$field.' '.$comparison.' "'.$val.'" ';
 		    		
 		    		$conditions_cf_array[$count] = $conditions_cf;
 		    		$conditions_cf = '';
@@ -299,7 +299,7 @@
 							$val = "$val_day AND $val_night";
 			    		}
 		    		}
-		    		$conditions .= $comparison=='BETWEEN' ? $operator.' subscribers.'.$field.' '.$comparison.' '.$val.' ' : $operator.' subscribers.'.$field.' '.$comparison.' "'.$val.'" ';
+		    		$conditions .= $comparison=='BETWEEN' ? $operator.' '.SUBSCRIBERS.'.'.$field.' '.$comparison.' '.$val.' ' : $operator.' '.SUBSCRIBERS.'.'.$field.' '.$comparison.' "'.$val.'" ';
 		    	}
 		    	// Is a custom field condition
 		    	else
@@ -332,7 +332,7 @@
 		    if($ca!='')
 		    {
 			    $ca = substr($ca, 0, 3)=='(OR' ? '('.substr($ca, 3) : $ca ;
-			    $q2 = 'SELECT id FROM subscribers WHERE list in ('.$lid.') AND '.$ca.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
+			    $q2 = 'SELECT id FROM '.SUBSCRIBERS.' WHERE list in ('.$lid.') AND '.$ca.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
 			    $r2 = mysqli_query($mysqli, $q2);
 			    $total_rows = mysqli_num_rows($r2);
 			    if ($r2 && $total_rows > 0)
@@ -369,7 +369,7 @@
 		    if($ca!='')
 		    {
 			    $ca = substr($ca, 0, 3)=='(OR' ? '('.substr($ca, 3) : $ca ;
-			    $q2 = 'SELECT subscribers.id AS id FROM subscribers LEFT JOIN subscribers_seg ON (subscribers.id = subscribers_seg.subscriber_id)  WHERE subscribers.list in ('.$lid.') AND '.$ca.' AND subscribers.unsubscribed = 0 AND subscribers.bounced = 0 AND subscribers.complaint = 0 AND subscribers.confirmed = 1 AND subscribers_seg.seg_id = '.$sid;
+			    $q2 = 'SELECT '.SUBSCRIBERS.'.id AS id FROM '.SUBSCRIBERS.' LEFT JOIN '.SUBSCRIBERS_SEG.' ON ('.SUBSCRIBERS.'.id = '.SUBSCRIBERS_SEG.'.subscriber_id)  WHERE '.SUBSCRIBERS.'.list in ('.$lid.') AND '.$ca.' AND '.SUBSCRIBERS.'.unsubscribed = 0 AND '.SUBSCRIBERS.'.bounced = 0 AND '.SUBSCRIBERS.'.complaint = 0 AND '.SUBSCRIBERS.'.confirmed = 1 AND '.SUBSCRIBERS_SEG.'.seg_id = '.$sid;
 			    $r2 = mysqli_query($mysqli, $q2);
 			    $total_rows = mysqli_num_rows($r2);
 			    if ($r2 && $total_rows > 0)
@@ -403,15 +403,15 @@
     }
     
     //Update segment 'last updated'
-    $q = 'UPDATE seg SET last_updated = "'.$time.'" WHERE id = '.$sid;
+    $q = 'UPDATE '.SEG.' SET last_updated = "'.$time.'" WHERE id = '.$sid;
 	mysqli_query($mysqli, $q);
     
     if($redirect_url!='')
     {
 	    if($redirect_url=='list')
-	    	$redirect_url = APP_PATH."/segments-list?i=$app&l=$lid";
+	    	$redirect_url = APP_PATH."/index.php/site/segments-list?i=$app&l=$lid";
 	    else if($redirect_url=='conditions')
-		    $redirect_url = APP_PATH."/segment?i=$app&l=$lid&s=$sid";
+		    $redirect_url = APP_PATH."/index.php/site/segment?i=$app&l=$lid&s=$sid";
 		header("Location: $redirect_url");
 	}
 ?>

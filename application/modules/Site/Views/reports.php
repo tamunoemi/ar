@@ -6,12 +6,12 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/reports?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/reports?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 		else if(get_app_info('campaigns_only')==1 && get_app_info('templates_only')==1 && get_app_info('lists_only')==1 && get_app_info('reports_only')==1)
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/logout"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/auth/logout"</script>';
 			exit;
 		}
 		else if(get_app_info('reports_only')==1)
@@ -44,7 +44,7 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
     	</div>
@@ -72,7 +72,7 @@
 				$p = isset($_GET['p']) ? $_GET['p'] : null;
 				$offset = $p!=null ? ($p-1) * $limit : 0;
 				
-			  	$q = 'SELECT * FROM campaigns WHERE userID = '.get_app_info('main_userID').' AND app='.get_app_info('app').' AND sent != "" ORDER BY id DESC LIMIT '.$offset.','.$limit;
+			  	$q = 'SELECT * FROM '.CAMPAIGNS.' WHERE userID = '.get_app_info('main_userID').' AND app='.get_app_info('app').' AND sent != "" ORDER BY id DESC LIMIT '.$offset.','.$limit;
 			  	$r = mysqli_query($mysqli, $q);
 			  	if ($r && mysqli_num_rows($r) > 0)
 			  	{
@@ -151,7 +151,7 @@
 			  			{
 			  				echo '
 				  				<tr id="'.$id.'">
-							      <td><span class="label">Draft</span> <a href="'.get_app_info('path').'/send-to?i='.get_app_info('app').'&c='.$id.'" title="'._('Define recipients & send').'">'.$campaign_title.'</a> | <a href="'.get_app_info('path').'/edit?i='.get_app_info('app').'&c='.$id.'" title="'._('Edit this campaign').'"> Edit</a></td>
+							      <td><span class="label">Draft</span> <a href="'.get_app_info('path').'/index.php/site/send-to?i='.get_app_info('app').'&c='.$id.'" title="'._('Define recipients & send').'">'.$campaign_title.'</a> | <a href="'.get_app_info('path').'/edit?i='.get_app_info('app').'&c='.$id.'" title="'._('Edit this campaign').'"> Edit</a></td>
 							      <td>-</td>
 							      <td>-</td>
 							      <td>-</td>
@@ -163,7 +163,7 @@
 									c = confirm("'._('Confirm delete').' '.$campaign_title.'?");
 									if(c)
 									{
-										$.post("includes/campaigns/delete.php", { campaign_id: '.$id.' },
+										$.post("'.get_app_info('path').'/index.php/site/campaigns/delete", { campaign_id: '.$id.' },
 										  function(data) {
 										      if(data)
 										      {
@@ -184,13 +184,13 @@
 			  			else
 			  			{
 			  				if($error_stack != '')
-				  				$download_errors = ' | <a href="'.get_app_info('path').'/includes/app/download-errors-csv.php?c='.$id.'" title="'._('Download CSV of emails that were not delivered to even after retrying').'">'.$no_of_errors.' '._('not delivered').'</a>';
+				  				$download_errors = ' | <a href="'.get_app_info('path').'/index.php/site/app/download-errors-csv?c='.$id.'" title="'._('Download CSV of emails that were not delivered to even after retrying').'">'.$no_of_errors.' '._('not delivered').'</a>';
 				  			else
 				  				$download_errors = '';
 				  				
 				  			echo '
 				  				<tr id="'.$id.'">
-							      <td><i class="icon icon-bar-chart" style="margin-right:3px;"></i> <a href="'.get_app_info('path').'/report?i='.get_app_info('app').'&c='.$id.'" title="">'.$campaign_title.'</a>'.$download_errors.'</td>
+							      <td><i class="icon icon-bar-chart" style="margin-right:3px;"></i> <a href="'.get_app_info('path').'/index.php/site/report?i='.get_app_info('app').'&c='.$id.'" title="">'.$campaign_title.'</a>'.$download_errors.'</td>
 							      <td>'.number_format($recipients).'</td>
 							      <td>'.parse_date($sent, 'long', true).'</td>
 							      <td><span class="label label-success">'.$open_data.'</td>
@@ -205,7 +205,7 @@
 										c = confirm("'._('Confirm delete').' '.$campaign_title.'?");
 										if(c)
 										{
-											$.post("includes/campaigns/delete.php", { campaign_id: '.$id.' },
+											$.post("'.get_app_info('path').'/index.php/site/campaigns/delete", { campaign_id: '.$id.' },
 											  function(data) {
 											      if(data)
 											      {
@@ -235,7 +235,7 @@
 				  	if(get_app_info('is_sub_user')) 
 				  		echo '<td>'._('There are no reports yet.').'</td>';
 				  	else	
-						echo '<td>'._('There are no reports yet.').' <a href="'.get_app_info('path').'/create?i='.get_app_info('app').'" title="" style="text-decoration: underline;">'._('Create your first campaign').'</a>!</td>';
+						echo '<td>'._('There are no reports yet.').' <a href="'.get_app_info('path').'/index.php/site/create?i='.get_app_info('app').'" title="" style="text-decoration: underline;">'._('Create your first campaign').'</a>!</td>';
 					
 					echo '<td></td>
 					      <td></td>

@@ -10,7 +10,7 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/segments-list?i='.get_app_info('restricted_to_app').'&l='.$lid.'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/segments-list?i='.get_app_info('restricted_to_app').'&l='.$lid.'"</script>';
 			exit;
 		}
 	}
@@ -33,18 +33,18 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 		    	</div>
 		    	<h2><?php echo _('Segments');?></h2>
 				<br/>
-		    	<p class="well"><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" title=""><span class="label label-info"><?php echo get_lists_data('name', $lid);?></span></a> | <a href="<?php echo get_app_info('path')?>/list?i=<?php echo get_app_info('app');?>" title=""><?php echo _('Back to lists');?></a>
+		    	<p class="well"><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/index.php/site/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" title=""><span class="label label-info"><?php echo get_lists_data('name', $lid);?></span></a> | <a href="<?php echo get_app_info('path')?>/index.php/site/list?i=<?php echo get_app_info('app');?>" title=""><?php echo _('Back to lists');?></a>
 		    	</p><br/>
 	    	</div>
 	    </div>
 	    
-	    <p><a href="<?php echo get_app_info('path');?>/segment?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" id="new-segment-btn" class="btn btn-inverse btn-large"><i class="icon-plus icon-white"></i> <?php echo _('Create a new segment');?></a></p>	    
+	    <p><a href="<?php echo get_app_info('path');?>/index.php/site/segment?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" id="new-segment-btn" class="btn btn-inverse btn-large"><i class="icon-plus icon-white"></i> <?php echo _('Create a new segment');?></a></p>	    
 	    
 	    <br/><br/>
 	    
@@ -70,7 +70,7 @@
 	              </thead>
 	              <tbody>
 	                	<?php 
-		                	$q = 'SELECT id, name FROM seg WHERE list = '.$lid.' ORDER BY id DESC';
+		                	$q = 'SELECT id, name FROM '.SEG.' WHERE list = '.$lid.' ORDER BY id DESC';
 		                	$r = mysqli_query($mysqli, $q);
 		                	if ($r && mysqli_num_rows($r) > 0)
 		                	{
@@ -83,9 +83,9 @@
 		                			echo '
 		                			<tr id="seg-'.$seg_id.'">
 			                			<td><span class="label seg-id">'.$seg_id.'</span></td>
-			                			<td><a href="'.get_app_info('path').'/segment?i='.get_app_info('app').'&l='.$lid.'&s='.$seg_id.'">'.$seg_name.'</a></td>
+			                			<td><a href="'.get_app_info('path').'/index.php/site/segment?i='.get_app_info('app').'&l='.$lid.'&s='.$seg_id.'">'.$seg_name.'</a></td>
 			                			<td>'.$subscriber_count.'</td>
-			                			<td><a href="'.get_app_info('path').'/includes/segments/segmentate.php?i='.get_app_info('app').'&l='.$lid.'&s='.$seg_id.'&t='.get_app_info('timezone').'&r=list" title="'._('Update totals for').' '.$seg_name.'? '._('Last update').' '.parse_date(get_seg_data('last_updated', $seg_id), 'short').'" id="update-'.$seg_id.'" data-id="'.$seg_id.'"><i class="icon-refresh"></i></a></td>
+			                			<td><a href="'.get_app_info('path').'index.php/site/segments/segmentate?i='.get_app_info('app').'&l='.$lid.'&s='.$seg_id.'&t='.get_app_info('timezone').'&r=list" title="'._('Update totals for').' '.$seg_name.'? '._('Last update').' '.parse_date(get_seg_data('last_updated', $seg_id), 'short').'" id="update-'.$seg_id.'" data-id="'.$seg_id.'"><i class="icon-refresh"></i></a></td>
 			                			<td><a href="javascript:void(0)" title="'._('Delete').' '.$seg_name.'?" id="delete-'.$seg_id.'" data-id="'.$seg_id.'"><i class="icon-trash"></i></a></td>
 			                			<script type="text/javascript">
 						            	$("#delete-'.$seg_id.'").click(function(e){
@@ -93,7 +93,7 @@
 											c = confirm("'._('All conditions in this segment will be permanently deleted.').' '._('Confirm delete').' \''.$seg_name.'\'?");
 											if(c)
 											{
-								            	$.post("'.get_app_info('path').'/includes/segments/delete.php", { sid: $(this).data("id") },
+								            	$.post("'.get_app_info('path').'/index.php/site/segments/delete", { sid: $(this).data("id") },
 							            		  function(data) {
 							            		      if(data)
 							            		      {
@@ -102,7 +102,7 @@
 														  else if(data=="deleted")
 														  {
 								            		      	  $("#seg-'.$seg_id.'").fadeOut(function(){
-								            		      		  window.location = "'.get_app_info('path').'/segments-list?i='.get_app_info('app').'&l='.$lid.'";
+								            		      		  window.location = "'.get_app_info('path').'/index.php/site/segments-list?i='.get_app_info('app').'&l='.$lid.'";
 								            		      	  });
 								            		      }
 							            		      }

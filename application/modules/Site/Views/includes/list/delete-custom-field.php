@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      VARIABLES                       //
@@ -12,7 +12,7 @@
 	//                      FUNCTIONS                       //
 	//------------------------------------------------------//
 	
-	$q = 'SELECT custom_fields FROM lists WHERE id = '.$list_id;
+	$q = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$list_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
@@ -26,7 +26,7 @@
 	    $custom_fields_value = explode(':', $custom_fields_array[$index]);
 	    
 	    //check if any autoresponder is using this custom field, if so, throw an error
-	    $q4 = 'SELECT id FROM ares WHERE custom_field = "'.$custom_fields_value[0].'" AND list = '.$list_id;
+	    $q4 = 'SELECT id FROM '.ARES.' WHERE custom_field = "'.$custom_fields_value[0].'" AND list = '.$list_id;
 	    $r4 = mysqli_query($mysqli, $q4);
 	    if (mysqli_num_rows($r4) > 0)
 	    {
@@ -38,13 +38,13 @@
 	    $c_field = implode('%s%', $custom_fields_array);
 	    	
 	    //update custom_fields column
-	    $q2 = 'UPDATE lists SET custom_fields = "'.$c_field.'" WHERE id = '.$list_id;
+	    $q2 = 'UPDATE '.LISTS.' SET custom_fields = "'.$c_field.'" WHERE id = '.$list_id;
 	    $r2 = mysqli_query($mysqli, $q2);
 	    if ($r2){}
 	}
 	
 	//delete data from subscribers	
-	$q3 = 'SELECT id, custom_fields FROM subscribers WHERE list = '.$list_id;
+	$q3 = 'SELECT id, custom_fields FROM '.SUBSCRIBERS.' WHERE list = '.$list_id;
 	$r3 = mysqli_query($mysqli, $q3);
 	if ($r3)
 	{
@@ -64,7 +64,7 @@
 		    $c_field = implode('%s%', $custom_fields_array);
 		    	
 		    //update custom_fields column
-		    $q4 = 'UPDATE subscribers SET custom_fields = "'.$c_field.'" WHERE list = '.$list_id.' AND id = '.$s_id;
+		    $q4 = 'UPDATE '.SUBSCRIBERS.' SET custom_fields = "'.$c_field.'" WHERE list = '.$list_id.' AND id = '.$s_id;
 		    $r4 = mysqli_query($mysqli, $q4);
 	    }  
 	}

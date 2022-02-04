@@ -1,4 +1,4 @@
-<?php //require('functions.php');?>
+<?php require('functions.php');?>
 <?php if(isset($_COOKIE['logged_in'])){start_app();}// else var_dump($_COOKIE['logged_in']); exit();?>
 
 <!DOCTYPE html>
@@ -71,7 +71,7 @@
 	          <!-- Check if sub user -->
 	          <?php if(!get_app_info('is_sub_user') && CURRENT_DOMAIN == APP_PATH_DOMAIN):?>
 	          
-		          <a class="brand" href="<?php echo get_app_info('path');?>/"><img src="https://www.gravatar.com/avatar/<?php echo md5(strtolower(trim(get_app_info('email'))));?>?s=36&d=<?php echo get_app_info('path');?>/img/sendy-avatar.png" title="" class="main-gravatar" onerror="this.src='<?php echo get_app_info('path');?>/img/sendy-avatar.png'"/><?php echo get_app_info('company');?></a>
+		          <a class="brand" href="<?php echo get_app_info('path');?>/index.php/site/"><img src="https://www.gravatar.com/avatar/<?php echo md5(strtolower(trim(get_app_info('email'))));?>?s=36&d=<?php echo get_app_info('path');?>/img/sendy-avatar.png" title="" class="main-gravatar" onerror="this.src='<?php echo get_app_info('path');?>/img/sendy-avatar.png'"/><?php echo get_app_info('company');?></a>
 		          
 	          <?php else:?>
 	          
@@ -79,9 +79,9 @@
 			          $is_login_page = basename($_SERVER['SCRIPT_FILENAME'])=='login.php';
 			          $is_index_page = basename($_SERVER['SCRIPT_FILENAME'])=='index.php';
 			          if($is_login_page || $is_index_page)
-				          $q = 'SELECT brand_logo_filename, id FROM apps WHERE custom_domain = "'.CURRENT_DOMAIN.'"';
+				          $q = 'SELECT brand_logo_filename, id FROM '.APPS.' WHERE custom_domain = "'.CURRENT_DOMAIN.'"';
 				      else
-				          $q = 'SELECT brand_logo_filename FROM apps WHERE id = '.get_app_info('app');
+				          $q = 'SELECT brand_logo_filename FROM '.APPS.' WHERE id = '.get_app_info('app');
 			          $r = mysqli_query($mysqli, $q);
 			          if ($r) 
 			          {
@@ -96,12 +96,12 @@
 			          
 			          if($is_login_page)
 			          {
-				          $q = 'SELECT company FROM login WHERE app = '.$app_id;
+				          $q = 'SELECT company FROM '.LOGIN.' WHERE app = '.$app_id;
 				          $r = mysqli_query($mysqli, $q);
 				          if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $company = $row['company'];
 				      }
 		          ?>
-		          <a class="brand" href="<?php echo get_app_info('path');?>/app?i=<?php echo get_app_info('restricted_to_app');?>"><img src="<?php echo $logo_image;?>" title="" class="main-gravatar"/><?php echo $is_login_page ? $company : get_app_info('company');?></a>
+		          <a class="brand" href="<?php echo get_app_info('path');?>/index.php/site/app?i=<?php echo get_app_info('restricted_to_app');?>"><img src="<?php echo $logo_image;?>" title="" class="main-gravatar"/><?php echo $is_login_page ? $company : get_app_info('company');?></a>
 		          
 	          <?php endif;?>
 	          
@@ -112,7 +112,7 @@
 	              <span class="caret"></span>
 	            </a>
 	            <ul class="dropdown-menu">
-	              <li><a href="<?php echo get_app_info('path');?>/settings<?php if(get_app_info('is_sub_user')) echo '?i='.get_app_info('app');?>"><i class="icon icon-cog"></i> <?php echo _('Settings');?></a></li>
+	              <li><a href="<?php echo get_app_info('path');?>/index.php/site/settings<?php if(get_app_info('is_sub_user')) echo '?i='.get_app_info('app');?>"><i class="icon icon-cog"></i> <?php echo _('Settings');?></a></li>
 	              <li class="divider"></li>
 	              <li><a href="<?php echo get_app_info('path');?>/index.php/auth/logout"><i class="icon icon-off"></i> <?php echo _('Logout');?></a></li>
 	            </ul>
@@ -126,7 +126,7 @@
 				    <?php 
 				    	$get_i = isset($_GET['i']) ? mysqli_real_escape_string($mysqli, (int) $_GET['i']) : '';
 				    	
-					    $q = "SELECT app_name, from_email, brand_logo_filename FROM apps WHERE id = '$get_i'";
+					    $q = "SELECT app_name, from_email, brand_logo_filename FROM ".APPS." WHERE id = '$get_i'";
 					    $r = mysqli_query($mysqli, $q);
 					    if ($r && mysqli_num_rows($r) > 0)
 					    {
@@ -150,7 +150,7 @@
 				  </a>
 				  <ul class="dropdown-menu">
 				  	<?php 
-		              $q = 'SELECT id, app_name, from_email, brand_logo_filename FROM apps WHERE userID = '.get_app_info('userID').' ORDER BY app_name ASC';
+		              $q = 'SELECT id, app_name, from_email, brand_logo_filename FROM '.APPS.' WHERE userID = '.get_app_info('userID').' ORDER BY app_name ASC';
 		              $r = mysqli_query($mysqli, $q);
 		              if ($r && mysqli_num_rows($r) > 0)
 		              {
@@ -169,12 +169,12 @@
 		              		echo '<li';
 		              		if($get_i==$app_id)
 		              			echo ' class="active"';
-		              		echo'><a href="'.get_app_info('path').'/app?i='.$app_id.'"><img src="'.$logo_image.'" style="margin:-4px 5px 0 0; width:16px; height: 16px;"/>'.$app_name.'</a></li>';
+		              		echo'><a href="'.get_app_info('path').'/index.php/site/app?i='.$app_id.'"><img src="'.$logo_image.'" style="margin:-4px 5px 0 0; width:16px; height: 16px;"/>'.$app_name.'</a></li>';
 		                  }  
 		              }
 		              else
 		              {
-			              echo '<li><a href="'.get_app_info('path').'/new-brand" title="">'._('Add a new brand').'</a></li>';
+			              echo '<li><a href="'.get_app_info('path').'/index.php/site/new-brand" title="">'._('Add a new brand').'</a></li>';
 		              }
 		            ?>
 				  </ul>

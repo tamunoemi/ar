@@ -8,7 +8,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM apps WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -24,7 +24,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM lists WHERE id = '.mysqli_real_escape_string($mysqli, (int)$_GET['l']).' AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.LISTS.' WHERE id = '.mysqli_real_escape_string($mysqli, (int)$_GET['l']).' AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -40,7 +40,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT name FROM lists WHERE id = '.$val.' AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT name FROM '.LISTS.' WHERE id = '.$val.' AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -56,7 +56,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM seg WHERE id = '.$sid;
+		$q = 'SELECT '.$val.' FROM '.SEG.' WHERE id = '.$sid;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -72,7 +72,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q2 = 'SELECT COUNT(*) AS subscriber_count FROM subscribers_seg WHERE seg_id = '.$val;
+		$q2 = 'SELECT COUNT(*) AS subscriber_count FROM '.SUBSCRIBERS_SEG.' WHERE seg_id = '.$val;
 		$r2 = mysqli_query($mysqli, $q2);
 		if ($r2 && mysqli_num_rows($r2) > 0)
 		    while($row = mysqli_fetch_array($r2))
@@ -109,7 +109,7 @@
 		if($cp!='')
 			$more = 'AND complaint = '.$cp;
 			
-		$q = 'SELECT COUNT(*) FROM subscribers WHERE list = '.$list.' '.$s_more.' '.$more;
+		$q = 'SELECT COUNT(*) FROM '.SUBSCRIBERS.' WHERE list = '.$list.' '.$s_more.' '.$more;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) return $row['COUNT(*)'];
 	}
@@ -135,7 +135,7 @@
 		else
 			$s_more = 'AND '.$val1.' = '.$val2;
 		
-		$q = 'SELECT COUNT(*) FROM subscribers use index (s_list) WHERE list = '.$lid.' '.$s_more;
+		$q = 'SELECT COUNT(*) FROM '.SUBSCRIBERS.' use index (s_list) WHERE list = '.$lid.' '.$s_more;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) return number_format($row['COUNT(*)']);
 	}
@@ -145,7 +145,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM lists WHERE app = "'.get_app_info('app').'" AND id = '.$lid;
+		$q = 'SELECT '.$val.' FROM '.LISTS.' WHERE app = "'.get_app_info('app').'" AND id = '.$lid;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -161,7 +161,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(*) FROM ares WHERE list = '.mysqli_real_escape_string($mysqli, (int)$_GET['l']);
+		$q = 'SELECT COUNT(*) FROM '.ARES.' WHERE list = '.mysqli_real_escape_string($mysqli, (int)$_GET['l']);
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -177,7 +177,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(*) FROM seg WHERE list = '.mysqli_real_escape_string($mysqli, (int)$_GET['l']);
+		$q = 'SELECT COUNT(*) FROM '.SEG.' WHERE list = '.mysqli_real_escape_string($mysqli, (int)$_GET['l']);
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -193,7 +193,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT custom_fields FROM lists WHERE app = "'.get_app_info('app').'" AND id = '.mysqli_real_escape_string($mysqli, (int)$_GET['l']);
+		$q = 'SELECT custom_fields FROM '.LISTS.' WHERE app = "'.get_app_info('app').'" AND id = '.mysqli_real_escape_string($mysqli, (int)$_GET['l']);
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -267,9 +267,9 @@
 			//Prev btn
 			if($curpage>=2)
 				if($prev_page_num==1)
-					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$_GET['l'].$s_more.$more.'\'"><span class="icon icon icon-arrow-left"></span></button>';
+					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$_GET['l'].$s_more.$more.'\'"><span class="icon icon icon-arrow-left"></span></button>';
 				else
-					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$_GET['l'].$s_more.$more.'&p='.$prev_page_num.'\'"><span class="icon icon icon-arrow-left"></span></button>';
+					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$_GET['l'].$s_more.$more.'&p='.$prev_page_num.'\'"><span class="icon icon icon-arrow-left"></span></button>';
 			else
 				echo '<button class="btn disabled"><span class="icon icon icon-arrow-left"></span></button>';
 			
@@ -277,7 +277,7 @@
 			if($curpage==$total_pages)
 				echo '<button class="btn disabled"><span class="icon icon icon-arrow-right"></span></button>';
 			else
-				echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$_GET['l'].$s_more.$more.'&p='.$next_page_num.'\'"><span class="icon icon icon-arrow-right"></span></button>';
+				echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$_GET['l'].$s_more.$more.'&p='.$next_page_num.'\'"><span class="icon icon icon-arrow-right"></span></button>';
 					
 			echo '</div>';
 		}

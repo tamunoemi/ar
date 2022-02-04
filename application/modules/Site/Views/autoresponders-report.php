@@ -10,13 +10,13 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/autoresponders-report.php?i='.get_app_info('restricted_to_app').'&a='.$ar.'&ae='.$ae.'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/autoresponders-report?i='.get_app_info('restricted_to_app').'&a='.$ar.'&ae='.$ae.'"</script>';
 			exit;
 		}
 	}
 ?>
 <?php 
-	$q = 'SELECT * FROM ares_emails WHERE id = '.mysqli_real_escape_string($mysqli, $ae);
+	$q = 'SELECT * FROM '.ARES_EMAILS.' WHERE id = '.mysqli_real_escape_string($mysqli, $ae);
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -185,13 +185,13 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
     	</div>
     	<h2><?php echo _('Autoresponder report');?></h2><br/>
     	
-    	<h3><?php echo get_saved_data('title');?> <a href="<?php echo get_app_info('path');?>/w/<?php echo short($id);?>/a" title="<?php echo _('View the web version');?>" class="iframe-preview"><span class="icon-eye-open"></span></a></h3>
+    	<h3><?php echo get_saved_data('title');?> <a href="<?php echo get_app_info('path');?>/index.php/site/w/<?php echo short($id);?>/a" title="<?php echo _('View the web version');?>" class="iframe-preview"><span class="icon-eye-open"></span></a></h3>
     	<?php echo _('For');?>: <span class="label label-info"><?php echo get_ares_data('name');?></span> <span>(<?php echo get_ares_type_name('type');?>)</span>, <em><?php echo _('sent to');?> <span class="label"><?php echo number_format(get_saved_data('recipients'));?> <?php echo _('subscribers');?></span></em>
     	
     	<div class="row-fluid">
@@ -228,7 +228,7 @@
 	    	<div class="span12">
 		    	<h2 class="report-titles"><?php echo _('Link activity');?></h2>
 		    	<?php if($links_tracking): ?>
-			    	<a href="<?php echo get_app_info('path');?>/includes/ares-reports/export-csv.php?c=<?php echo $id?>&a=clicks" title="<?php echo _('Export subscribers who clicked');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
+			    	<a href="<?php echo get_app_info('path');?>/index.php/site/ares-reports/export-csv?c=<?php echo $id?>&a=clicks" title="<?php echo _('Export subscribers who clicked');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
 			    <?php endif;?>
 	    	</div>
 	    </div>
@@ -245,7 +245,7 @@
 			  <tbody>
 			  	
 			  	<?php 
-				  	$q = 'SELECT * FROM links WHERE ares_emails_id = '.mysqli_real_escape_string($mysqli, $ae);
+				  	$q = 'SELECT * FROM '.LINKS.' WHERE ares_emails_id = '.mysqli_real_escape_string($mysqli, $ae);
 				  	$r = mysqli_query($mysqli, $q);
 				  	if ($r && mysqli_num_rows($r) > 0)
 				  	{
@@ -301,7 +301,7 @@
 	    	<div class="span12">
 		    	<h2 class="report-titles"><?php echo _('Last 10 opened');?></h2>
 		    	<?php if($opens_tracking): ?>
-			    	<a href="<?php echo get_app_info('path');?>/includes/ares-reports/export-csv.php?c=<?php echo $id?>&a=opens" title="<?php echo _('Export subscribers who opened');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
+			    	<a href="<?php echo get_app_info('path');?>/index.php/site/ares-reports/export-csv?c=<?php echo $id?>&a=opens" title="<?php echo _('Export subscribers who opened');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
 			    <?php endif;?>
 	    	</div>
 	    </div>
@@ -319,7 +319,7 @@
 			  <tbody>
 			  	
 			  	<?php 
-				  	$q = 'SELECT opens FROM ares_emails WHERE id = '.mysqli_real_escape_string($mysqli, $ae);
+				  	$q = 'SELECT opens FROM '.ARES_EMAILS.' WHERE id = '.mysqli_real_escape_string($mysqli, $ae);
 				  	$r = mysqli_query($mysqli, $q);
 				  	if ($r && mysqli_num_rows($r) > 0)
 				  	{
@@ -349,7 +349,7 @@
 				  	    		$last_opens_array2 = array_reverse(array_unique($last_opens_array));
 					  			$last_subscriber_id = explode(':', $last_opens_array2[$z]);
 					  			
-					  			$q2 = 'SELECT * FROM subscribers WHERE id = '.$last_subscriber_id[0];
+					  			$q2 = 'SELECT * FROM '.SUBSCRIBERS.' WHERE id = '.$last_subscriber_id[0];
 					  			$r2 = mysqli_query($mysqli, $q2);
 					  			if ($r2 && mysqli_num_rows($r2) > 0)
 					  			{
@@ -375,7 +375,7 @@
 							  			if($name=='')
 							  				$name = '['._('No name').']';
 							  				
-							  			$q2 = 'SELECT name FROM lists WHERE id = '.$listID;
+							  			$q2 = 'SELECT name FROM '.LISTS.' WHERE id = '.$listID;
 							  			$r2 = mysqli_query($mysqli, $q2);
 							  			if ($r2 && mysqli_num_rows($r2) > 0)
 							  			{
@@ -390,7 +390,7 @@
 							  			<tr>
 									      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$name.'</a></td>
 									      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$email.'</a></td>
-									      <td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
+									      <td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
 									      <td>'.$unsubscribed.'</td>
 									    </tr>
 							  			
@@ -424,7 +424,7 @@
 	    <div class="row-fluid">
 	    	<div class="span12">
 		    	<h2 class="report-titles"><?php echo _('Last 10 unsubscribed');?></h2>
-		    	<a href="<?php echo get_app_info('path');?>/includes/ares-reports/export-csv.php?c=<?php echo $id?>&a=unsubscribes" title="<?php echo _('Export subscribers who unsubscribed');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
+		    	<a href="<?php echo get_app_info('path');?>/index.php/site/ares-reports/export-csv?c=<?php echo $id?>&a=unsubscribes" title="<?php echo _('Export subscribers who unsubscribed');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
 	    	</div>
 	    </div>
 	    <br/>
@@ -442,7 +442,7 @@
 			  <tbody>
 			  	
 			  	<?php 
-				  	$q = 'SELECT * FROM subscribers WHERE unsubscribed = 1 AND last_ares = '.mysqli_real_escape_string($mysqli, $ae).' LIMIT 10';
+				  	$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE unsubscribed = 1 AND last_ares = '.mysqli_real_escape_string($mysqli, $ae).' LIMIT 10';
 				  	$r = mysqli_query($mysqli, $q);
 				  	if ($r && mysqli_num_rows($r) > 0)
 				  	{
@@ -458,7 +458,7 @@
 				  			if($name=='')
 				  				$name = '['._('No name').']';
 				  				
-				  			$q2 = 'SELECT name FROM lists WHERE id = '.$listID;
+				  			$q2 = 'SELECT name FROM '.LISTS.' WHERE id = '.$listID;
 				  			$r2 = mysqli_query($mysqli, $q2);
 				  			if ($r2 && mysqli_num_rows($r2) > 0)
 				  			{
@@ -473,7 +473,7 @@
 				  			<tr>
 						      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$name.'</a></td>
 						      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$email.'</a></td>
-						      <td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
+						      <td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
 						      <td><span class="label label-important">'._('Unsubscribed').'</span></td>
 						      <td>'.$timestamp.'</td>
 						    </tr>
@@ -506,7 +506,7 @@
 	    <div class="row-fluid">
 	    	<div class="span12">
 		    	<h2 class="report-titles"><?php echo _('Last 10 bounced emails');?></h2>
-		    	<a href="<?php echo get_app_info('path');?>/includes/ares-reports/export-csv.php?c=<?php echo $id?>&a=bounces" title="<?php echo _('Export subscribers who bounced');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
+		    	<a href="<?php echo get_app_info('path');?>/index.php/site/ares-reports/export-csv?c=<?php echo $id?>&a=bounces" title="<?php echo _('Export subscribers who bounced');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
 	    	</div>
 	    </div>
 	    <br/>
@@ -524,7 +524,7 @@
 			  <tbody>
 			  	
 			  	<?php 
-				  	$q = 'SELECT * FROM subscribers WHERE bounced = 1 AND last_ares = '.mysqli_real_escape_string($mysqli, $ae).' LIMIT 10';
+				  	$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE bounced = 1 AND last_ares = '.mysqli_real_escape_string($mysqli, $ae).' LIMIT 10';
 				  	$r = mysqli_query($mysqli, $q);
 				  	if ($r && mysqli_num_rows($r) > 0)
 				  	{
@@ -539,7 +539,7 @@
 				  			if($name=='')
 				  				$name = '['._('No name').']';
 				  				
-				  			$q2 = 'SELECT name FROM lists WHERE id = '.$listID;
+				  			$q2 = 'SELECT name FROM '.LISTS.' WHERE id = '.$listID;
 				  			$r2 = mysqli_query($mysqli, $q2);
 				  			if ($r2 && mysqli_num_rows($r2) > 0)
 				  			{
@@ -554,7 +554,7 @@
 				  			<tr>
 						      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$name.'</a></td>
 						      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$email.'</a></td>
-						      <td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
+						      <td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
 						      <td><span class="label label-inverse">'._('Bounced').'</span></td>
 						      <td>'.$timestamp.'</td>
 						    </tr>
@@ -587,7 +587,7 @@
 	    <div class="row-fluid">
 	    	<div class="span12">
 		    	<h2 class="report-titles"><?php echo _('Last 10 marked as spam');?></h2>
-		    	<a href="<?php echo get_app_info('path');?>/includes/ares-reports/export-csv.php?c=<?php echo $id?>&a=complaints" title="<?php echo _('Export subscribers who marked your email as spam');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
+		    	<a href="<?php echo get_app_info('path');?>/index.php/site/ares-reports/export-csv?c=<?php echo $id?>&a=complaints" title="<?php echo _('Export subscribers who marked your email as spam');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
 	    	</div>
 	    </div>
 	    <br/>
@@ -605,7 +605,7 @@
 			  <tbody>
 			  	
 			  	<?php 
-				  	$q = 'SELECT * FROM subscribers WHERE complaint = 1 AND last_ares = '.mysqli_real_escape_string($mysqli, $ae).' LIMIT 10';
+				  	$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE complaint = 1 AND last_ares = '.mysqli_real_escape_string($mysqli, $ae).' LIMIT 10';
 				  	$r = mysqli_query($mysqli, $q);
 				  	if ($r && mysqli_num_rows($r) > 0)
 				  	{
@@ -620,7 +620,7 @@
 				  			if($name=='')
 				  				$name = '[No name]';
 				  				
-				  			$q2 = 'SELECT name FROM lists WHERE id = '.$listID;
+				  			$q2 = 'SELECT name FROM '.LISTS.' WHERE id = '.$listID;
 				  			$r2 = mysqli_query($mysqli, $q2);
 				  			if ($r2 && mysqli_num_rows($r2) > 0)
 				  			{
@@ -635,7 +635,7 @@
 				  			<tr>
 						      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$name.'</a></td>
 						      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$email.'</a></td>
-						      <td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
+						      <td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
 						      <td><span class="label label-inverse">'._('Marked as spam').'</span></td>
 						      <td>'.$timestamp.'</td>
 						    </tr>
@@ -736,7 +736,7 @@
 						  			<tr>
 						  				<td>'.$cc[1].'</td>
 						  				<td>'.$cc[0].'</td>
-						  				<td><a href="'.get_app_info('path').'/includes/ares-reports/export-csv.php?c='.$id.'&a='.$cc[2].'" title="'._('Export subscribers from').' '.$cc[1].'"><i class="icon icon-download-alt"></i></a></td>
+						  				<td><a href="'.get_app_info('path').'/index.php/site/ares-reports/export-csv?c='.$id.'&a='.$cc[2].'" title="'._('Export subscribers from').' '.$cc[1].'"><i class="icon icon-download-alt"></i></a></td>
 						  			</tr>
 						  			';
 					  			}
@@ -874,7 +874,7 @@
 		s_id = $(this).data("id");
 		$("#subscriber-text").html("<?php echo _('Fetching');?>..");
 		
-		$.post("<?php echo get_app_info('path');?>/includes/subscribers/subscriber-info.php", { id: s_id, app:<?php echo get_app_info('app');?> },
+		$.post("<?php echo get_app_info('path');?>/index.php/site/subscribers/subscriber-info.php", { id: s_id, app:<?php echo get_app_info('app');?> },
 		  function(data) {
 		      if(data)
 		      {

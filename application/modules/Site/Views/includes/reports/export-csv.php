@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 
 /********************************/
@@ -14,14 +14,14 @@ if($action == 'clicks')
 {
 	//file name
 	$filename = 'clicked.csv';
-	$additional_query = 'AND subscribers.unsubscribed = 0 AND subscribers.bounced = 0 AND subscribers.complaint = 0';
+	$additional_query = 'AND '.SUBSCRIBERS.'.unsubscribed = 0 AND '.SUBSCRIBERS.'.bounced = 0 AND '.SUBSCRIBERS.'.complaint = 0';
 	
 	//get
 	$clicks_join = '';
 	$clicks_array = array();
 	$clicks_unique = 0;
 	
-	$q = 'SELECT id, clicks FROM links WHERE campaign_id = '.$campaign_id;
+	$q = 'SELECT id, clicks FROM '.LINKS.' WHERE campaign_id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -42,9 +42,9 @@ else if($action == 'opens')
 {
 	//file name
 	$filename = 'opened.csv';
-	$additional_query = 'AND subscribers.unsubscribed = 0 AND subscribers.bounced = 0 AND subscribers.complaint = 0';
+	$additional_query = 'AND '.SUBSCRIBERS.'.unsubscribed = 0 AND '.SUBSCRIBERS.'.bounced = 0 AND '.SUBSCRIBERS.'.complaint = 0';
 	
-	$q = 'SELECT opens FROM campaigns WHERE id = '.$campaign_id;
+	$q = 'SELECT opens FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -62,9 +62,9 @@ else if($action == 'unopens')
 {
 	//file name
 	$filename = 'unopened.csv';
-	$additional_query = 'AND subscribers.unsubscribed = 0 AND subscribers.bounced = 0 AND subscribers.complaint = 0 AND subscribers.confirmed = 1';
+	$additional_query = 'AND '.SUBSCRIBERS.'.unsubscribed = 0 AND '.SUBSCRIBERS.'.bounced = 0 AND '.SUBSCRIBERS.'.complaint = 0 AND '.SUBSCRIBERS.'.confirmed = 1';
 	
-	$q = 'SELECT opens FROM campaigns WHERE id = '.$campaign_id;
+	$q = 'SELECT opens FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -83,7 +83,7 @@ else if($action == 'unopens')
 	}
 	
 	//Get lists the campaign was sent to
-	$q = 'SELECT to_send_lists, segs FROM campaigns WHERE id = '.$campaign_id;
+	$q = 'SELECT to_send_lists, segs FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r) 
 	{
@@ -97,7 +97,7 @@ else if($action == 'unopens')
 	$sid_not_opened = array();
 	$subscribers = '';
 	
-	$q = 'SELECT id, email FROM subscribers WHERE list IN ('.$to_send_lists.') AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1 AND last_campaign = '.$campaign_id;
+	$q = 'SELECT id, email FROM '.SUBSCRIBERS.' WHERE list IN ('.$to_send_lists.') AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1 AND last_campaign = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -109,7 +109,7 @@ else if($action == 'unopens')
 	    }  
 	}
 	
-	$q = 'SELECT subscribers_seg.subscriber_id as subscriber_id, subscribers.email as email FROM subscribers_seg LEFT JOIN subscribers ON (subscribers.id = subscribers_seg.subscriber_id) WHERE subscribers_seg.seg_id IN ('.$segs.') '.$additional_query;
+	$q = 'SELECT '.SUBSCRIBERS_SEG.'.subscriber_id as subscriber_id, '.SUBSCRIBERS.'.email as email FROM '.SUBSCRIBERS_SEG.' LEFT JOIN '.SUBSCRIBERS.' ON ('.SUBSCRIBERS.'.id = '.SUBSCRIBERS_SEG.'.subscriber_id) WHERE '.SUBSCRIBERS_SEG.'.seg_id IN ('.$segs.') '.$additional_query;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -128,7 +128,7 @@ else if($action == 'unsubscribes')
 	//file name
 	$filename = 'unsubscribed.csv';
 	
-	$q = 'SELECT id FROM subscribers WHERE last_campaign = '.$campaign_id.' AND unsubscribed = 1';
+	$q = 'SELECT id FROM '.SUBSCRIBERS.' WHERE last_campaign = '.$campaign_id.' AND unsubscribed = 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -147,7 +147,7 @@ else if($action == 'bounces')
 	//file name
 	$filename = 'bounced.csv';
 	
-	$q = 'SELECT id FROM subscribers WHERE last_campaign = '.$campaign_id.' AND bounced = 1';
+	$q = 'SELECT id FROM '.SUBSCRIBERS.' WHERE last_campaign = '.$campaign_id.' AND bounced = 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -166,7 +166,7 @@ else if($action == 'complaints')
 	//file name
 	$filename = 'marked-as-spam.csv';
 	
-	$q = 'SELECT id FROM subscribers WHERE last_campaign = '.$campaign_id.' AND complaint = 1';
+	$q = 'SELECT id FROM '.SUBSCRIBERS.' WHERE last_campaign = '.$campaign_id.' AND complaint = 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -184,10 +184,10 @@ else if($action == 'recipient_clicks')
 {
 	//file name
 	$filename = 'recipients-who-clicked.csv';
-	$additional_query = 'AND subscribers.unsubscribed = 0 AND subscribers.bounced = 0 AND subscribers.complaint = 0';
+	$additional_query = 'AND '.SUBSCRIBERS.'.unsubscribed = 0 AND '.SUBSCRIBERS.'.bounced = 0 AND '.SUBSCRIBERS.'.complaint = 0';
 	
 	//get strings of click ids
-	$q = 'SELECT clicks, link FROM links WHERE id = '.$link_id;
+	$q = 'SELECT clicks, link FROM '.LINKS.' WHERE id = '.$link_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r) 
 	{	
@@ -208,7 +208,7 @@ else
 	//file name
 	$filename = $action.'.csv';
 	
-	$q = 'SELECT opens FROM campaigns WHERE id = '.$campaign_id;
+	$q = 'SELECT opens FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -236,11 +236,11 @@ else
 }
 
 //Export
-$select = 'SELECT subscribers.id, subscribers.name, subscribers.email, subscribers.join_date, subscribers.timestamp, subscribers.list, subscribers.ip, subscribers.country, subscribers.referrer, subscribers.method, subscribers.added_via, subscribers.gdpr, lists.name as list_name  
-			FROM subscribers 
-			LEFT JOIN lists
-			ON (subscribers.list = lists.id)
-			where subscribers.id IN ('.$subscribers.') '.$additional_query;
+$select = 'SELECT '.SUBSCRIBERS.'.id, '.SUBSCRIBERS.'.name, '.SUBSCRIBERS.'.email, '.SUBSCRIBERS.'.join_date, '.SUBSCRIBERS.'.timestamp, '.SUBSCRIBERS.'.list, '.SUBSCRIBERS.'.ip, '.SUBSCRIBERS.'.country, '.SUBSCRIBERS.'.referrer, '.SUBSCRIBERS.'.method, '.SUBSCRIBERS.'.added_via, '.SUBSCRIBERS.'.gdpr, '.LISTS.'.name as list_name  
+			FROM '.SUBSCRIBERS.' 
+			LEFT JOIN '.LISTS.'
+			ON ('.SUBSCRIBERS.'.list = '.LISTS.'.id)
+			where '.SUBSCRIBERS.'.id IN ('.$subscribers.') '.$additional_query;
 $export = mysqli_query($mysqli, $select);
 if($export)
 {

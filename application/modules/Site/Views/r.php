@@ -49,7 +49,7 @@
 		$campaign_id = is_numeric(short($_GET['c'], true)) ? short($_GET['c'], true) : exit;
 		
 		//Set language
-		$q = 'SELECT login.language, campaigns.from_email FROM campaigns, login WHERE campaigns.id = '.$campaign_id.' AND login.app = campaigns.app';
+		$q = 'SELECT '.LOGIN.'.language, '.CAMPAIGNS.'.from_email FROM '.CAMPAIGNS.', login WHERE '.CAMPAIGNS.'.id = '.$campaign_id.' AND '.LOGIN.'.app = '.CAMPAIGNS.'.app';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0) 
 		{
@@ -90,7 +90,7 @@
 		}
 		
 		//Get custom domain
-		$q2 = 'SELECT custom_domain, custom_domain_protocol, custom_domain_enabled FROM apps WHERE id = '.$app;
+		$q2 = 'SELECT custom_domain, custom_domain_protocol, custom_domain_enabled FROM '.APPS.' WHERE id = '.$app;
 		$r2 = mysqli_query($mysqli, $q2);
 		if ($r2 && mysqli_num_rows($r2) > 0)
 		{

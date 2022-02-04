@@ -7,12 +7,12 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/list?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/list?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 		else if(get_app_info('campaigns_only')==1 && get_app_info('templates_only')==1 && get_app_info('lists_only')==1 && get_app_info('reports_only')==1)
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/logout"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/auth/logout"</script>';
 			exit;
 		}
 		else if(get_app_info('lists_only')==1)
@@ -63,7 +63,7 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
     	</div>
@@ -72,14 +72,14 @@
     	<div style="clear:both;">
 	    	<button class="btn" id="new-list-btn"><i class="icon-plus-sign"></i> <?php echo _('Add a new list');?></button>
 	    	
-	    	<form class="form-search" action="<?php echo get_app_info('path');?>/search-all-lists" method="GET" style="float:right;">
+	    	<form class="form-search" action="<?php echo get_app_info('path');?>/index.php/site/search-all-lists" method="GET" style="float:right;">
 	    		<input type="hidden" name="i" value="<?php echo get_app_info('app');?>">
 				<input type="text" class="input-medium search-query" name="s" style="width: 200px;">
 				<button type="submit" class="btn"><i class="icon-search"></i> <?php echo _('Search all lists');?></button>
 			</form>
 		</div>
 		
-		<form action="<?php echo get_app_info('path')?>/includes/subscribers/import-add.php" method="POST" accept-charset="utf-8" class="form-vertical well" enctype="multipart/form-data" id="list-form">
+		<form action="<?php echo get_app_info('path')?>/index.php/site/subscribers/import-add" method="POST" accept-charset="utf-8" class="form-vertical well" enctype="multipart/form-data" id="list-form">
 	    	
 	    	<label class="control-label" for="list_name"><?php echo _('List name');?></label>
 	    	<div class="control-group">
@@ -128,7 +128,7 @@
 			
 			<?php 
 				//Get sorting preference
-				$q = 'SELECT templates_lists_sorting FROM apps WHERE id = '.get_app_info('app');
+				$q = 'SELECT templates_lists_sorting FROM '.APPS.' WHERE id = '.get_app_info('app');
 				$r = mysqli_query($mysqli, $q);
 				if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $templates_lists_sorting = $row['templates_lists_sorting'];
 				$sortby = $templates_lists_sorting=='date' ? 'id DESC' : 'name ASC';
@@ -141,7 +141,7 @@
 				$p = isset($_GET['p']) ? $_GET['p'] : null;
 				$offset = $p!=null ? ($p-1) * $limit : 0;
 			  	
-			  	$q = 'SELECT id, name FROM lists WHERE app = '.get_app_info('app').' AND userID = '.get_app_info('main_userID').' ORDER BY '.$sortby.' LIMIT '.$offset.','.$limit;
+			  	$q = 'SELECT id, name FROM '.LISTS.' WHERE app = '.get_app_info('app').' AND userID = '.get_app_info('main_userID').' ORDER BY '.$sortby.' LIMIT '.$offset.','.$limit;
 			  	$r = mysqli_query($mysqli, $q);
 			  	if ($r && mysqli_num_rows($r) > 0)
 			  	{
@@ -161,17 +161,17 @@
 			  			
 			  			$no_of_segs = get_segment_count($id);
 			  			$seg_label = $no_of_segs>0 ? 'label-info' : 'label';
-			  			$seg_count = $no_of_segs>0 ? '<a href="'.get_app_info('path').'/segments-list?i='.get_app_info('app').'&l='.$id.'" style="color:white;">'.$no_of_segs.'</a>' : '<a href="'.get_app_info('path').'/segments-list?i='.get_app_info('app').'&l='.$id.'">'.$no_of_segs.'</a>';
+			  			$seg_count = $no_of_segs>0 ? '<a href="'.get_app_info('path').'/index.php/site/segments-list?i='.get_app_info('app').'&l='.$id.'" style="color:white;">'.$no_of_segs.'</a>' : '<a href="'.get_app_info('path').'/index.php/site/segments-list?i='.get_app_info('app').'&l='.$id.'">'.$no_of_segs.'</a>';
 			  			
 			  			$no_of_ars = get_ar_count($id);
 			  			$ar_label = $no_of_ars>0 ? 'label-info' : 'label';
-			  			$ar_count = $no_of_ars>0 ? '<a href="'.get_app_info('path').'/autoresponders-list?i='.get_app_info('app').'&l='.$id.'" style="color:white;">'.$no_of_ars.'</a>' : '<a href="'.get_app_info('path').'/autoresponders-list?i='.get_app_info('app').'&l='.$id.'"">'.$no_of_ars.'</a>';
+			  			$ar_count = $no_of_ars>0 ? '<a href="'.get_app_info('path').'/index.php/site/autoresponders-list?i='.get_app_info('app').'&l='.$id.'" style="color:white;">'.$no_of_ars.'</a>' : '<a href="'.get_app_info('path').'/index.php/site/autoresponders-list?i='.get_app_info('app').'&l='.$id.'"">'.$no_of_ars.'</a>';
 			  				
 			  			echo '
 			  			
 			  			<tr id="'.$id.'">
 			  			  <td><span class="label" id="list'.$id.'">'.$listid.'</span><span class="label encrypted-list-id" id="list'.$id.'-encrypted" style="display:none;">'.short($id).'</span></td>
-					      <td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$id.'" title="">'.$name.'</a></td>
+					      <td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$id.'" title="">'.$name.'</a></td>
 					      <td id="progress'.$id.'"><span class="badge badge-success">'.$subscribers_count.'</span></td>';
 					      
 					    if($has_gdpr_subscribers)
@@ -194,7 +194,7 @@
 							c = confirm("'._('All subscribers, custom fields and autoresponders in this list will also be permanently deleted. Confirm delete').' '.$name.'?");
 							if(c)
 							{
-								$.post("includes/list/delete.php", { list_id: '.$id.' },
+								$.post("'.get_app_info('path').'index.php/site/list/delete.php", { list_id: '.$id.' },
 								  function(data) {
 								      if(data)
 								      {

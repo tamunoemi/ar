@@ -1,7 +1,7 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
-<?php require_once('../helpers/EmailAddressValidator.php');?>
-<?php require_once('../helpers/parsecsv.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
+<?php require_once('include/helpers/EmailAddressValidator.php');?>
+<?php require_once('include/helpers/parsecsv.php');?>
 <?php
 
 /********************************/
@@ -12,7 +12,7 @@ $time = time();
 /********************************/
 
 //get comma separated lists belonging to this app
-$q2 = 'SELECT id FROM lists WHERE app = '.$app;
+$q2 = 'SELECT id FROM '.LISTS.' WHERE app = '.$app;
 $r2 = mysqli_query($mysqli, $q2);
 if ($r2)
 {
@@ -25,7 +25,7 @@ if ($r2)
 if($line=='')
 {
 	//show error msg
-	header("Location: ".get_app_info('path').'/blacklist-suppression?i='.$app.'&e=3'); 
+	header("Location: ".get_app_info('path').'/index.php/site/blacklist-suppression?i='.$app.'&e=3'); 
 	exit;
 }
 
@@ -54,12 +54,12 @@ foreach($line_array as $line)
 		}
 		
 		//delete email from any existing lists within the brand
-		$q2 = 'DELETE FROM subscribers WHERE list IN ('.$all_lists.') AND email = "'.trim($line).'"';
+		$q2 = 'DELETE FROM '.SUBSCRIBERS.' WHERE list IN ('.$all_lists.') AND email = "'.trim($line).'"';
 		mysqli_query($mysqli, $q2);
 	}
 }
 
 //return
-header("Location: ".get_app_info('path').'/blacklist-suppression?i='.$app); 
+header("Location: ".get_app_info('path').'/index.php/site/blacklist-suppression?i='.$app); 
 
 ?>

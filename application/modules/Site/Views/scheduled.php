@@ -40,7 +40,7 @@
 <?php include('includes/helpers/locale.php');?>
 <?php 	
 	//setup cron
-	$q = 'SELECT id, cron, send_rate, ses_endpoint FROM login LIMIT 1';
+	$q = 'SELECT id, cron, send_rate, ses_endpoint FROM '.LOGIN.' LIMIT 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
@@ -53,7 +53,7 @@
 			
 			if($cron==0)
 			{
-				$q2 = 'UPDATE login SET cron=1 WHERE id = '.$userid;
+				$q2 = 'UPDATE '.LOGIN.' SET cron=1 WHERE id = '.$userid;
 				$r2 = mysqli_query($mysqli, $q2);
 				if ($r2) exit;
 			}
@@ -64,7 +64,7 @@
 	$offset = isset($_GET['offset']) ? $_GET['offset'] : '';
 	
 	//Check campaigns database
-	$q = 'SELECT timezone, sent, id, app, userID, to_send, to_send_lists, recipients, timeout_check, send_date, lists, lists_excl, segs, segs_excl, from_name, from_email, reply_to, title, label, plain_text, html_text, query_string, opens_tracking, links_tracking FROM campaigns WHERE (send_date !="" AND lists !="" AND timezone != "") OR (to_send > recipients) ORDER BY sent DESC';
+	$q = 'SELECT timezone, sent, id, app, userID, to_send, to_send_lists, recipients, timeout_check, send_date, lists, lists_excl, segs, segs_excl, from_name, from_email, reply_to, title, label, plain_text, html_text, query_string, opens_tracking, links_tracking FROM '.CAMPAIGNS.' WHERE (send_date !="" AND lists !="" AND timezone != "") OR (to_send > recipients) ORDER BY sent DESC';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -99,13 +99,13 @@
 			$links_tracking = $row['links_tracking'];
 			
 			//Set language
-			$q_l = 'SELECT login.language FROM campaigns, login WHERE campaigns.id = '.$campaign_id.' AND login.app = campaigns.app';
+			$q_l = 'SELECT '.LOGIN.'.language FROM '.CAMPAIGNS.', '.LOGIN.' WHERE '.CAMPAIGNS.'.id = '.$campaign_id.' AND '.LOGIN.'.app = '.CAMPAIGNS.'.app';
 			$r_l = mysqli_query($mysqli, $q_l);
 			if ($r_l && mysqli_num_rows($r_l) > 0) while($row = mysqli_fetch_array($r_l)) $language = $row['language'];
 			set_locale($language);
 			
 			//get user details
-			$q2 = 'SELECT s3_key, s3_secret, name, username, timezone FROM login WHERE id = '.$userID;
+			$q2 = 'SELECT s3_key, s3_secret, name, username, timezone FROM '.LOGIN.' WHERE id = '.$userID;
 			$r2 = mysqli_query($mysqli, $q2);
 			if ($r2)
 			{
@@ -135,7 +135,7 @@
 			$converted_date = array($currentdaynumber, $currentday, $currentmonthnumber, $currentmonth, $currentyear);
 			
 			//get smtp settings
-			$q3 = 'SELECT smtp_host, smtp_port, smtp_ssl, smtp_username, smtp_password, notify_campaign_sent, gdpr_only, custom_domain, custom_domain_protocol, custom_domain_enabled FROM apps WHERE id = '.$app;
+			$q3 = 'SELECT smtp_host, smtp_port, smtp_ssl, smtp_username, smtp_password, notify_campaign_sent, gdpr_only, custom_domain, custom_domain_protocol, custom_domain_enabled FROM '.APPS.' WHERE id = '.$app;
 			$r3 = mysqli_query($mysqli, $q3);
 			if ($r3 && mysqli_num_rows($r3) > 0)
 			{
@@ -164,29 +164,29 @@
 			}
 			
 			if($offset=='') //If sending for the first time
-				$main_query = $email_list == 0 ? '' : 'subscribers.list in ('.$email_list.') '; //Include main list query
+				$main_query = $email_list == 0 ? '' : SUBSCRIBERS.'.list in ('.$email_list.') '; //Include main list query
 			else //If resuming
-				$main_query = $to_send_lists == '' ? '' : 'subscribers.list in ('.$to_send_lists.') '; //Include main list query
+				$main_query = $to_send_lists == '' ? '' : SUBSCRIBERS.'.list in ('.$to_send_lists.') '; //Include main list query
 			
 			//Include segmentation query
 			$seg_query = $main_query != '' && $segs != 0 ? 'OR ' : '';
 			$seg_query .= $segs == 0 ? '' : '(subscribers_seg.seg_id IN ('.$segs.')) ';
 			
 			//Exclude list query
-			$exclude_query = $email_list_excl == 0 ? '' : 'subscribers.email NOT IN (SELECT email FROM subscribers WHERE list IN ('.$email_list_excl.')) ';
+			$exclude_query = $email_list_excl == 0 ? '' : SUBSCRIBERS.'.email NOT IN (SELECT email FROM '.SUBSCRIBERS.' WHERE list IN ('.$email_list_excl.')) ';
 			
 			//Exclude segmentation query
 			$exclude_seg_query = $exclude_query != '' && $segs_excl != 0 ? 'AND ' : ''; 
-			$exclude_seg_query .= $segs_excl == 0 ? '' : 'subscribers.email NOT IN (SELECT subscribers.email FROM subscribers LEFT JOIN subscribers_seg ON (subscribers.id = subscribers_seg.subscriber_id) WHERE subscribers_seg.seg_id IN ('.$segs_excl.'))';
+			$exclude_seg_query .= $segs_excl == 0 ? '' : SUBSCRIBERS.'.email NOT IN (SELECT '.SUBSCRIBERS.'.email FROM '.SUBSCRIBERS.' LEFT JOIN '.SUBSCRIBERS_SEG.' ON ('.SUBSCRIBERS.'.id = '.SUBSCRIBERS_SEG.'.subscriber_id) WHERE '.SUBSCRIBERS_SEG.'.seg_id IN ('.$segs_excl.'))';
 			
 			//check if we should send email now
 			if((($time>=$send_date && $time<$send_date+300) && $sent=='') || (($send_date<$time) && $sent=='') || ($send_date=='0' && $timezone=='0'))
 			{
 				//if resuming
 				if($offset!='')
-					$q = 'UPDATE campaigns SET send_date=NULL, lists=NULL, timezone=NULL WHERE id = '.$campaign_id;
+					$q = 'UPDATE '.CAMPAIGNS.' SET send_date=NULL, lists=NULL, timezone=NULL WHERE id = '.$campaign_id;
 				else
-					$q = 'UPDATE campaigns SET sent = "'.$time.'", send_date=NULL, lists=NULL, timezone=NULL WHERE id = '.$campaign_id;
+					$q = 'UPDATE '.CAMPAIGNS.' SET sent = "'.$time.'", send_date=NULL, lists=NULL, timezone=NULL WHERE id = '.$campaign_id;
 				$r = mysqli_query($mysqli, $q);
 				if ($r){}
 				
@@ -198,11 +198,11 @@
 					{
 						//Insert web version link
 						if(strpos($html, '</webversion>')==true || strpos($html, '[webversion]')==true)
-							mysqli_query($mysqli, 'INSERT INTO links (campaign_id, link) VALUES ('.$campaign_id.', "'.$app_path.'/w/'.short($campaign_id).'")');
+							mysqli_query($mysqli, 'INSERT INTO '.LINKS.' (campaign_id, link) VALUES ('.$campaign_id.', "'.$app_path.'/index.php/site/w/'.short($campaign_id).'")');
 						
 						//Insert reconsent link
 						if(strpos($html, '[reconsent]')==true)
-							mysqli_query($mysqli, 'INSERT INTO links (campaign_id, link) VALUES ('.$campaign_id.', "'.$app_path.'/r?c='.short($campaign_id).'")');
+							mysqli_query($mysqli, 'INSERT INTO '.LINKS.' (campaign_id, link) VALUES ('.$campaign_id.', "'.$app_path.'/index.php/site/r?c='.short($campaign_id).'")');
 						
 						//Insert into links
 						$links = array();
@@ -221,27 +221,27 @@
 						//extract unique links
 						for($i=0;$i<count($links);$i++)
 						{
-						    $q = 'INSERT INTO links (campaign_id, link) VALUES ('.$campaign_id.', "'.$links[$i].'")';
+						    $q = 'INSERT INTO '.LINKS.' (campaign_id, link) VALUES ('.$campaign_id.', "'.$links[$i].'")';
 						    $r = mysqli_query($mysqli, $q);
 						    if ($r){}
 						}
 					}
 					
 					//Get and update number of recipients to send to
-					$q  = 'SELECT 1 FROM subscribers';
-					$q .= $segs==0 && $segs_excl==0 ? ' ' : ' LEFT JOIN subscribers_seg ON (subscribers.id = subscribers_seg.subscriber_id) ';
+					$q  = 'SELECT 1 FROM '.SUBSCRIBERS;
+					$q .= $segs==0 && $segs_excl==0 ? ' ' : ' LEFT JOIN '.SUBSCRIBERS_SEG.' ON ('.SUBSCRIBERS.'.id = '.SUBSCRIBERS_SEG.'.subscriber_id) ';
 					$q .= 'WHERE ('.$main_query.$seg_query.') ';
 					$q .= $exclude_query != '' || $exclude_seg_query != '' ? 'AND ('.$exclude_query.$exclude_seg_query.') ' : '';
-					$q .= 'AND subscribers.unsubscribed = 0 AND subscribers.bounced = 0 AND subscribers.complaint = 0 AND subscribers.confirmed = 1 '.$gdpr_line.'
-						   GROUP BY subscribers.email 
-						   ORDER BY subscribers.id ASC 
+					$q .= 'AND '.SUBSCRIBERS.'.unsubscribed = 0 AND '.SUBSCRIBERS.'.bounced = 0 AND '.SUBSCRIBERS.'.complaint = 0 AND '.SUBSCRIBERS.'.confirmed = 1 '.$gdpr_line.'
+						   GROUP BY '.SUBSCRIBERS.'.email 
+						   ORDER BY '.SUBSCRIBERS.'.id ASC 
 						   LIMIT 18446744073709551615'.$the_offset;
 					$r = mysqli_query($mysqli, $q);
 					if ($r)
 					{
 					    $to_send = mysqli_num_rows($r);	
 					    $to_send_num = 	$to_send;
-						$q2 = 'UPDATE campaigns SET to_send = '.$to_send.', to_send_lists = "'.$email_list.'" WHERE id = '.$campaign_id;
+						$q2 = 'UPDATE '.CAMPAIGNS.' SET to_send = '.$to_send.', to_send_lists = "'.$email_list.'" WHERE id = '.$campaign_id;
 						$r2 = mysqli_query($mysqli, $q2);
 						if ($r2){} 
 					}
@@ -251,26 +251,26 @@
 					//if resuming					
 					$email_list = $to_send_lists;
 					//get currently unsubscribed
-					$uc = 'SELECT id FROM subscribers WHERE unsubscribed = 1 AND last_campaign = '.$campaign_id;
+					$uc = 'SELECT id FROM '.SUBSCRIBERS.' WHERE unsubscribed = 1 AND last_campaign = '.$campaign_id;
 				    $currently_unsubscribed = mysqli_num_rows(mysqli_query($mysqli, $uc));
 				    //get currently bounced
-					$bc = 'SELECT id FROM subscribers WHERE bounced = 1 AND last_campaign = '.$campaign_id;
+					$bc = 'SELECT id FROM '.SUBSCRIBERS.' WHERE bounced = 1 AND last_campaign = '.$campaign_id;
 				    $currently_bounced = mysqli_num_rows(mysqli_query($mysqli, $bc));
 				    //get currently complaint
-					$cc = 'SELECT id FROM subscribers WHERE complaint = 1 AND last_campaign = '.$campaign_id;
+					$cc = 'SELECT id FROM '.SUBSCRIBERS.' WHERE complaint = 1 AND last_campaign = '.$campaign_id;
 				    $currently_complaint = mysqli_num_rows(mysqli_query($mysqli, $cc));
 					//calculate offset (offset should exclude currently unsubscribed, bounced or complaint)
 					$the_offset = ' OFFSET '.($offset-($currently_unsubscribed+$currently_bounced+$currently_complaint));	
 				}
 				
 				//Replace links in newsletter and put tracking image
-				$q  = 'SELECT subscribers.id, subscribers.name, subscribers.email, subscribers.list, subscribers.custom_fields FROM subscribers';
-				$q .= $segs==0 && $segs_excl==0 ? ' ' : ' LEFT JOIN subscribers_seg ON (subscribers.id = subscribers_seg.subscriber_id) ';
+				$q  = 'SELECT '.SUBSCRIBERS.'.id, '.SUBSCRIBERS.'.name, '.SUBSCRIBERS.'.email, '.SUBSCRIBERS.'.list, '.SUBSCRIBERS.'.custom_fields FROM '.SUBSCRIBERS.'';
+				$q .= $segs==0 && $segs_excl==0 ? ' ' : ' LEFT JOIN '.SUBSCRIBERS_SEG.' ON ('.SUBSCRIBERS.'.id = '.SUBSCRIBERS_SEG.'.subscriber_id) ';
 				$q .= 'WHERE ('.$main_query.$seg_query.') ';
 				$q .= $exclude_query != '' || $exclude_seg_query != '' ? 'AND ('.$exclude_query.$exclude_seg_query.') ' : '';
-				$q .= 'AND subscribers.unsubscribed = 0 AND subscribers.bounced = 0 AND subscribers.complaint = 0 AND subscribers.confirmed = 1 '.$gdpr_line.'
-					   GROUP BY subscribers.email 
-					   ORDER BY subscribers.id ASC 
+				$q .= 'AND '.SUBSCRIBERS.'.unsubscribed = 0 AND '.SUBSCRIBERS.'.bounced = 0 AND '.SUBSCRIBERS.'.complaint = 0 AND '.SUBSCRIBERS.'.confirmed = 1 '.$gdpr_line.'
+					   GROUP BY '.SUBSCRIBERS.'.email 
+					   ORDER BY '.SUBSCRIBERS.'.id ASC 
 					   LIMIT 18446744073709551615'.$the_offset;
 				$r = mysqli_query($mysqli, $q);
 				if ($r && mysqli_num_rows($r) > 0)
@@ -296,7 +296,7 @@
 						$title_treated = str_replace($unconverted_date, $converted_date, $title);
 						
 						//replace new links on HTML code
-						$q2 = 'SELECT id, link FROM links WHERE campaign_id = '.$campaign_id;
+						$q2 = 'SELECT id, link FROM '.LINKS.' WHERE campaign_id = '.$campaign_id;
 						$r2 = mysqli_query($mysqli, $q2);
 						if ($r2 && mysqli_num_rows($r2) > 0)
 						{			
@@ -313,11 +313,11 @@
 								if($links_tracking)
 								{									
 									//replace new links on HTML code
-							    	$html_treated = str_replace('href="'.$link.'"', 'href="'.$app_path.'/l/'.short($subscriber_id).'/'.short($linkID).'/'.short($campaign_id).'"', $html_treated);
-							    	$html_treated = str_replace('href=\''.$link.'\'', 'href="'.$app_path.'/l/'.short($subscriber_id).'/'.short($linkID).'/'.short($campaign_id).'"', $html_treated);
+							    	$html_treated = str_replace('href="'.$link.'"', 'href="'.$app_path.'/index.php/site/l/'.short($subscriber_id).'/'.short($linkID).'/'.short($campaign_id).'"', $html_treated);
+							    	$html_treated = str_replace('href=\''.$link.'\'', 'href="'.$app_path.'/index.php/site/l/'.short($subscriber_id).'/'.short($linkID).'/'.short($campaign_id).'"', $html_treated);
 							    	
 							    	//replace new links on Plain Text code
-							    	$plain_treated = str_replace($link, $app_path.'/l/'.short($subscriber_id).'/'.short($linkID).'/'.short($campaign_id), $plain_treated);
+							    	$plain_treated = str_replace($link, $app_path.'/index.php/site/l/'.short($subscriber_id).'/'.short($linkID).'/'.short($campaign_id), $plain_treated);
 							    }
 						    }  
 						}
@@ -354,7 +354,7 @@
 								//otherwise, replace custom field tag
 								else
 								{					
-									$q5 = 'SELECT custom_fields FROM lists WHERE id = '.$subscriber_list;
+									$q5 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$subscriber_list;
 									$r5 = mysqli_query($mysqli, $q5);
 									if ($r5)
 									{
@@ -428,7 +428,7 @@
 								//otherwise, replace custom field tag
 								else
 								{					
-									$q5 = 'SELECT custom_fields FROM lists WHERE id = '.$subscriber_list;
+									$q5 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$subscriber_list;
 									$r5 = mysqli_query($mysqli, $q5);
 									if ($r5)
 									{
@@ -501,7 +501,7 @@
 								//otherwise, replace custom field tag
 								else
 								{					
-									$q5 = 'SELECT custom_fields FROM lists WHERE id = '.$subscriber_list;
+									$q5 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$subscriber_list;
 									$r5 = mysqli_query($mysqli, $q5);
 									if ($r5)
 									{
@@ -544,16 +544,16 @@
 						}
 						
 						//set web version links
-				    	$html_treated = str_replace('<webversion', '<a href="'.$app_path.'/w/'.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id).'" ', $html_treated);
+				    	$html_treated = str_replace('<webversion', '<a href="'.$app_path.'/index.php/site/w/'.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id).'" ', $html_treated);
 				    	$html_treated = str_replace('</webversion>', '</a>', $html_treated);
-				    	$html_treated = str_replace('[webversion]', $app_path.'/w/'.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id), $html_treated);
-				    	$plain_treated = str_replace('[webversion]', $app_path.'/w/'.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id), $plain_treated);
+				    	$html_treated = str_replace('[webversion]', $app_path.'/index.php/site/w/'.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id), $html_treated);
+				    	$plain_treated = str_replace('[webversion]', $app_path.'/index.php/site/w/'.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id), $plain_treated);
 				    	
 				    	//set unsubscribe links
-				    	$html_treated = str_replace('<unsubscribe', '<a href="'.$app_path.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id).'" ', $html_treated);
+				    	$html_treated = str_replace('<unsubscribe', '<a href="'.$app_path.'/index.php/site/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id).'" ', $html_treated);
 				    	$html_treated = str_replace('</unsubscribe>', '</a>', $html_treated);
-				    	$html_treated = str_replace('[unsubscribe]', $app_path.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id), $html_treated);
-				    	$plain_treated = str_replace('[unsubscribe]', $app_path.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id), $plain_treated);
+				    	$html_treated = str_replace('[unsubscribe]', $app_path.'/index.php/site/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id), $html_treated);
+				    	$plain_treated = str_replace('[unsubscribe]', $app_path.'/index.php/site/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id), $plain_treated);
 				    	
 				    	//Email tag
 						$html_treated = str_replace('[Email]', $email, $html_treated);
@@ -561,14 +561,14 @@
 						$title_treated = str_replace('[Email]', $email, $title_treated);
 						
 						//set reconsent links
-				    	$html_treated = str_replace('[reconsent]', $app_path.'/r?e='.short($email).'&a='.short($app).'&w='.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id), $html_treated);
-				    	$plain_treated = str_replace('[reconsent]', $app_path.'/r?e='.short($email).'&a='.short($app).'&w='.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id), $plain_treated);
+				    	$html_treated = str_replace('[reconsent]', $app_path.'/index.php/site/r?e='.short($email).'&a='.short($app).'&w='.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id), $html_treated);
+				    	$plain_treated = str_replace('[reconsent]', $app_path.'/index.php/site/r?e='.short($email).'&a='.short($app).'&w='.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id), $plain_treated);
 				    	
 				    	//If opens tracking is enabled, add 1 x 1 px tracking image
 				    	if($opens_tracking)
 				    	{
 					    	//add tracking 1 by 1px image
-							$html_treated .= '<img src="'.$app_path.'/t/'.short($campaign_id).'/'.short($subscriber_id).'" alt="" style="width:1px;height:1px;"/>';
+							$html_treated .= '<img src="'.$app_path.'/index.php/site/t/'.short($campaign_id).'/'.short($subscriber_id).'" alt="" style="width:1px;height:1px;"/>';
 						}
 						
 						//Get server path
@@ -608,7 +608,7 @@
 						$mail->IsHTML(true);
 						$mail->AddAddress($email, $name);
 						$mail->AddReplyTo($reply_to, $from_name);
-						$mail->AddCustomHeader('List-Unsubscribe: <'.$app_path.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id).'>');
+						$mail->AddCustomHeader('List-Unsubscribe: <'.$app_path.'/index.php/site/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id).'>');
 						//check if attachments are available for this campaign to attach
 						if(file_exists($server_path.'uploads/attachments/'.$campaign_id))
 						{
@@ -623,11 +623,11 @@
 						if($s3_key=='' && $s3_secret=='')
 						{
 							//increment recipients number in campaigns table
-							$q5 = 'UPDATE campaigns SET recipients = recipients+1 WHERE id = '.$campaign_id;
+							$q5 = 'UPDATE '.CAMPAIGNS.' SET recipients = recipients+1 WHERE id = '.$campaign_id;
 							mysqli_query($mysqli, $q5);
 							
 							//update last_campaign
-							$q14 = 'UPDATE subscribers SET last_campaign = '.$campaign_id.' WHERE id = '.$subscriber_id;
+							$q14 = 'UPDATE '.SUBSCRIBERS.' SET last_campaign = '.$campaign_id.' WHERE id = '.$subscriber_id;
 							mysqli_query($mysqli, $q14);
 						}
 				    }  
@@ -642,7 +642,7 @@
 				        ."Algorithm=HmacSHA1,Signature={$signature}";
 				    $headers[] = "Content-Type: application/x-www-form-urlencoded";		
 				    
-				    $q4 = 'SELECT id, query_str, subscriber_id FROM queue WHERE campaign_id = '.$campaign_id.' AND sent = 0';
+				    $q4 = 'SELECT id, query_str, subscriber_id FROM '.QUEUE.' WHERE campaign_id = '.$campaign_id.' AND sent = 0';
 				    $r4 = mysqli_query($mysqli, $q4);
 				    if ($r4 && mysqli_num_rows($r4) > 0)
 				    {
@@ -677,7 +677,7 @@
 					        
 					        if ($response_http_status_code !== 200)
 					        {
-						        $q7 = 'SELECT errors FROM campaigns WHERE id = '.$campaign_id;
+						        $q7 = 'SELECT errors FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 					        	$r7 = mysqli_query($mysqli, $q7);
 					        	if ($r7)
 					        	{
@@ -696,13 +696,13 @@
 					        	}
 			
 						        //update campaigns' errors column
-						        $q6 = 'UPDATE campaigns SET errors = "'.$val.'" WHERE id = '.$campaign_id;
+						        $q6 = 'UPDATE '.CAMPAIGNS.' SET errors = "'.$val.'" WHERE id = '.$campaign_id;
 								mysqli_query($mysqli, $q6);
 					        }
 					        else
 					        {
 					        	//increment recipients number in campaigns table
-								$q6 = 'UPDATE campaigns SET recipients = recipients+1 WHERE recipients < to_send AND id = '.$campaign_id;
+								$q6 = 'UPDATE '.CAMPAIGNS.' SET recipients = recipients+1 WHERE recipients < to_send AND id = '.$campaign_id;
 								mysqli_query($mysqli, $q6);
 								
 								//update record in queue
@@ -710,18 +710,18 @@
 								mysqli_query($mysqli, $q5);
 								
 								//update messageID of subscriber
-								$q14 = 'UPDATE subscribers SET messageID = "'.$messageID.'" WHERE id = '.$subscriber_id;
+								$q14 = 'UPDATE '.SUBSCRIBERS.' SET messageID = "'.$messageID.'" WHERE id = '.$subscriber_id;
 								mysqli_query($mysqli, $q14);
 					        }
 				        }  
 				    }
 				    else
 				    {
-					    $q12 = 'UPDATE campaigns SET to_send = (SELECT recipients) WHERE id = '.$campaign_id;
+					    $q12 = 'UPDATE '.CAMPAIGNS.' SET to_send = (SELECT recipients) WHERE id = '.$campaign_id;
 						$r12 = mysqli_query($mysqli, $q12);
 						if ($r12)
 						{
-							$q13 = 'SELECT recipients FROM campaigns WHERE id = '.$campaign_id;
+							$q13 = 'SELECT recipients FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 							$r13 = mysqli_query($mysqli, $q13);
 							if ($r13) while($row = mysqli_fetch_array($r13)) $current_recipient_count = $row['recipients'];
 							$to_send = $current_recipient_count;
@@ -732,7 +732,7 @@
 				}
 				else
 				{
-					$q12 = 'UPDATE campaigns SET to_send = '.$current_recipient_count.' WHERE id = '.$campaign_id;
+					$q12 = 'UPDATE '.CAMPAIGNS.' SET to_send = '.$current_recipient_count.' WHERE id = '.$campaign_id;
 					$r12 = mysqli_query($mysqli, $q12);
 					if ($r12)
 					{
@@ -743,7 +743,7 @@
 				
 				//=========================== Post processing ===========================//
 				    
-			    $q8 = 'SELECT recipients FROM campaigns where id = '.$campaign_id;
+			    $q8 = 'SELECT recipients FROM '.CAMPAIGNS.' where id = '.$campaign_id;
 			    $r8 = mysqli_query($mysqli, $q8);
 			    if ($r8) while($row = mysqli_fetch_array($r8)) $no_of_recipients = $row['recipients'];
 			    if($no_of_recipients >= $to_send)
@@ -804,13 +804,13 @@
 					</div>
 				    ";
 				    
-				    $q4 = 'UPDATE campaigns SET recipients = '.$to_send_num.' WHERE id = '.$campaign_id;
+				    $q4 = 'UPDATE '.CAMPAIGNS.' SET recipients = '.$to_send_num.' WHERE id = '.$campaign_id;
 					mysqli_query($mysqli, $q4);
 					
-					$q9 = 'DELETE FROM queue WHERE campaign_id = '.$campaign_id;
+					$q9 = 'DELETE FROM '.QUEUE.' WHERE campaign_id = '.$campaign_id;
 					mysqli_query($mysqli, $q9);
 					
-					$q11 = 'SELECT errors, to_send_lists FROM campaigns WHERE id = '.$campaign_id;
+					$q11 = 'SELECT errors, to_send_lists FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 					$r11 = mysqli_query($mysqli, $q11);
 					if ($r11) 
 					{
@@ -822,7 +822,7 @@
 						
 						if($error_recipients_ids=='')
 						{
-							$q10 = 'UPDATE subscribers SET bounce_soft = 0 WHERE list IN ('.$tsl.')';
+							$q10 = 'UPDATE '.SUBSCRIBERS.' SET bounce_soft = 0 WHERE list IN ('.$tsl.')';
 							mysqli_query($mysqli, $q10);
 						}
 						else
@@ -835,7 +835,7 @@
 								array_push($eid_array, $id_val_array[0]);
 							}
 							$error_recipients_ids = implode(',', $eid_array);
-							$q10 = 'UPDATE subscribers SET bounce_soft = 0 WHERE list IN ('.$tsl.') AND id NOT IN ('.$error_recipients_ids.')';
+							$q10 = 'UPDATE '.SUBSCRIBERS.' SET bounce_soft = 0 WHERE list IN ('.$tsl.') AND id NOT IN ('.$error_recipients_ids.')';
 							mysqli_query($mysqli, $q10);
 						}
 					}
@@ -890,14 +890,14 @@
 				$tc = $tc_now.':'.$tc_prev;
 				
 				//update status of timeout
-				$q = 'UPDATE campaigns SET timeout_check = "'.$tc.'" WHERE id = '.$campaign_id;
+				$q = 'UPDATE '.CAMPAIGNS.' SET timeout_check = "'.$tc.'" WHERE id = '.$campaign_id;
 				mysqli_query($mysqli, $q);
 				
 				//compare prev count with current recipients number count
 				//if timed out
 				if($tc_now == $tc_prev)
 				{
-					$q = 'UPDATE campaigns SET timeout_check = NULL, send_date = "0", timezone = "0" WHERE id = '.$campaign_id;
+					$q = 'UPDATE '.CAMPAIGNS.' SET timeout_check = NULL, send_date = "0", timezone = "0" WHERE id = '.$campaign_id;
 					mysqli_query($mysqli, $q);
 					
 					//continue sending
@@ -912,7 +912,7 @@
 			}
 			else if($current_recipient_count == $to_send_num)
 			{
-				$q = 'UPDATE campaigns SET timeout_check = NULL WHERE id = '.$campaign_id;
+				$q = 'UPDATE '.CAMPAIGNS.' SET timeout_check = NULL WHERE id = '.$campaign_id;
 				mysqli_query($mysqli, $q);
 			}
 	    }  

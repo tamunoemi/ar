@@ -3,7 +3,7 @@
 <?php include('includes/subscribers/main.php');?>
 <?php 
 	//Get gdpr_options
-	$q = 'SELECT gdpr_options FROM apps WHERE id = '.get_app_info('app');
+	$q = 'SELECT gdpr_options FROM '.APPS.' WHERE id = '.get_app_info('app');
 	$r = mysqli_query($mysqli, $q);
 	if ($r) while($row = mysqli_fetch_array($r)) $gdpr_options = $row['gdpr_options'];
 ?>
@@ -205,7 +205,7 @@
 			    </div>
 		    </div>
 		    
-		    <input type="hidden" id="app_path" name="app_path" value="<?php echo get_app_info('path');?>" />
+		    <input type="hidden" id="app_path" name="app_path" value="<?php echo get_app_info('path').'/index.php/site';?>" />
 		    <input type="hidden" id="app" name="app" value="<?php echo $_GET['i'];?>" />
 		    <input type="hidden" id="lid" name="lid" value="<?php echo $lid;?>" />
 		    
@@ -244,7 +244,7 @@
 						$boolean_comparisons = array('=', '!=');
 						$boolean_comparisons_text = array($boolean_comparisons[0]=>_('is tagged'), $boolean_comparisons[1]=>_('is not tagged'));
 					    
-					    $q = 'SELECT id, grouping, operator, field, comparison, val FROM seg_cons WHERE seg_id = '.$sid;
+					    $q = 'SELECT id, grouping, operator, field, comparison, val FROM '.SEG_CONS.' WHERE seg_id = '.$sid;
 					    $r = mysqli_query($mysqli, $q);
 					    if ($r && mysqli_num_rows($r) > 0)
 					    {				  
@@ -264,7 +264,7 @@
 					    		if(!in_array($field, $default_fields))
 					    		{
 						    		//Check if custom field is a 'text' or 'date' type
-									$q5 = 'SELECT custom_fields FROM lists WHERE id = '.$lid;
+									$q5 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$lid;
 									$r5 = mysqli_query($mysqli, $q5);
 									if ($r5)
 									{
@@ -828,7 +828,7 @@
 		    <p>
 			    <span class="label label<?php echo $total_in_seg==0 ? '' : '-success';?>" style="font-size: 20px;"><?php echo $total_in_seg;?></span> <?php echo _('subscribers found for this segment');?> 
 		    	<span class="seg-note"> (<?php echo $total_in_seg!=0 ? _('showing a preview of up to 10 records below') : _('your conditions does not match any subscribers');?>)</span>
-		    	<a href="<?php echo get_app_info('path');?>/includes/segments/export-csv.php?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>&s=<?php echo $sid;?>" class="export-seg-csv" title="<?php echo _('Export CSV of this segment');?>"><i class="icon icon-download-alt"></i> <?php echo _('Export');?></a>
+		    	<a href="<?php echo get_app_info('path');?>/index.php/site/segments/export-csv?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>&s=<?php echo $sid;?>" class="export-seg-csv" title="<?php echo _('Export CSV of this segment');?>"><i class="icon icon-download-alt"></i> <?php echo _('Export');?></a>
 		    </p>
 		    <hr/>
 		    
@@ -844,7 +844,7 @@
 			    <tbody>
 				    
 				  <?php 
-					  $q = 'SELECT subscribers.id, subscribers.name, subscribers.email, subscribers.timestamp FROM subscribers LEFT JOIN subscribers_seg ON (subscribers.id = subscribers_seg.subscriber_id) WHERE subscribers_seg.seg_id = '.$sid.' ORDER BY timestamp DESC LIMIT 10';
+					  $q = 'SELECT '.SUBSCRIBERS.'.id, '.SUBSCRIBERS.'.name, '.SUBSCRIBERS.'.email, '.SUBSCRIBERS.'.timestamp FROM '.SUBSCRIBERS.' LEFT JOIN '.SUBSCRIBERS_SEG.' ON ('.SUBSCRIBERS.'.id = '.SUBSCRIBERS_SEG.'.subscriber_id) WHERE '.SUBSCRIBERS_SEG.'.seg_id = '.$sid.' ORDER BY timestamp DESC LIMIT 10';
 					  $r = mysqli_query($mysqli, $q);
 					  if ($r && mysqli_num_rows($r) > 0)
 					  {
@@ -883,7 +883,7 @@
 						s_id = $(this).data("id");
 						$("#subscriber-text").html("<?php echo _('Fetching');?>..");
 						
-						$.post("<?php echo get_app_info('path');?>/includes/subscribers/subscriber-info.php", { id: s_id, app:<?php echo get_app_info('app');?> },
+						$.post("<?php echo get_app_info('path');?>/index.php/site/subscribers/subscriber-info", { id: s_id, app:<?php echo get_app_info('app');?> },
 						  function(data) {
 						      if(data)
 						      {
@@ -904,18 +904,18 @@
 		  <hr/>
 		  
 		  <span class="last-update"><?php echo _('Last update');?>: <?php echo parse_date(get_seg_data('last_updated', $sid), 'short');?></span> 
-		  <a href="<?php echo get_app_info('path')?>/includes/segments/segmentate.php?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>&s=<?php echo $sid;?>&t=<?php echo get_app_info('timezone')?>&r=conditions" style="margin-left: 5px;" title="<?php echo _('Update segmentation results?');?>">
+		  <a href="<?php echo get_app_info('path')?>/index.php/site/segments/segmentate?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>&s=<?php echo $sid;?>&t=<?php echo get_app_info('timezone')?>&r=conditions" style="margin-left: 5px;" title="<?php echo _('Update segmentation results?');?>">
 			  <span class="icon icon-refresh"></span>
 		  </a>
 		  
 		  <?php 
 			  //check if cron is set up
-		    	$q = 'SELECT cron_seg FROM login WHERE id = '.get_app_info('main_userID');
+		    	$q = 'SELECT cron_seg FROM '.LOGIN.' WHERE id = '.get_app_info('main_userID');
 		    	$r = mysqli_query($mysqli, $q);
 		    	if ($r) while($row = mysqli_fetch_array($r)) $cron = $row['cron_seg'];
 		    	
 		    	//get server path
-		    	$server_path_array = explode('segment.php', $_SERVER['SCRIPT_FILENAME']);
+		    	$server_path_array = explode('segment', $_SERVER['SCRIPT_FILENAME']);
 			    $server_path = $server_path_array[0];
 		    	
 			if(!$cron && !get_app_info('is_sub_user')): ?>
@@ -931,7 +931,7 @@
 	            <h3><?php echo _('Time Interval');?></h3>
 				<pre id="command">*/15 * * * * </pre>
 	            <h3><?php echo _('Command');?></h3>
-	            <pre id="command">php <?php echo $server_path;?>update-segments.php > /dev/null 2>&amp;1</pre>
+	            <pre id="command">php <?php echo $server_path;?>update-segments > /dev/null 2>&amp;1</pre>
 	            <p><em><?php echo _('(Note that adding cron jobs vary from hosts to hosts, most offer a UI to add a cron job easily. Check your hosting control panel or consult your host if unsure.)');?></em>.</p>
 	            <p><?php echo _('Once added, wait for the cron job to start running in 15 minutes. If your cron job is functioning correctly, the blue informational message will disappear and your segmentation results will be updated automatically every 15 minutes by the cron job.');?></p>
 	            </div>

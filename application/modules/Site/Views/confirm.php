@@ -59,17 +59,17 @@
 	$join_date = round($time/60)*60;
 	
 	//Set language
-	$q = 'SELECT login.language FROM lists, login WHERE lists.id = '.$list_id.' AND login.app = lists.app';
+	$q = 'SELECT '.LOGIN.'.language FROM '.LISTS.', login WHERE lists.id = '.$list_id.' AND '.LOGIN.'.app = '.LISTS.'.app';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $language = $row['language'];
 	set_locale($language);
 	
-	$q = 'UPDATE subscribers SET confirmed = 1, timestamp = "'.$time.'", join_date = CASE WHEN join_date IS NULL THEN '.$join_date.' ELSE join_date END WHERE id = '.$email_id.' AND list = '.$list_id;
+	$q = 'UPDATE '.SUBSCRIBERS.' SET confirmed = 1, timestamp = "'.$time.'", join_date = CASE WHEN join_date IS NULL THEN '.$join_date.' ELSE join_date END WHERE id = '.$email_id.' AND list = '.$list_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
 		//get thank you message etc
-		$q2 = 'SELECT app, name, userID, thankyou, thankyou_subject, thankyou_message, confirm_url, notify_new_signups, notification_email, custom_fields FROM lists WHERE id = '.$list_id;
+		$q2 = 'SELECT app, name, userID, thankyou, thankyou_subject, thankyou_message, confirm_url, notify_new_signups, notification_email, custom_fields FROM '.LISTS.' WHERE id = '.$list_id;
 		$r2 = mysqli_query($mysqli, $q2);
 		if ($r2)
 		{
@@ -88,7 +88,7 @@
 		    }  
 		}
 		//get email address of subscribing user
-		$q3 = 'SELECT name, email, custom_fields FROM subscribers WHERE id = '.$email_id;
+		$q3 = 'SELECT name, email, custom_fields FROM '.SUBSCRIBERS.' WHERE id = '.$email_id;
 		$r3 = mysqli_query($mysqli, $q3);
 		if ($r3)
 		{
@@ -100,7 +100,7 @@
 		    }  
 		}
 		//get smtp credentials and other data
-		$q4 = 'SELECT from_name, from_email, reply_to, smtp_host, smtp_port, smtp_ssl, smtp_username, smtp_password, allocated_quota, custom_domain, custom_domain_protocol, custom_domain_enabled FROM apps WHERE id = '.$app;
+		$q4 = 'SELECT from_name, from_email, reply_to, smtp_host, smtp_port, smtp_ssl, smtp_username, smtp_password, allocated_quota, custom_domain, custom_domain_protocol, custom_domain_enabled FROM '.APPS.' WHERE id = '.$app;
 		$r4 = mysqli_query($mysqli, $q4);
 		if ($r4)
 		{
@@ -130,7 +130,7 @@
 		    }  
 		}
 		//get AWS creds
-		$q = 'SELECT s3_key, s3_secret FROM login WHERE id = '.$userID;
+		$q = 'SELECT s3_key, s3_secret FROM '.LOGIN.' WHERE id = '.$userID;
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
@@ -221,7 +221,7 @@
 									<strong>"._('Name').": </strong>$name<br/>
 									<strong>"._('Email').": </strong>$email<br/>
 									$custom_field_lines
-									<strong>"._('List').": </strong><a style=\"color:#4371AB; text-decoration:none;\" href=\"".$app_path."/subscribers?i=$app&l=$list_id\">$list_name</a>
+									<strong>"._('List').": </strong><a style=\"color:#4371AB; text-decoration:none;\" href=\"".$app_path."/index.php/site/subscribers?i=$app&l=$list_id\">$list_name</a>
 								</p>
 								<p style=\"line-height: 21px; font-family: Helvetica, Verdana, Arial, sans-serif; font-size: 12px;\">
 								</p>
@@ -247,9 +247,9 @@
 		$thankyou_subject = str_replace('[Email]', $email, $thankyou_subject);
 		
 		//Unsubscribe tag
-		$thankyou_message = str_replace('<unsubscribe', '<a href="'.$app_path.'/unsubscribe/'.short($email).'/'.short($list_id).'" ', $thankyou_message);
+		$thankyou_message = str_replace('<unsubscribe', '<a href="'.$app_path.'/index.php/site/unsubscribe/'.short($email).'/'.short($list_id).'" ', $thankyou_message);
     	$thankyou_message = str_replace('</unsubscribe>', '</a>', $thankyou_message);
-		$thankyou_message = str_replace('[unsubscribe]', $app_path.'/unsubscribe/'.short($email).'/'.short($list_id), $thankyou_message);
+		$thankyou_message = str_replace('[unsubscribe]', $app_path.'/index.php/site/unsubscribe/'.short($email).'/'.short($list_id), $thankyou_message);
 		
 		//Send thankyou email
 		send_email($thankyou_subject, $thankyou_message, $email, '');
@@ -258,7 +258,7 @@
 		if($allocated_quota!=-1)
 		{
 			//if so, update quota
-			$q4 = 'UPDATE apps SET current_quota = current_quota+1 WHERE id = '.$app;
+			$q4 = 'UPDATE '.APPS.' SET current_quota = current_quota+1 WHERE id = '.$app;
 			mysqli_query($mysqli, $q4);
 		}
 	}

@@ -14,7 +14,7 @@
     	<h2><?php echo _('Search brands');?></h2> <br/>
 		
 		<div class="well">
-			<p><?php echo _('Keyword');?>: <span class="label label-info"><?php echo htmlentities($s);?></span> | Results <span class="label label-info" id="results-count"></span> <a href="<?php echo get_app_info('path')?>" title="" style="float:right;"><i class="icon icon-double-angle-left"></i> <?php echo _('Back to brands');?></a></p>
+			<p><?php echo _('Keyword');?>: <span class="label label-info"><?php echo htmlentities($s);?></span> | Results <span class="label label-info" id="results-count"></span> <a href="<?php echo get_app_info('path')?>/index.php/site" title="" style="float:right;"><i class="icon icon-double-angle-left"></i> <?php echo _('Back to brands');?></a></p>
 		</div>
 		
 		<br/>
@@ -32,7 +32,7 @@
 		  </thead>
 		  <tbody>		  	
 		  	<?php		  		
-		  		$q = 'SELECT * FROM apps WHERE userID = '.get_app_info('userID').' AND app_name LIKE "%'.$s.'%" ORDER BY app_name ASC';
+		  		$q = 'SELECT * FROM '.APPS.' WHERE userID = '.get_app_info('userID').' AND app_name LIKE "%'.$s.'%" ORDER BY app_name ASC';
 			  	$r = mysqli_query($mysqli, $q);
 			  	$number_of_results = mysqli_num_rows($r);
 			  	echo '
@@ -99,7 +99,7 @@
 								if(!$no_expiry)
 								{
 									//Reset current limit to 0 and set the month_of_next_reset & year_of_next_reset to the next month
-									$q2 = 'UPDATE apps SET current_quota = 0, month_of_next_reset = "'.$month_next.'", year_of_next_reset = "'.$year_next.'" WHERE id = '.$id;
+									$q2 = 'UPDATE '.APPS.' SET current_quota = 0, month_of_next_reset = "'.$month_next.'", year_of_next_reset = "'.$year_next.'" WHERE id = '.$id;
 									$r2 = mysqli_query($mysqli, $q2);
 									if($r2) 
 									{
@@ -129,10 +129,10 @@
 			  			echo '
 			  			<tr id="'.$id.'">
 			  				<td><span class="label brand-id">'.$id.'</span></td>
-			  				<td><a href="'.get_app_info('path').'/app?i='.$id.'" title=""><img src="'.$logo_image.'" style="margin:-3px 5px 0 0; width:16px; height: 16px;"/>'.$title.'</a></td>
+			  				<td><a href="'.get_app_info('path').'/index.php/site/app?i='.$id.'" title=""><img src="'.$logo_image.'" style="margin:-3px 5px 0 0; width:16px; height: 16px;"/>'.$title.'</a></td>
 			  				<td>'.$allocated_quota.' '.$limit_type.'</td>
 			  				<td>'.$current_quota.'</td>
-			  				<td><a href="'.get_app_info('path').'/edit-brand?i='.$id.'" title=""><span class="icon icon-pencil"></span></a></td>
+			  				<td><a href="'.get_app_info('path').'/index.php/site/edit-brand?i='.$id.'" title=""><span class="icon icon-pencil"></span></a></td>
 			  				<td><a href="#" title="'._('Delete').' '.$title.'" id="delete-btn-'.$id.'"><span class="icon icon-trash"></span></a></td>
 			  				<script type="text/javascript">
 					    	$("#delete-btn-'.$id.'").click(function(e){
@@ -140,7 +140,7 @@
 							c = confirm("'._('All campaigns, lists, subscribers will be permanently deleted. Confirm delete').' '.$title.'?");
 							if(c)
 							{
-								$.post("includes/app/delete.php", { id: '.$id.' },
+								$.post("'.get_app_info('path').'/index.php/site/app/delete", { id: '.$id.' },
 								  function(data) {
 								      if(data)
 								      {

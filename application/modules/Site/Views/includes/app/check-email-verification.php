@@ -1,7 +1,7 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
-	require_once('../helpers/EmailAddressValidator.php');
+	require_once('includes/helpers/EmailAddressValidator.php');
 ?>
 <?php 
 	//------------------------------------------------------//

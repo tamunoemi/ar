@@ -67,9 +67,9 @@
 			}
 			
 			if($w_clicked || $save_only)
-				header('Location: '.get_app_info('path').'/edit?i='.get_app_info('app').'&c='.$campaign_id);
+				header('Location: '.get_app_info('path').'/index.php/site/edit?i='.get_app_info('app').'&c='.$campaign_id);
 			else
-				header('Location: '.get_app_info('path').'/send-to?i='.get_app_info('app').'&c='.$campaign_id);
+				header('Location: '.get_app_info('path').'/index.php/site/send-to?i='.get_app_info('app').'&c='.$campaign_id);
 		}
 		else
 		{
@@ -116,9 +116,9 @@
 			}
 		    
 		    if($w_clicked || $save_only)
-				header('Location: '.get_app_info('path').'/edit?i='.get_app_info('app').'&c='.$campaign_id);
+				header('Location: '.get_app_info('path').'/index.php/site/edit?i='.get_app_info('app').'&c='.$campaign_id);
 			else
-				header('Location: '.get_app_info('path').'/send-to?i='.get_app_info('app').'&c='.$campaign_id);
+				header('Location: '.get_app_info('path').'/index.php/site/send-to?i='.get_app_info('app').'&c='.$campaign_id);
 		}
 		else
 		{

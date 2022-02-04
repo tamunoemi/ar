@@ -75,13 +75,13 @@
 	}
 	
 	//Set language
-	$q = "SELECT login.language FROM campaigns, login WHERE campaigns.id = '$campaign_id' AND login.app = campaigns.app";
+	$q = "SELECT ".LOGIN.".language FROM ".CAMPAIGNS.", login WHERE ".CAMPAIGNS.".id = '$campaign_id' AND ".LOGIN.".app = ".CAMPAIGNS.".app";
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $language = $row['language'];
 	set_locale($language);
 
 	//get currency
-	$q = "SELECT currency FROM apps WHERE id = '$app'";
+	$q = "SELECT currency FROM ".APPS." WHERE id = '$app'";
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
@@ -92,7 +92,7 @@
 	}
 	
 	//get campaign name
-	$q = "SELECT title FROM campaigns WHERE id = '$campaign_id'";
+	$q = "SELECT title FROM ".CAMPAIGNS." WHERE id = '$campaign_id'";
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
@@ -118,11 +118,11 @@
 <input type="hidden" name="no_shipping" value="1">
 <input type="hidden" name="item_name" value="<?php echo _('Campaign for');?> <?php echo htmlentities($title, ENT_QUOTES);?>">
 <?php if($schedule=='true'):?>
-<input type="hidden" name="return" value="<?php echo htmlentities(APP_PATH, ENT_QUOTES);?>/sending?i=<?php echo htmlentities($app, ENT_QUOTES);?>&c=<?php echo htmlentities($campaign_id, ENT_QUOTES);?>&e=<?php echo htmlentities($email_list, ENT_QUOTES);?>&ex=<?php echo htmlentities($email_list_excl, ENT_QUOTES);?>&e_segs=<?php echo htmlentities($email_lists_segs, ENT_QUOTES);?>&ex_segs=<?php echo htmlentities($email_lists_segs_excl, ENT_QUOTES);?>&s=true&date=<?php echo htmlentities($the_date, ENT_QUOTES);?>&timezone=<?php echo htmlentities($timezone, ENT_QUOTES);?>&recipients=<?php echo htmlentities($total_recipients, ENT_QUOTES);?>">
+<input type="hidden" name="return" value="<?php echo htmlentities(APP_PATH . "/index.php/site", ENT_QUOTES);?>/sending?i=<?php echo htmlentities($app, ENT_QUOTES);?>&c=<?php echo htmlentities($campaign_id, ENT_QUOTES);?>&e=<?php echo htmlentities($email_list, ENT_QUOTES);?>&ex=<?php echo htmlentities($email_list_excl, ENT_QUOTES);?>&e_segs=<?php echo htmlentities($email_lists_segs, ENT_QUOTES);?>&ex_segs=<?php echo htmlentities($email_lists_segs_excl, ENT_QUOTES);?>&s=true&date=<?php echo htmlentities($the_date, ENT_QUOTES);?>&timezone=<?php echo htmlentities($timezone, ENT_QUOTES);?>&recipients=<?php echo htmlentities($total_recipients, ENT_QUOTES);?>">
 <?php else:?>
-<input type="hidden" name="return" value="<?php echo htmlentities(APP_PATH, ENT_QUOTES);?>/sending?i=<?php echo htmlentities($app, ENT_QUOTES);?>&c=<?php echo htmlentities($campaign_id, ENT_QUOTES);?>&e=<?php echo htmlentities($email_list, ENT_QUOTES);?>&ex=<?php echo htmlentities($email_list_excl, ENT_QUOTES);?>&e_segs=<?php echo htmlentities($email_lists_segs, ENT_QUOTES);?>&ex_segs=<?php echo htmlentities($email_lists_segs_excl, ENT_QUOTES);?>&cr=<?php echo htmlentities($cron, ENT_QUOTES);?>&recipients=<?php echo htmlentities($total_recipients, ENT_QUOTES);?>">
+<input type="hidden" name="return" value="<?php echo htmlentities(APP_PATH . "/index.php/site", ENT_QUOTES);?>/sending?i=<?php echo htmlentities($app, ENT_QUOTES);?>&c=<?php echo htmlentities($campaign_id, ENT_QUOTES);?>&e=<?php echo htmlentities($email_list, ENT_QUOTES);?>&ex=<?php echo htmlentities($email_list_excl, ENT_QUOTES);?>&e_segs=<?php echo htmlentities($email_lists_segs, ENT_QUOTES);?>&ex_segs=<?php echo htmlentities($email_lists_segs_excl, ENT_QUOTES);?>&cr=<?php echo htmlentities($cron, ENT_QUOTES);?>&recipients=<?php echo htmlentities($total_recipients, ENT_QUOTES);?>">
 <?php endif;?>
-<input type="hidden" name="cancel_return" value="<?php echo htmlentities(APP_PATH, ENT_QUOTES);?>/send-to?i=<?php echo htmlentities($app, ENT_QUOTES);?>&c=<?php echo htmlentities($campaign_id, ENT_QUOTES);?>">
+<input type="hidden" name="cancel_return" value="<?php echo htmlentities(APP_PATH . "/index.php/site", ENT_QUOTES);?>/send-to?i=<?php echo htmlentities($app, ENT_QUOTES);?>&c=<?php echo htmlentities($campaign_id, ENT_QUOTES);?>">
 <input type="hidden" name="amount" value="<?php echo htmlentities($total, ENT_QUOTES);?>">
 </div>
  

@@ -8,12 +8,12 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/blacklist-suppression?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/blacklist-suppression?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 		else if(get_app_info('campaigns_only')==1 && get_app_info('templates_only')==1 && get_app_info('lists_only')==1 && get_app_info('reports_only')==1)
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/logout"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/auth/logout"</script>';
 			exit;
 		}
 		else if(get_app_info('lists_only')==1)
@@ -41,7 +41,7 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 		    	</div>
@@ -50,7 +50,7 @@
 		    	<div class="well">
 			    	<div class="btn-group" data-toggle="buttons-radio">
 					  <a href="javascript:void(0)" title="" class="btn active"><i class="icon icon-remove-circle"></i> <?php echo _('Suppression list');?></a>
-					  <a href="<?php echo get_app_info('path');?>/blacklist-blocked-domains?i=<?php echo get_app_info('app');?>" title="" class="btn"><i class="icon icon-minus-sign"></i> <?php echo _('Blocked domains');?></a>
+					  <a href="<?php echo get_app_info('path');?>/index.php/site/blacklist-blocked-domains?i=<?php echo get_app_info('app');?>" title="" class="btn"><i class="icon icon-minus-sign"></i> <?php echo _('Blocked domains');?></a>
 					</div>
 		    	</div>
 		    	<div class="alert alert-info">
@@ -77,7 +77,7 @@
 				    	<button class="btn" id="import-btn"><i class="icon-plus-sign"></i> <?php echo _('Import suppression list');?></button> 
 				    </div>
 				    <div style="float:right;">
-					    <form class="form-search" action="<?php echo get_app_info('path');?>/blacklist-suppression" method="GET" style="float:right;">
+					    <form class="form-search" action="<?php echo get_app_info('path');?>/index.php/site/blacklist-suppression" method="GET" style="float:right;">
 				    		<input type="hidden" name="i" value="<?php echo get_app_info('app');?>">
 							<input type="text" class="input-medium search-query" name="s" value="<?php echo isset($_GET['s']) ? $_GET['s'] : '';?>">
 							<button type="submit" class="btn"><i class="icon-search"></i> <?php echo _('Search');?></button>
@@ -93,7 +93,7 @@
 			    <div>
 					<h2><?php echo _('Import via CSV file');?></h2><br/>
 					
-				    <form action="<?php echo get_app_info('path')?>/includes/subscribers/import-suppression-list.php" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="import-update-form">
+				    <form action="<?php echo get_app_info('path')?>/index.php/site/subscribers/import-suppression-list" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="import-update-form">
 				        
 				        <?php if($err==1):?>
 						<div class="alert alert-error blacklist-alerts">
@@ -149,7 +149,7 @@
 			    <div>
 					<h2><?php echo _('Import emails per line');?></h2><br/>
 					
-				    <form action="<?php echo get_app_info('path')?>/includes/subscribers/import-suppression-list2.php" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="import-update-form2">
+				    <form action="<?php echo get_app_info('path')?>/index.php/site/subscribers/import-suppression-list2.php" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="import-update-form2">
 				        
 				        <?php if($err==3):?>
 						<div class="alert alert-error blacklist-alerts">
@@ -199,7 +199,7 @@
 					  		//search line
 					  		$search_line = $s=='' ? '' : 'AND email LIKE "%'.$s.'%"';
 					  		
-					  		$q = 'SELECT * FROM suppression_list WHERE app = '.get_app_info('app').' '.$search_line.' ORDER BY block_attempts DESC, timestamp DESC LIMIT '.$offset.','.$limit;
+					  		$q = 'SELECT * FROM '.SUPPRESSION_LIST.' WHERE app = '.get_app_info('app').' '.$search_line.' ORDER BY block_attempts DESC, timestamp DESC LIMIT '.$offset.','.$limit;
 					  		
 						  	$r = mysqli_query($mysqli, $q);
 						  	if ($r && mysqli_num_rows($r) > 0)
@@ -225,7 +225,7 @@
 											c = confirm("'._('Confirm delete').' '.$email.'?");
 											if(c)
 											{
-												$.post("includes/subscribers/delete-suppressed-email.php", { app: '.get_app_info('app').', email_id: '.$id.' },
+												$.post("index.php/site/subscribers/delete-suppressed-email", { app: '.get_app_info('app').', email_id: '.$id.' },
 												  function(data) {
 												      if(data)
 												      {

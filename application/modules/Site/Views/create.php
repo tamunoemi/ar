@@ -7,7 +7,7 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/create?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/create?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 	}
@@ -66,14 +66,14 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 	    	</div>
 	    	<h2><?php echo _('New campaign');?></h2><br/>
     	</div>
     	<div class="row-fluid">
-    		<form action="<?php echo get_app_info('path')?>/includes/create/save-campaign.php?i=<?php echo get_app_info('app')?>" method="POST" accept-charset="utf-8" class="form-vertical" id="edit-form" enctype="multipart/form-data">
+    		<form action="<?php echo get_app_info('path')?>/index.php/site/create/save-campaign?i=<?php echo get_app_info('app')?>" method="POST" accept-charset="utf-8" class="form-vertical" id="edit-form" enctype="multipart/form-data">
 			    <div class="span3">
 				    
 				    <?php if(have_templates()):?>
@@ -82,7 +82,7 @@
 					  <span class="caret"></span></button>
 					  <ul class="dropdown-menu">
 						  <?php 
-							  $q = 'SELECT id, template_name FROM template WHERE app = '.get_app_info('app').' ORDER BY id DESC';
+							  $q = 'SELECT id, template_name FROM '. TEMPLATE . ' WHERE app = '.get_app_info('app').' ORDER BY id DESC';
 							  $r = mysqli_query($mysqli, $q);
 							  if ($r && mysqli_num_rows($r) > 0)
 							  {
@@ -91,7 +91,7 @@
 							  		$template_id = $row['id'];
 							  		$template_name = stripslashes($row['template_name']);
 							  		
-							  		echo '<li><a href="'.get_app_info('path').'/includes/templates/use-template.php?i='.get_app_info('app').'&t='.$template_id.'">'.$template_name.'</a></li>';
+							  		echo '<li><a href="'.get_app_info('path').'/index.php/site/templates/use-template?i='.get_app_info('app').'&t='.$template_id.'">'.$template_name.'</a></li>';
 							      }  
 							  }
 						  ?>
@@ -149,7 +149,7 @@
 				    	<div class="controls">
 					      <?php 
 						      //Get main user's login email address
-						      $q = 'SELECT username FROM login WHERE id = '.get_app_info('main_userID');
+						      $q = 'SELECT username FROM '. LOGIN .' WHERE id = '.get_app_info('main_userID');
 						      $r = mysqli_query($mysqli, $q);
 						      if ($r) while($row = mysqli_fetch_array($r)) $main_email = $row['username'];
 					      ?>

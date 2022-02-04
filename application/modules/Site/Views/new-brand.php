@@ -7,12 +7,12 @@
 	{
 		if(get_app_info('reports_only'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/reports?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/reports?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 		else
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/app?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/app?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 	}
@@ -132,7 +132,7 @@
             			$("#api-error").hide();
             			$("#verified-email").hide();
             			
-	            		$.post("<?php echo get_app_info('path')?>/includes/app/check-email-verification.php", { from_email: $("#from_email").val(), auto_verify: 'no' },
+	            		$.post("<?php echo get_app_info('path')?>/index.php/site/app/check-email-verification", { from_email: $("#from_email").val(), auto_verify: 'no' },
             			  function(data) {
             			       if(data=='unverified')
             			      {
@@ -176,7 +176,7 @@
             		$("#click-to-verify-btn").click(function(e){
             			e.preventDefault();
             			$("#click-to-verify-copy").html("<?php echo _('Please wait..');?>");
-            			$.post("<?php echo get_app_info('path')?>/includes/app/verify-email.php", { from_email: $("#from_email").val() },
+            			$.post("<?php echo get_app_info('path')?>/index.php/site/app/verify-email", { from_email: $("#from_email").val() },
         				  function(data) {
         				      if(data)
         				      {
@@ -286,7 +286,7 @@
 								      <td>
 									      <span id="sd">
 									      <?php 
-											$parse = parse_url(get_app_info('path'));
+											$parse = parse_url(get_app_info('path').'/index.php/site');
 											$domain = $parse['host'];
 											echo $domain;
 									      ?>
@@ -533,7 +533,7 @@
 				    	<p><strong><?php echo _('Login URL');?></strong>: 
 					    	<span id="loginurl">
 					    	<?php 
-						    	$parse = parse_url(get_app_info('path'));
+						    	$parse = parse_url(get_app_info('path'). '/index.php/site');
 								$protocol = $parse['scheme'];
 								$domain = $parse['host'];
 								$path = $parse['path'];

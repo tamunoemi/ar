@@ -9,10 +9,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	//----------------------------------------------------------------------------------//
 	
 	/*  MySQL database connection credentials (please place values between the apostrophes) */
-	$dbHost = 'localhost'; //MySQL Hostname
-	$dbUser = 'root'; //MySQL Username
-	$dbPass = ''; //MySQL Password
-	$dbName = 'sendy_igniter'; //MySQL Database Name
+	$dbHost = 'db4free.net'; //MySQL Hostname
+	$dbUser = 'tegotestdb'; //MySQL Username
+	$dbPass = 'PPVnkjFwLsHm'; //MySQL Password
+	$dbName = 'tegotestdb'; //MySQL Database Name
+
+   // $dbHost = 'localhost'; //MySQL Hostname
+	// $dbUser = 'root'; //MySQL Username
+	// $dbPass = ''; //MySQL Password
+	// $dbName = 'sendy_igniter'; //MySQL Database Name
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +67,7 @@ else{
 |
 */
 $config['index_page'] = '';
+//$config['index_page'] = 'site/';
 
 /*
 |--------------------------------------------------------------------------
@@ -406,7 +412,8 @@ $config['encryption_key'] = '';
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = NULL;
+$config['sess_save_path'] = sys_get_temp_dir();
+//$config['sess_save_path'] = NULL;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;

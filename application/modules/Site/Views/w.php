@@ -40,7 +40,8 @@
 	$time = time();
 	
 	//get variable
-	$i = $_GET['i']=='' ? exit : mysqli_real_escape_string($mysqli, $_GET['i']);
+	//$i = $_GET['i']=='' ? exit : mysqli_real_escape_string($mysqli, $_GET['i']);
+	$i = $i=='' ? exit : mysqli_real_escape_string($mysqli, $i); // passing $i to view from controller in codeigniter
 	$i_array = array();
 	$i_array = explode('/', $i);
 	
@@ -50,6 +51,7 @@
 		$get = short($i_array[0], true);
 		$get_array = explode('/', $get);
 		$is_ares = $i_array[1]=='a' ? true : false;
+		echo $is_ares; exit();
 		
 		$i_array = array();
 		$i_array[0] = short($get_array[0]);
@@ -67,9 +69,9 @@
 		$just_show_html = false;
 		
 		if(count($i_array)==4 && $i_array[3]=='a')
-			$table = 'ares_emails';
+			$table = ARES_EMAILS;
 		else
-			$table = 'campaigns';
+			$table = CAMPAIGNS;
 	}
 	else if(count($i_array)==1 || count($i_array)==2)
 	{
@@ -77,17 +79,17 @@
 		$just_show_html = true;
 		
 		if(count($i_array)==2 && $i_array[1]=='a')
-			$table = 'ares_emails';
+			$table = ARES_EMAILS;
 		else
-			$table = 'campaigns';
+			$table = CAMPAIGNS;
 	}
 	else exit;
 	
 	//get html text from campaign
 	if($table == 'campaigns') 
-		$q = 'SELECT campaigns.from_email, campaigns.html_text, campaigns.query_string, campaigns.sent, campaigns.send_date, campaigns.opens_tracking, campaigns.links_tracking, login.timezone, campaigns.app FROM campaigns, login WHERE campaigns.userID = login.id AND campaigns.id = '.$campaign_id;
+		$q = 'SELECT campaigns.from_email, campaigns.html_text, campaigns.query_string, campaigns.sent, campaigns.send_date, campaigns.opens_tracking, campaigns.links_tracking, login.timezone, campaigns.app FROM '.CAMPAIGNS.', login WHERE campaigns.userID = login.id AND campaigns.id = '.$campaign_id;
 	else if($table == 'ares_emails') 
-		$q = 'SELECT ares_id, from_email, html_text, opens_tracking, links_tracking, query_string FROM ares_emails WHERE id = '.$campaign_id;
+		$q = 'SELECT ares_id, from_email, html_text, opens_tracking, links_tracking, query_string FROM '.ARES_EMAILS.' WHERE id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -107,13 +109,13 @@
 			if($table == 'ares_emails') 
 			{
 				//Get app id
-				$q2 = 'SELECT app FROM lists WHERE id = '.$subscriber_list;
+				$q2 = 'SELECT app FROM '.LISTS.' WHERE id = '.$subscriber_list;
 				$r2 = mysqli_query($mysqli, $q2);
 				if ($r2) while($row = mysqli_fetch_array($r2)) $app = $row['app'];
 			}
 			
 			//Get custom domain
-			$q2 = 'SELECT custom_domain, custom_domain_protocol, custom_domain_enabled FROM apps WHERE id = '.$app;
+			$q2 = 'SELECT custom_domain, custom_domain_protocol, custom_domain_enabled FROM '.APPS.' WHERE id = '.$app;
 			$r2 = mysqli_query($mysqli, $q2);
 			if ($r2 && mysqli_num_rows($r2) > 0)
 			{
@@ -232,9 +234,9 @@
 	
 	//if this is an autoresponder web version,
 	if(count($i_array)==4 && $i_array[3]=='a')
-		$q2 = 'SELECT * FROM links WHERE ares_emails_id = '.$campaign_id;
+		$q2 = 'SELECT * FROM '.LINKS.' WHERE ares_emails_id = '.$campaign_id;
 	else
-		$q2 = 'SELECT * FROM links WHERE campaign_id = '.$campaign_id;
+		$q2 = 'SELECT * FROM '.LINKS.' WHERE campaign_id = '.$campaign_id;
 	$r2 = mysqli_query($mysqli, $q2);
 	if ($r2 && mysqli_num_rows($r2) > 0)
 	{			
@@ -256,7 +258,7 @@
 	}
 	
 	//get user's email for unsubscription link formatting
-	$q = 'SELECT name, email, custom_fields FROM subscribers WHERE id = '.$subscriber_id;
+	$q = 'SELECT name, email, custom_fields FROM '.SUBSCRIBERS.' WHERE id = '.$subscriber_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -298,7 +300,7 @@
 		//otherwise, replace custom field tag
 		else
 		{					
-			$q5 = 'SELECT custom_fields FROM lists WHERE id = '.$subscriber_list;
+			$q5 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$subscriber_list;
 			$r5 = mysqli_query($mysqli, $q5);
 			if ($r5)
 			{
@@ -363,9 +365,9 @@
 	//if this is an autoresponder web version,
 	$val = '';
 	if(count($i_array)==4 && $i_array[3]=='a')
-		$q = 'SELECT clicks, link FROM links WHERE link = "'.$app_path.'/w/'.$i_array[2].'/a"';
+		$q = 'SELECT clicks, link FROM '.LINKS.' WHERE link = "'.$app_path.'/w/'.$i_array[2].'/a"';
 	else
-		$q = 'SELECT clicks, link FROM links WHERE link = "'.$app_path.'/w/'.$i_array[2].'"';
+		$q = 'SELECT clicks, link FROM '.LINKS.' WHERE link = "'.$app_path.'/w/'.$i_array[2].'"';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -388,7 +390,7 @@
 	{
 		if($links_tracking && !empty($val))
 		{
-			$q = 'UPDATE links SET clicks = "'.$val.'" WHERE link = "'.$app_path.'/w/'.$i_array[2].'/a"';
+			$q = 'UPDATE '.LINKS.' SET clicks = "'.$val.'" WHERE link = "'.$app_path.'/w/'.$i_array[2].'/a"';
 			mysqli_query($mysqli, $q);
 		}
 	}
@@ -396,13 +398,13 @@
 	{
 		if($links_tracking && !empty($val))
 		{
-			$q = 'UPDATE links SET clicks = "'.$val.'" WHERE link = "'.$app_path.'/w/'.$i_array[2].'"';
+			$q = 'UPDATE '.LINKS.' SET clicks = "'.$val.'" WHERE link = "'.$app_path.'/w/'.$i_array[2].'"';
 			mysqli_query($mysqli, $q);
 		}
 	}
 	
 	//Set open
-	$q = count($i_array)==4 && $i_array[3]=='a' ? 'SELECT opens FROM ares_emails WHERE id = '.$campaign_id : 'SELECT opens FROM campaigns WHERE id = '.$campaign_id;
+	$q = count($i_array)==4 && $i_array[3]=='a' ? 'SELECT opens FROM '.ARES_EMAILS.' WHERE id = '.$campaign_id : 'SELECT opens FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -430,7 +432,7 @@
 	}
 	
 	//Update subscriber's timestamp
-	$q = 'UPDATE subscribers SET timestamp = "'.$time.'" WHERE id = '.$subscriber_id;
+	$q = 'UPDATE '.SUBSCRIBERS.' SET timestamp = "'.$time.'" WHERE id = '.$subscriber_id;
 	mysqli_query($mysqli, $q);
 	
 	function file_get_contents_curl($url) 

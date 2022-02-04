@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php
 
 /********************************/
@@ -9,7 +9,7 @@ $app = mysqli_real_escape_string($mysqli, $_POST['app']);
 /********************************/
 
 //add new list
-$q = 'INSERT INTO lists (app, userID, name) VALUES ('.$app.', '.$userID.', "'.$new_list_name.'")';
+$q = 'INSERT INTO '.LISTS.' (app, userID, name) VALUES ('.$app.', '.$userID.', "'.$new_list_name.'")';
 $r = mysqli_query($mysqli, $q);
 if ($r)
 {
@@ -17,6 +17,6 @@ if ($r)
 }
 
 //return
-header("Location: ".get_app_info('path').'/update-list?i='.$app.'&l='.$listID); 
+header("Location: ".get_app_info('path').'/index.php/site/update-list?i='.$app.'&l='.$listID); 
 
 ?>

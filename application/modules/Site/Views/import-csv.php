@@ -1,10 +1,44 @@
 <?php require_once('includes/helpers/EmailAddressValidator.php');?>
 <?php require_once('includes/helpers/parsecsv.php');?>
-<?php 	include('includes/config.php');	//--------------------------------------------------------------//	function dbConnect() { //Connect to database	//--------------------------------------------------------------//	    // Access global variables	    global $mysqli;	    global $dbHost;	    global $dbUser;	    global $dbPass;	    global $dbName;	    global $dbPort;	    	    // Attempt to connect to database server	    if(isset($dbPort)) $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName, $dbPort);	    else $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);		    // If connection failed...	    if ($mysqli->connect_error) {	        fail();	    }	    	    global $charset; mysqli_set_charset($mysqli, isset($charset) ? $charset : "utf8");	    	    return $mysqli;	}	//--------------------------------------------------------------//	function fail() { //Database connection fails	//--------------------------------------------------------------//	    print 'Database error';	    exit;	}	// connect to database	dbConnect();?>
+<?php 
+	include('includes/config.php');
+	//--------------------------------------------------------------//
+	function dbConnect() { //Connect to database
+	//--------------------------------------------------------------//
+	    // Access global variables
+	    global $mysqli;
+	    global $dbHost;
+	    global $dbUser;
+	    global $dbPass;
+	    global $dbName;
+	    global $dbPort;
+	    
+	    // Attempt to connect to database server
+	    if(isset($dbPort)) $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName, $dbPort);
+	    else $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+	
+	    // If connection failed...
+	    if ($mysqli->connect_error) {
+	        fail();
+	    }
+	    
+	    global $charset; mysqli_set_charset($mysqli, isset($charset) ? $charset : "utf8");
+	    
+	    return $mysqli;
+	}
+	//--------------------------------------------------------------//
+	function fail() { //Database connection fails
+	//--------------------------------------------------------------//
+	    print 'Database error';
+	    exit;
+	}
+	// connect to database
+	dbConnect();
+?>
 <?php
 
 //setup cron
-$q = 'SELECT id, cron_csv FROM login LIMIT 1';
+$q = 'SELECT id, cron_csv FROM '.LOGIN.' LIMIT 1';
 $r = mysqli_query($mysqli, $q);
 if ($r)
 {
@@ -15,7 +49,7 @@ if ($r)
 		
 		if($cron==0)
 		{
-			$q2 = 'UPDATE login SET cron_csv=1 WHERE id = '.$userid;
+			$q2 = 'UPDATE '.LOGIN.' SET cron_csv=1 WHERE id = '.$userid;
 			$r2 = mysqli_query($mysqli, $q2);
 			if ($r2) exit;
 		}
@@ -49,7 +83,7 @@ $userID = $data_array[0];
 $listID = str_replace('.csv', '', $data_array[1]);
 
 //Check if CSV is currently processing
-$q = 'SELECT lists.app, lists.currently_processing, lists.prev_count, lists.total_records, lists.gdpr, login.timezone FROM lists, login WHERE lists.id = '.$listID.' AND login.app = lists.app';
+$q = 'SELECT '.LISTS.'.app, '.LISTS.'.currently_processing, '.LISTS.'.prev_count, '.LISTS.'.total_records, '.LISTS.'.gdpr, '.LOGIN.'.timezone FROM '.LISTS.', '.LOGIN.' WHERE '.LISTS.'.id = '.$listID.' AND '.LOGIN.'.app = '.LISTS.'.app';
 $r = mysqli_query($mysqli, $q);
 if ($r) 
 {
@@ -69,7 +103,7 @@ if ($r)
 }
 
 //get comma separated lists belonging to this app
-$q2 = 'SELECT id FROM lists WHERE app = '.$app;
+$q2 = 'SELECT id FROM '.LISTS.' WHERE app = '.$app;
 $r2 = mysqli_query($mysqli, $q2);
 if ($r2)
 {
@@ -85,7 +119,7 @@ if(!$current_processing)
 	if(isset($_GET['offset'])) $csv->offset = $_GET['offset'];
 	$csv->heading = false;
 	$csv->auto($csvfile);
-	$databasetable = "subscribers";
+	$databasetable = SUBSCRIBERS;
 	$fieldseparator = ",";
 	$time = time();
 
@@ -116,7 +150,7 @@ if(!$current_processing)
 		}
 		
 		//check for duplicates
-		$q = 'SELECT custom_fields FROM subscribers WHERE list = '.$listID.' AND (email = "'.$linearray[0].'" || email = "'.trim($linearray[1]).'")';
+		$q = 'SELECT custom_fields FROM '.SUBSCRIBERS.' WHERE list = '.$listID.' AND (email = "'.$linearray[0].'" || email = "'.trim($linearray[1]).'")';
 		$r = mysqli_query($mysqli, $q);
 		if (mysqli_num_rows($r) > 0) //if so, update subscriber
 		{
@@ -126,7 +160,7 @@ if(!$current_processing)
 		    } 
 			
 			//Get the list of custom fields for this list
-			$q2 = 'SELECT custom_fields FROM lists WHERE id = '.$listID;
+			$q2 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$listID;
 			$r2 = mysqli_query($mysqli, $q2);
 			if ($r2)
 			{
@@ -191,9 +225,9 @@ if(!$current_processing)
 			$gdpr_status = $gdpr ? ', gdpr = '.$gdpr : '';
 		    
 			if(!isset($name) || $name=='')
-				$q = 'UPDATE subscribers SET custom_fields = "'.substr($custom_fields_value, 0, -3).'" '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
+				$q = 'UPDATE '.SUBSCRIBERS.' SET custom_fields = "'.substr($custom_fields_value, 0, -3).'" '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
 			else
-				$q = 'UPDATE subscribers SET name = "'.$name.'", custom_fields = "'.substr($custom_fields_value, 0, -3).'" '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
+				$q = 'UPDATE '.SUBSCRIBERS.' SET name = "'.$name.'", custom_fields = "'.substr($custom_fields_value, 0, -3).'" '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
 
 			mysqli_query($mysqli, $q);
 			
@@ -202,7 +236,7 @@ if(!$current_processing)
 		else
 		{			
 			//Get the list of custom fields for this list
-			$q2 = 'SELECT custom_fields FROM lists WHERE id = '.$listID;
+			$q2 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$listID;
 			$r2 = mysqli_query($mysqli, $q2);
 			if ($r2)
 			{
@@ -248,7 +282,7 @@ if(!$current_processing)
 			}
 			
 			//Check if user set the list to unsubscribe from all lists
-			$q = 'SELECT unsubscribe_all_list FROM lists WHERE id = '.$listID;
+			$q = 'SELECT unsubscribe_all_list FROM '.LISTS.' WHERE id = '.$listID;
 			$r = mysqli_query($mysqli, $q);
 			if ($r) while($row = mysqli_fetch_array($r)) $unsubscribe_all_list = $row['unsubscribe_all_list'];
 			
@@ -262,13 +296,13 @@ if(!$current_processing)
 			$email_domain2 = $email_explode2[1];
 	
 			//Check if this email is previously marked as bounced, if so, we shouldn't add it
-			$q = 'SELECT email from subscribers WHERE ( (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND bounced = 1 ) OR ( (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND list IN ('.$all_lists.') AND '.$unsubscribe_line.')';
+			$q = 'SELECT email from '.SUBSCRIBERS.' WHERE ( (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND bounced = 1 ) OR ( (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND list IN ('.$all_lists.') AND '.$unsubscribe_line.')';
 			$r = mysqli_query($mysqli, $q);
 			if (mysqli_num_rows($r) == 0)
 			{
-				$q2 = '(SELECT id FROM suppression_list WHERE (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND app = '.$app.') 
+				$q2 = '(SELECT id FROM '.SUPPRESSION_LIST.' WHERE (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND app = '.$app.') 
 					UNION 
-					(SELECT id FROM blocked_domains WHERE (domain = "'.$email_domain.'" || domain = "'.$email_domain2.'") AND app = '.$app.')';
+					(SELECT id FROM '.BLOCKED_DOMAINS.' WHERE (domain = "'.$email_domain.'" || domain = "'.$email_domain2.'") AND app = '.$app.')';
 				$r2 = mysqli_query($mysqli, $q2);
 				if (mysqli_num_rows($r2) == 0)
 				{
@@ -323,8 +357,8 @@ if(!$current_processing)
 				else
 				{
 					//Update block_attempts count				
-					$q3 = 'UPDATE suppression_list SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND app = '.$app;
-					$q4 = 'UPDATE blocked_domains SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE (domain = "'.$email_domain.'" || domain = "'.$email_domain2.'") AND app = '.$app;
+					$q3 = 'UPDATE '.SUPPRESSION_LIST.' SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND app = '.$app;
+					$q4 = 'UPDATE '.BLOCKED_DOMAINS.' SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE (domain = "'.$email_domain.'" || domain = "'.$email_domain2.'") AND app = '.$app;
 					mysqli_query($mysqli, $q3);
 					mysqli_query($mysqli, $q4);
 					
@@ -343,7 +377,7 @@ if(!$current_processing)
 			if($key+1 == $total_records-$_GET['offset'])
 			{
 				//set currently_processing to 0
-				$q = 'UPDATE lists SET currently_processing=0, prev_count=0, total_records=0, gdpr=0 WHERE id = '.$listID;
+				$q = 'UPDATE '.LISTS.' SET currently_processing=0, prev_count=0, total_records=0, gdpr=0 WHERE id = '.$listID;
 				mysqli_query($mysqli, $q);				
 				
 				//delete CSV file
@@ -355,7 +389,7 @@ if(!$current_processing)
 			if($key+1 == $total_records)
 			{
 				//set currently_processing to 0
-				$q = 'UPDATE lists SET currently_processing=0, prev_count=0, total_records=0, gdpr=0 WHERE id = '.$listID;
+				$q = 'UPDATE '.LISTS.' SET currently_processing=0, prev_count=0, total_records=0, gdpr=0 WHERE id = '.$listID;
 				mysqli_query($mysqli, $q);
 				
 				//delete CSV file
@@ -369,11 +403,11 @@ if(!$current_processing)
 //Otherwise, check if CSV import timed out
 else 
 {
-	$q = 'SELECT COUNT(*) FROM subscribers WHERE list = '.$listID.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
+	$q = 'SELECT COUNT(*) FROM '.SUBSCRIBERS.' WHERE list = '.$listID.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
 	$r = mysqli_query($mysqli, $q);
 	if($r) while($row = mysqli_fetch_array($r)) $before_count = $row['COUNT(*)'];
 	sleep(8);
-	$q2 = 'SELECT COUNT(*) FROM subscribers WHERE list = '.$listID.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
+	$q2 = 'SELECT COUNT(*) FROM '.SUBSCRIBERS.' WHERE list = '.$listID.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
 	$r2 = mysqli_query($mysqli, $q2);
 	if($r2) while($row = mysqli_fetch_array($r2)) $after_count = $row['COUNT(*)'];
 	
@@ -389,7 +423,7 @@ else
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_URL, APP_PATH.'/import-csv.php?offset='.$offset);
+		curl_setopt($ch, CURLOPT_URL, APP_PATH.'/index.php/site/import-csv?offset='.$offset);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		$data = curl_exec($ch);
@@ -408,7 +442,7 @@ function finish_importing()
 	
 	//Once everything is imported, reset count and remove CSV
 	//set currently_processing to 0
-	$q = 'UPDATE lists SET currently_processing=0, prev_count=0, total_records=0, gdpr=0 WHERE id = '.$listID;
+	$q = 'UPDATE '.LISTS.' SET currently_processing=0, prev_count=0, total_records=0, gdpr=0 WHERE id = '.$listID;
 	mysqli_query($mysqli, $q);
 	//delete CSV file
 	unlink($csvfile);
@@ -421,7 +455,7 @@ function set_currently_processing($val)
 	global $listID;	
 	global $mysqli;
 	
-	$q = 'UPDATE lists SET currently_processing='.$val.' WHERE id = '.$listID;
+	$q = 'UPDATE '.LISTS.' SET currently_processing='.$val.' WHERE id = '.$listID;
 	mysqli_query($mysqli, $q);
 }
 
@@ -432,11 +466,11 @@ function set_prev_count()
 	global $listID;
 	global $mysqli;
 	
-	$q = 'SELECT COUNT(id) FROM subscribers WHERE list = '.$listID.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
+	$q = 'SELECT COUNT(id) FROM '.SUBSCRIBERS.' WHERE list = '.$listID.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r) while($row = mysqli_fetch_array($r)) $count = $row['COUNT(id)'];
 	
-	$q2 = 'UPDATE lists SET prev_count = '.$count.' WHERE id = '.$listID;
+	$q2 = 'UPDATE '.LISTS.' SET prev_count = '.$count.' WHERE id = '.$listID;
 	$r2 = mysqli_query($mysqli, $q2);
 }
 
@@ -453,7 +487,7 @@ function skipped_emails($email, $reason)
 	if($reason=='Exists') $reason = 3;
 	if($reason=='Suppressed') $reason = 4;
 	
-	$q = 'INSERT INTO skipped_emails (app, list, email, reason) VALUES ('.$app.', '.$listID.', "'.$email.'", '.$reason.')';
+	$q = 'INSERT INTO '.SKIPPED_EMAILS.' (app, list, email, reason) VALUES ('.$app.', '.$listID.', "'.$email.'", '.$reason.')';
 	mysqli_query($mysqli, $q);
 }
 ?>

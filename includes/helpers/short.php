@@ -27,7 +27,10 @@ function short($in, $to_num = false)
 			if(function_exists('openssl_encrypt')) 
 			{
 				$decrypted = version_compare(PHP_VERSION, '5.3.3') >= 0 ? openssl_decrypt($decrypted, $encryptionMethod, $api_key, 0, '3j9hwG7uj8uvpRAT') : openssl_decrypt($decrypted, $encryptionMethod, $api_key, 0);
-				if(!$decrypted) return $is_email ? $in : intval($in, 36);
+				if(!$decrypted) {
+					return $is_email ? $in : intval($in, 36);
+				}
+				
 			}
 			else return $is_email ? $in : intval($in, 36);
 			

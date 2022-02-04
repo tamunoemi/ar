@@ -8,7 +8,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM apps WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -26,7 +26,7 @@
 		global $mysqli;
 		global $edit;
 		
-		$q = 'SELECT '.$val.' FROM template WHERE id = "'.mysqli_real_escape_string($mysqli, $_GET['t']).'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.TEMPLATE.' WHERE id = "'.mysqli_real_escape_string($mysqli, $_GET['t']).'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -44,7 +44,7 @@
 	{
 		global $mysqli;
 			
-		$q = 'SELECT id FROM template WHERE app = '.$app.' AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT id FROM '.TEMPLATE.' WHERE app = '.$app.' AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r) return mysqli_num_rows($r);
 	}
@@ -80,9 +80,9 @@
 			//Prev btn
 			if($curpage>=2)
 				if($prev_page_num==1)
-					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/templates?i='.get_app_info('app').'\'"><span class="icon icon icon-arrow-left"></span></button>';
+					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site/templates?i='.get_app_info('app').'\'"><span class="icon icon icon-arrow-left"></span></button>';
 				else
-					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/templates?i='.get_app_info('app').'&p='.$prev_page_num.'\'"><span class="icon icon icon-arrow-left"></span></button>';
+					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site/templates?i='.get_app_info('app').'&p='.$prev_page_num.'\'"><span class="icon icon icon-arrow-left"></span></button>';
 			else
 				echo '<button class="btn disabled"><span class="icon icon icon-arrow-left"></span></button>';
 			
@@ -90,7 +90,7 @@
 			if($curpage==$total_pages)
 				echo '<button class="btn disabled"><span class="icon icon icon-arrow-right"></span></button>';
 			else
-				echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/templates?i='.get_app_info('app').'&p='.$next_page_num.'\'"><span class="icon icon icon-arrow-right"></span></button>';
+				echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site/templates?i='.get_app_info('app').'&p='.$next_page_num.'\'"><span class="icon icon icon-arrow-right"></span></button>';
 					
 			echo '</div>';
 		}

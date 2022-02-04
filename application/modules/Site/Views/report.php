@@ -10,7 +10,7 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/reports?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/reports?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 		else if(get_app_info('campaigns_only')==1 && get_app_info('templates_only')==1 && get_app_info('lists_only')==1 && get_app_info('reports_only')==1)
@@ -19,10 +19,10 @@
 		}
 		else if(get_app_info('reports_only')==1)
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/app?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/app?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
-		$q = 'SELECT app FROM campaigns WHERE id = '.$cid;
+		$q = 'SELECT app FROM '.CAMPAIGNS.' WHERE id = '.$cid;
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
@@ -32,14 +32,14 @@
 		    }  
 		    if($a!=get_app_info('restricted_to_app'))
 		    {
-			    echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/reports?i='.get_app_info('restricted_to_app').'"</script>';
+			    echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/reports?i='.get_app_info('restricted_to_app').'"</script>';
 				exit;
 		    }
 		}
 	}
 ?>
 <?php 
-	$q = 'SELECT * FROM campaigns WHERE userID = '.get_app_info('main_userID').' AND app='.get_app_info('app').' AND id = '.$cid;
+	$q = 'SELECT * FROM '.CAMPAIGNS.' WHERE userID = '.get_app_info('main_userID').' AND app='.get_app_info('app').' AND id = '.$cid;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -228,7 +228,7 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
     	</div>
@@ -259,7 +259,7 @@
 					});
 					function update_campaign_title()
 					{						
-						$.post("<?php echo get_app_info('path');?>/includes/reports/update-campaign-title.php", { campaign_id: "<?php echo $cid;?>", campaign_title: $("#campaign-title-field").val() },
+						$.post("<?php echo get_app_info('path');?>/index.php/site/reports/update-campaign-title", { campaign_id: "<?php echo $cid;?>", campaign_title: $("#campaign-title-field").val() },
 						  function(data) {
 						      if(data)
 						      {
@@ -280,7 +280,7 @@
     	</span>
     	<?php endif;?>
     	
-    	<h3><?php echo _('Subject');?>: <?php echo get_saved_data('title');?> <a href="<?php echo get_app_info('path');?>/w/<?php echo short($id);?>" title="<?php echo _('View the campaign');?>" class="iframe-preview"><span class="icon-eye-open"></span></a></h3><br/>
+    	<h3><?php echo _('Subject');?>: <?php echo get_saved_data('title');?> <a href="<?php echo get_app_info('path');?>/index.php/site/w/<?php echo short($id);?>" title="<?php echo _('View the campaign');?>" class="iframe-preview"><span class="icon-eye-open"></span></a></h3><br/>
     	<p><em><?php echo _('Sent on');?> <?php echo parse_date(get_saved_data('sent'), 'long', false)?> <?php echo _('to');?> <span class="label"><?php echo number_format(get_saved_data('recipients'));?> <?php echo _('subscribers');?></span></em></p>
     	<p><em><?php echo _('To');?>: <?php echo get_lists();?></em></p>
     	<?php if(get_saved_data('lists_excl')!='' || get_saved_data('segs_excl')!=''):?>
@@ -304,7 +304,7 @@
 			    	<h3 style="float:left;"><?php if($opens_tracking): ?><span class="badge badge-warning" style="font-size:16px;"><?php echo $recipients - $opens_unique;?></span> <?php echo _('not opened');?> <?php else: ?><span class="badge" style="font-size:16px;"><?php echo _('Tracking disabled for opens');?></span><?php endif;?></h3> 
 			    	<?php if(!get_app_info('is_sub_user') || (get_app_info('is_sub_user') && get_app_info('lists_only')==0)):?>
 				    	<?php if($opens_tracking && is_last_campaign(get_app_info('app'), $cid)): ?>
-				    		<a href="<?php echo get_app_info('path');?>/includes/reports/export-csv.php?c=<?php echo $id?>&a=unopens" title="<?php echo _('Export a CSV of ALL subscribers who did not open this email (includes subscribers newly added to the lists after this campaign was sent)');?>" style="float:left; margin: 5px 0 0 7px;"><i class="icon icon-download-alt"></i></a>
+				    		<a href="<?php echo get_app_info('path');?>/index.php/site/reports/export-csv?c=<?php echo $id?>&a=unopens" title="<?php echo _('Export a CSV of ALL subscribers who did not open this email (includes subscribers newly added to the lists after this campaign was sent)');?>" style="float:left; margin: 5px 0 0 7px;"><i class="icon icon-download-alt"></i></a>
 				    	<?php endif;?>
 				    <?php endif;?>
 			    	<br/>
@@ -330,7 +330,7 @@
 		    	<h2 class="report-titles"><?php echo _('Link activity');?></h2>
 		    	<?php if(!get_app_info('is_sub_user') || (get_app_info('is_sub_user') && get_app_info('lists_only')==0)):?>
 			    	<?php if($links_tracking): ?>
-				    	<a href="<?php echo get_app_info('path');?>/includes/reports/export-csv.php?c=<?php echo $id?>&a=clicks" title="<?php echo _('Export a CSV of ALL subscribers who clicked');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
+				    	<a href="<?php echo get_app_info('path');?>/index.php/site/reports/export-csv.php?c=<?php echo $id?>&a=clicks" title="<?php echo _('Export a CSV of ALL subscribers who clicked');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
 			    	<?php endif;?>
 		    	<?php endif;?>
 	    	</div>
@@ -351,7 +351,7 @@
 			  <tbody>
 			  	
 			  	<?php 
-				  	$q = 'SELECT id, link, clicks FROM links WHERE campaign_id = '.$cid;
+				  	$q = 'SELECT id, link, clicks FROM '.LINKS.' WHERE campaign_id = '.$cid;
 				  	$r = mysqli_query($mysqli, $q);
 				  	if ($r && mysqli_num_rows($r) > 0)
 				  	{
@@ -384,7 +384,7 @@
 						    
 						    if(!get_app_info('is_sub_user') || (get_app_info('is_sub_user') && get_app_info('lists_only')==0))  
 						    echo'
-						      <td><a href="'.get_app_info('path').'/includes/reports/export-csv.php?c='.$id.'&l='.$link_id.'&a=recipient_clicks" title="'._('Export a CSV of ALL subscribers who clicked this link').'" class="recipient-click-export"><i class="icon icon-download-alt"></i></a></td>'; 
+						      <td><a href="'.get_app_info('path').'/index.php/site/reports/export-csv?c='.$id.'&l='.$link_id.'&a=recipient_clicks" title="'._('Export a CSV of ALL subscribers who clicked this link').'" class="recipient-click-export"><i class="icon icon-download-alt"></i></a></td>'; 
 						    
 						    echo '
 						    </tr>				  			
@@ -418,7 +418,7 @@
 		    	
 		    	<?php if(!get_app_info('is_sub_user') || (get_app_info('is_sub_user') && get_app_info('lists_only')==0)):?>
 			    	<?php if($opens_tracking): ?>
-				    	<a href="<?php echo get_app_info('path');?>/includes/reports/export-csv.php?c=<?php echo $id?>&a=opens" title="<?php echo _('Export a CSV of ALL subscribers who opened');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
+				    	<a href="<?php echo get_app_info('path');?>/index.php/site/reports/export-csv?c=<?php echo $id?>&a=opens" title="<?php echo _('Export a CSV of ALL subscribers who opened');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
 				    <?php endif;?>
 				<?php endif;?>
 	    	</div>
@@ -437,7 +437,7 @@
 			  <tbody>
 			  	
 			  	<?php 
-				  	$q = 'SELECT opens from campaigns WHERE id = '.$cid;
+				  	$q = 'SELECT opens from '.CAMPAIGNS.' WHERE id = '.$cid;
 				  	$r = mysqli_query($mysqli, $q);
 				  	if ($r && mysqli_num_rows($r) > 0)
 				  	{
@@ -467,7 +467,7 @@
 				  	    		$last_opens_array2 = array_reverse(array_unique($last_opens_array));
 					  			$last_subscriber_id = explode(':', $last_opens_array2[$z]);
 					  			
-					  			$q2 = 'SELECT * FROM subscribers WHERE id = '.$last_subscriber_id[0];
+					  			$q2 = 'SELECT * FROM '.SUBSCRIBERS.' WHERE id = '.$last_subscriber_id[0];
 					  			$r2 = mysqli_query($mysqli, $q2);
 					  			if ($r2 && mysqli_num_rows($r2) > 0)
 					  			{
@@ -493,7 +493,7 @@
 							  			if($name=='')
 							  				$name = '['._('No name').']';
 							  				
-							  			$q2 = 'SELECT name FROM lists WHERE id = '.$listID;
+							  			$q2 = 'SELECT name FROM '.LISTS.' WHERE id = '.$listID;
 							  			$r2 = mysqli_query($mysqli, $q2);
 							  			if ($r2 && mysqli_num_rows($r2) > 0)
 							  			{
@@ -508,7 +508,7 @@
 								  			<tr>
 										      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$name.'</a></td>
 										      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$email.'</a></td>
-										      <td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
+										      <td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
 										      <td>'.$unsubscribed.'</td>
 										    </tr>
 								  			';
@@ -551,7 +551,7 @@
 	    	<div class="span12">
 		    	<h2 class="report-titles"><?php echo _('Last 10 unsubscribed');?></h2>
 		    	<?php if(!get_app_info('is_sub_user') || (get_app_info('is_sub_user') && get_app_info('lists_only')==0)):?>
-		    	<a href="<?php echo get_app_info('path');?>/includes/reports/export-csv.php?c=<?php echo $id?>&a=unsubscribes" title="<?php echo _('Export a CSV of ALL subscribers who unsubscribed');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
+		    	<a href="<?php echo get_app_info('path');?>/index.php/site/reports/export-csv?c=<?php echo $id?>&a=unsubscribes" title="<?php echo _('Export a CSV of ALL subscribers who unsubscribed');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
 		    	<?php endif;?>
 	    	</div>
 	    </div>
@@ -570,7 +570,7 @@
 			  <tbody>
 			  	
 			  	<?php 
-				  	$q = 'SELECT * FROM subscribers WHERE unsubscribed = 1 AND last_campaign = '.$cid.' ORDER BY timestamp DESC LIMIT 10';
+				  	$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE unsubscribed = 1 AND last_campaign = '.$cid.' ORDER BY timestamp DESC LIMIT 10';
 				  	$r = mysqli_query($mysqli, $q);
 				  	if ($r && mysqli_num_rows($r) > 0)
 				  	{
@@ -586,7 +586,7 @@
 				  			if($name=='')
 				  				$name = '['._('No name').']';
 				  				
-				  			$q2 = 'SELECT name FROM lists WHERE id = '.$listID;
+				  			$q2 = 'SELECT name FROM '.LISTS.' WHERE id = '.$listID;
 				  			$r2 = mysqli_query($mysqli, $q2);
 				  			if ($r2 && mysqli_num_rows($r2) > 0)
 				  			{
@@ -601,7 +601,7 @@
 					  			<tr>
 							      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$name.'</a></td>
 							      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$email.'</a></td>
-							      <td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
+							      <td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
 							      <td><span class="label label-important">'._('Unsubscribed').'</span></td>
 							      <td>'.$timestamp.'</td>
 							    </tr>
@@ -644,7 +644,7 @@
 	    	<div class="span12">
 		    	<h2 class="report-titles"><?php echo _('Last 10 bounced emails');?></h2>
 		    	<?php if(!get_app_info('is_sub_user') || (get_app_info('is_sub_user') && get_app_info('lists_only')==0)):?>
-		    	<a href="<?php echo get_app_info('path');?>/includes/reports/export-csv.php?c=<?php echo $id?>&a=bounces" title="<?php echo _('Export a CSV of ALL subscribers who bounced');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
+		    	<a href="<?php echo get_app_info('path');?>/index.php/site/reports/export-csv?c=<?php echo $id?>&a=bounces" title="<?php echo _('Export a CSV of ALL subscribers who bounced');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
 		    	<?php endif;?>
 	    	</div>
 	    </div>
@@ -663,7 +663,7 @@
 			  <tbody>
 			  	
 			  	<?php 
-				  	$q = 'SELECT * FROM subscribers WHERE bounced = 1 AND last_campaign = '.$cid.' ORDER BY timestamp DESC LIMIT 10';
+				  	$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE bounced = 1 AND last_campaign = '.$cid.' ORDER BY timestamp DESC LIMIT 10';
 				  	$r = mysqli_query($mysqli, $q);
 				  	if ($r && mysqli_num_rows($r) > 0)
 				  	{
@@ -678,7 +678,7 @@
 				  			if($name=='')
 				  				$name = '['._('No name').']';
 				  				
-				  			$q2 = 'SELECT name FROM lists WHERE id = '.$listID;
+				  			$q2 = 'SELECT name FROM '.LISTS.' WHERE id = '.$listID;
 				  			$r2 = mysqli_query($mysqli, $q2);
 				  			if ($r2 && mysqli_num_rows($r2) > 0)
 				  			{
@@ -693,7 +693,7 @@
 					  			<tr>
 							      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$name.'</a></td>
 							      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$email.'</a></td>
-							      <td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
+							      <td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
 							      <td><span class="label label-inverse">'._('Bounced').'</span></td>
 							      <td>'.$timestamp.'</td>
 							    </tr>
@@ -739,7 +739,7 @@
 	    	<div class="span12">
 		    	<h2 class="report-titles"><?php echo _('Last 10 marked as spam');?></h2>
 		    	<?php if(!get_app_info('is_sub_user') || (get_app_info('is_sub_user') && get_app_info('lists_only')==0)):?>
-		    	<a href="<?php echo get_app_info('path');?>/includes/reports/export-csv.php?c=<?php echo $id?>&a=complaints" title="<?php echo _('Export a CSV of ALL subscribers who marked your email as spam');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
+		    	<a href="<?php echo get_app_info('path');?>/index.php/site/reports/export-csv.php?c=<?php echo $id?>&a=complaints" title="<?php echo _('Export a CSV of ALL subscribers who marked your email as spam');?>" class="report-export"><i class="icon icon-download-alt"></i></a>
 		    	<?php endif;?>
 	    	</div>
 	    </div>
@@ -758,7 +758,7 @@
 			  <tbody>
 			  	
 			  	<?php 
-				  	$q = 'SELECT * FROM subscribers WHERE complaint = 1 AND last_campaign = '.$cid.' ORDER BY timestamp DESC LIMIT 10';
+				  	$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE complaint = 1 AND last_campaign = '.$cid.' ORDER BY timestamp DESC LIMIT 10';
 				  	$r = mysqli_query($mysqli, $q);
 				  	if ($r && mysqli_num_rows($r) > 0)
 				  	{
@@ -773,7 +773,7 @@
 				  			if($name=='')
 				  				$name = '['._('No name').']';
 				  				
-				  			$q2 = 'SELECT name FROM lists WHERE id = '.$listID;
+				  			$q2 = 'SELECT name FROM '.LISTS.' WHERE id = '.$listID;
 				  			$r2 = mysqli_query($mysqli, $q2);
 				  			if ($r2 && mysqli_num_rows($r2) > 0)
 				  			{
@@ -788,7 +788,7 @@
 					  			<tr>
 							      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$name.'</a></td>
 							      <td><a href="#subscriber-info" data-id="'.$subscriber_id.'" data-toggle="modal" class="subscriber-info">'.$email.'</a></td>
-							      <td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
+							      <td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$listID.'" title="">'.$list_name.'</a></td>
 							      <td><span class="label label-inverse">'._('Marked as spam').'</span></td>
 							      <td>'.$timestamp.'</td>
 							    </tr>
@@ -906,7 +906,7 @@
 						  				<td>'.$cc[0].'</td>';
 						  			
 						  			if(!get_app_info('is_sub_user') || (get_app_info('is_sub_user') && get_app_info('lists_only')==0))
-						  			echo '<td><a href="'.get_app_info('path').'/includes/reports/export-csv.php?c='.$id.'&a='.$cc[2].'" title="'._('Export a CSV of ALL subscribers from').' '.$cc[1].'"><i class="icon icon-download-alt"></i></a></td>';
+						  			echo '<td><a href="'.get_app_info('path').'/index.php/site/reports/export-csv?c='.$id.'&a='.$cc[2].'" title="'._('Export a CSV of ALL subscribers from').' '.$cc[1].'"><i class="icon icon-download-alt"></i></a></td>';
 						  			
 						  			echo '</tr>
 						  			';
@@ -1046,7 +1046,7 @@
 		s_id = $(this).data("id");
 		$("#subscriber-text").html("<?php echo _('Fetching');?>..");
 		
-		$.post("<?php echo get_app_info('path');?>/includes/subscribers/subscriber-info.php", { id: s_id, app:<?php echo get_app_info('app');?> },
+		$.post("<?php echo get_app_info('path');?>/index.php/site/subscribers/subscriber-info", { id: s_id, app:<?php echo get_app_info('app');?> },
 		  function(data) {
 		      if(data)
 		      {

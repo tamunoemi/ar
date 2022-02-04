@@ -52,7 +52,7 @@
     <div id="wrapper">
 	    <?php if($error==1):?><div class="alert alert-danger" id="e1">OTP code must be numeric.</div><?php endif;?>
 	    <?php if($error==2):?><div class="alert alert-danger" id="e2">OTP code is incorrect.</div><?php endif;?>
-	    <form class="well form-inline" method="post" action="<?php echo get_app_info('path')?>/includes/login/two-factor.php" style="width: 322px;">
+	    <form class="well form-inline" method="post" action="<?php echo get_app_info('path')?>/index.php/auth/two-factor" style="width: 322px;">
 	      <h2><span class="icon icon-key" style="margin: 7px 7px 0 0; "></span><?php echo _('Two Factor Authentication');?></h2><br/>
 		  <input type="text" class="input" placeholder="<?php echo _('OTP Code');?>" name="otp_code" id="otp_code" autocomplete="off"><br/><br/><br/>
 		  <input type="hidden" name="redirect" value="<?php echo htmlentities($redirect, ENT_QUOTES);?>"/>
@@ -81,7 +81,7 @@
 			
 			<?php else:
 				//Get admin's email address
-				$r = mysqli_query($mysqli, 'SELECT username FROM login WHERE id = 1');
+				$r = mysqli_query($mysqli, 'SELECT username FROM '.LOGIN.' WHERE id = 1');
 				if ($r) while($row = mysqli_fetch_array($r)) $email = $row['username'];
 			?>
 				

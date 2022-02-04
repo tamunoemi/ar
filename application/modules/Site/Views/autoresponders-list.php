@@ -11,7 +11,7 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/autoresponders-list?i='.get_app_info('restricted_to_app').'&l='.$lid.'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/autoresponders-list?i='.get_app_info('restricted_to_app').'&l='.$lid.'"</script>';
 			exit;
 		}
 	}
@@ -24,7 +24,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		<?php 
-			$q = 'SELECT id, name, type, custom_field FROM ares WHERE list = '.$lid;
+			$q = 'SELECT id, name, type, custom_field FROM '.ARES.' WHERE list = '.$lid;
 			if(mysqli_num_rows(mysqli_query($mysqli, $q))==0):
 		?>
 		$("#autoresponder-form").show();
@@ -78,13 +78,13 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 		    	</div>
 		    	<h2><?php echo _('Autoresponders');?></h2>
 				<br/>
-		    	<p class="well"><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" title=""><span class="label label-info"><?php echo get_lists_data('name', $lid);?></span></a> | <a href="<?php echo get_app_info('path')?>/list?i=<?php echo get_app_info('app');?>" title=""><?php echo _('Back to lists');?></a>
+		    	<p class="well"><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/index.php/site/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" title=""><span class="label label-info"><?php echo get_lists_data('name', $lid);?></span></a> | <a href="<?php echo get_app_info('path')?>/index.php/site/list?i=<?php echo get_app_info('app');?>" title=""><?php echo _('Back to lists');?></a>
 		    	</p><br/>
 	    	</div>
 	    </div>
@@ -93,17 +93,16 @@
 	    <div class="alert alert-danger"><?php echo _('You can\'t create an autoresponder based on a custom field already in use by another autoresponder.');?></div>
 	    <?php endif;?>
 	    
-		<?php 
-	      //check if drip campaign has been created
+		<?php
 	  	  $all_used = 0;
-		  $q = 'SELECT type FROM ares WHERE list = '.$lid.' AND type = 1';
+		  $q = 'SELECT type FROM '.ARES.' WHERE list = '.$lid.' AND type = 1';
 		  if(mysqli_num_rows(mysqli_query($mysqli, $q)) > 0)
 		  	$all_used++;
 		  	
 		  //check if custom fields has been used up
 		  $inuse = 0;
   		  $total_dates = 0;
-		  $q = 'SELECT custom_fields FROM lists WHERE id = '.$lid;
+		  $q = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$lid;
 		  $r = mysqli_query($mysqli, $q);
 		  if (mysqli_num_rows($r) > 0)
 		  {
@@ -116,7 +115,7 @@
 					  {
 						  $total_dates++;
 						  //check if custom field has been used in any autoresponders before
-						  $q2 = 'SELECT custom_field FROM ares WHERE custom_field = "'.$cf_array[0].'" AND list = '.$lid;
+						  $q2 = 'SELECT custom_field FROM '.ARES.' WHERE custom_field = "'.$cf_array[0].'" AND list = '.$lid;
 						  $r2 = mysqli_query($mysqli, $q2);
 						  if (mysqli_num_rows($r2) > 0)
 							  $inuse++;
@@ -146,7 +145,7 @@
 	    
 	    <div class="row-fluid" id="autoresponder-form">
 	    	<div class="span12 well">
-				<form method="POST" action="<?php echo get_app_info('path');?>/includes/ares/add-autoresponder.php" id="add-autoresponder-form">
+				<form method="POST" action="<?php echo get_app_info('path');?>/index.php/site/ares/add-autoresponder" id="add-autoresponder-form">
 				  <h3><i class="icon icon-plus" style="margin-top: 4px;"></i> <?php echo _('Create a new autoresponder');?></h3><hr/>
 				  
 				  <?php if($all_used != 2): //if not all autoresponders have been created ?>
@@ -161,7 +160,7 @@
 						  <p><?php echo _('Autoresponder type');?></p>
 						  <?php 
 						  	  $drip_created = false;
-							  $q = 'SELECT type FROM ares WHERE list = '.$lid.' AND type = 1';
+							  $q = 'SELECT type FROM '.ARES.' WHERE list = '.$lid.' AND type = 1';
 							  if(mysqli_num_rows(mysqli_query($mysqli, $q)) == 0):
 						  ?>
 						  
@@ -182,7 +181,7 @@
 						  <?php 
 						  		$inuse = 0;
 						  		$total_dates = 0;
-								$q = 'SELECT custom_fields FROM lists WHERE id = '.$lid;
+								$q = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$lid;
 								$r = mysqli_query($mysqli, $q);
 								if (mysqli_num_rows($r) > 0)
 								{
@@ -195,7 +194,7 @@
 											{
 												$total_dates++;
 												//check if custom field has been used in any autoresponders before
-												$q2 = 'SELECT custom_field FROM ares WHERE custom_field = "'.$cf_array[0].'" AND list = '.$lid;
+												$q2 = 'SELECT custom_field FROM '.ARES.' WHERE custom_field = "'.$cf_array[0].'" AND list = '.$lid;
 												$r2 = mysqli_query($mysqli, $q2);
 												if (mysqli_num_rows($r2) > 0)
 													$inuse++;
@@ -210,7 +209,7 @@
 						  
 						  <?php else:?>
 							  <?php 
-									$q = 'SELECT custom_fields FROM lists WHERE id = '.$lid;
+									$q = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$lid;
 									$r = mysqli_query($mysqli, $q);
 									if (mysqli_num_rows($r) > 0):
 									while($row = mysqli_fetch_array($r)) $list_custom_fields = stripslashes($row['custom_fields']);
@@ -231,7 +230,7 @@
 											if($cf_array[1]=='Date')
 											{
 												//check if custom field has been used in any autoresponders before
-												$q2 = 'SELECT custom_field FROM ares WHERE custom_field = "'.$cf_array[0].'" AND list = '.$lid;
+												$q2 = 'SELECT custom_field FROM '.ARES.' WHERE custom_field = "'.$cf_array[0].'" AND list = '.$lid;
 												$r2 = mysqli_query($mysqli, $q2);
 												if (mysqli_num_rows($r2) > 0)
 													echo '<option value="'.$cf_array[0].'%s%inuse">'.$cf_array[0].' (in use)</option>';
@@ -246,7 +245,7 @@
 							  <?php endif; endif; ?>
 							  
 							  <?php 
-									$q = 'SELECT custom_fields FROM lists WHERE id = '.$lid;
+									$q = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$lid;
 									$r = mysqli_query($mysqli, $q);
 									if (mysqli_num_rows($r) > 0):
 									while($row = mysqli_fetch_array($r)) $list_custom_fields = stripslashes($row['custom_fields']);
@@ -267,7 +266,7 @@
 											if($cf_array[1]=='Date')
 											{
 												//check if custom field has been used in any autoresponders before
-												$q2 = 'SELECT custom_field FROM ares WHERE custom_field = "'.$cf_array[0].'" AND list = '.$lid;
+												$q2 = 'SELECT custom_field FROM '.ARES.' WHERE custom_field = "'.$cf_array[0].'" AND list = '.$lid;
 												$r2 = mysqli_query($mysqli, $q2);
 												if (mysqli_num_rows($r2) > 0)
 													echo '<option value="'.$cf_array[0].'%s%inuse">'.$cf_array[0].' (in use)</option>';
@@ -314,7 +313,7 @@
 	              </thead>
 	              <tbody>
 	                	<?php 
-		                	$q = 'SELECT id, name, type, custom_field FROM ares WHERE list = '.$lid.' ORDER BY type ASC';
+		                	$q = 'SELECT id, name, type, custom_field FROM '.ARES.' WHERE list = '.$lid.' ORDER BY type ASC';
 		                	$r = mysqli_query($mysqli, $q);
 		                	if ($r && mysqli_num_rows($r) > 0)
 		                	{
@@ -325,7 +324,7 @@
 		                			$ares_type = $row['type'];
 		                			$ares_custom_field = $row['custom_field'];
 		                			
-		                			$q2 = 'SELECT recipients FROM ares_emails WHERE ares_id = '.$ares_id;
+		                			$q2 = 'SELECT recipients FROM '.ARES_EMAILS.' WHERE ares_id = '.$ares_id;
 		                			$r2 = mysqli_query($mysqli, $q2);
 		                			if ($r2 && mysqli_num_rows($r2) > 0)
 		                			{
@@ -352,7 +351,7 @@
 		                			
 		                			echo '
 		                			<tr id="ares-'.$ares_id.'">
-			                			<td><a href="'.get_app_info('path').'/autoresponders-emails?i='.get_app_info('app').'&a='.$ares_id.'">'.$ares_name.'</a></td>
+			                			<td><a href="'.get_app_info('path').'/index.php/site/autoresponders-emails?i='.get_app_info('app').'&a='.$ares_id.'">'.$ares_name.'</a></td>
 			                			<td>'.$ares_type_name.'</td>
 			                			<td>'.$recipients.'</td>
 			                			<td><a href="javascript:void(0)" title="" id="delete-'.$ares_id.'" data-id="'.$ares_id.'"><i class="icon-trash"></i></a></td>
@@ -362,12 +361,12 @@
 											c = confirm("'._('All associated autoresponder emails will be permanently deleted.').' '._('Confirm delete').' \''.$ares_name.'\'?");
 											if(c)
 											{
-								            	$.post("'.get_app_info('path').'/includes/ares/delete-ares.php", { id: $(this).data("id") },
+								            	$.post("'.get_app_info('path').'/index.php/site/ares/delete-ares", { id: $(this).data("id") },
 							            		  function(data) {
 							            		      if(data)
 							            		      {
 							            		      	$("#ares-'.$ares_id.'").fadeOut(function(){
-							            		      		window.location = "'.get_app_info('path').'/autoresponders-list?i='.get_app_info('app').'&l='.$lid.'";
+							            		      		window.location = "'.get_app_info('path').'/index.php/site/autoresponders-list?i='.get_app_info('app').'&l='.$lid.'";
 							            		      	});
 							            		      }
 							            		      else

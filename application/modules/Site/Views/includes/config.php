@@ -11,7 +11,7 @@
 	$dbHost = 'localhost'; //MySQL Hostname
 	$dbUser = 'root'; //MySQL Username
 	$dbPass = ''; //MySQL Password
-	$dbName = 'sendy'; //MySQL Database Name
+	$dbName = 'sendy_igniter'; //MySQL Database Name
 	
 	
 	//----------------------------------------------------------------------------------//	

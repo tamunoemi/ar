@@ -1,7 +1,7 @@
 <?php 
-	include('../config.php');
-	include('../helpers/PHPMailerAutoload.php');
-	include('../helpers/ses.php');
+	include('includes/config.php');
+	include('includes/helpers/PHPMailerAutoload.php');
+	include('includes/helpers/ses.php');
 	//--------------------------------------------------------------//
 	function dbConnect() { //Connect to database
 	//--------------------------------------------------------------//
@@ -74,7 +74,7 @@
 	sleep(10);
 	
 	//Then check if bounces and complaints SNS notifications have been setup
-	$q = 'SELECT bounce_setup, complaint_setup FROM apps WHERE from_email = "'.$from_email.'"';
+	$q = 'SELECT bounce_setup, complaint_setup FROM '.APPS.' WHERE from_email = "'.$from_email.'"';
 	$r = mysqli_query($mysqli, $q);
 	if (mysqli_num_rows($r) > 0)
 	{
@@ -94,7 +94,7 @@
 	}
 	else
 	{
-		$q2 = 'SELECT bounce_setup, complaint_setup FROM campaigns WHERE from_email = "'.$from_email.'"';
+		$q2 = 'SELECT bounce_setup, complaint_setup FROM '.CAMPAIGNS.' WHERE from_email = "'.$from_email.'"';
 		$r2 = mysqli_query($mysqli, $q2);
 		if (mysqli_num_rows($r2) > 0)
 		{

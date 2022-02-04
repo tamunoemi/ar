@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
-<?php require('././././includes/header.php');?>
+<?php require('includes/header.php');?>
 <?php require('includes/login/auth.php');?>
 <?php /*if (!$this->ion_auth->logged_in())
 		{
@@ -12,7 +12,7 @@
 	check_simplexml();
 	if(get_app_info('is_sub_user'))
 	{
-		echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'app?i='.get_app_info('restricted_to_app').'"</script>';
+		echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/app?i='.get_app_info('restricted_to_app').'"</script>';
 		exit;
 	}
 ?>
@@ -56,7 +56,7 @@
 				$("#click-to-verify-btn").click(function(e){
 	    			e.preventDefault();
 	    			$("#click-to-verify-copy").html("<?php echo _('Please wait..');?>");
-	    			$.post("<?php echo get_app_info('path')?>includes/app/verify-login-email.php", { login_email: "<?php echo get_app_info('email');?>" },
+	    			$.post("<?php echo get_app_info('path')?>/index.php/site/app/verify-login-email", { login_email: "<?php echo get_app_info('email');?>" },
 					  function(data) {
 					      if(data)
 					      {
@@ -84,16 +84,16 @@
 				$p = isset($_GET['p']) ? $_GET['p'] : null;
 				$offset = $p!=null ? ($p-1) * $limit : 0;
 
-			  	$q = 'SELECT * FROM apps WHERE userID = '.get_app_info('userID').' ORDER BY app_name ASC LIMIT '.$offset.','.$limit;
+			  	$q = 'SELECT * FROM '.APPS.' WHERE userID = '.get_app_info('userID').' ORDER BY app_name ASC LIMIT '.$offset.','.$limit;
 			  	$r = mysqli_query($mysqli, $q);
 			  	if ($r && mysqli_num_rows($r) > 0)
 			  	{
 				  	echo '
 
 				  	<div style="clear:both; margin-bottom:30px;">
-					  	<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site/brand/new-brand\'"><i class="icon-plus-sign"></i> '._('Add a new brand').'</button>
+					  	<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site/new-brand\'"><i class="icon-plus-sign"></i> '._('Add a new brand').'</button>
 
-					  	<form class="form-search" action="'.get_app_info('path').'search-all-brands" method="GET" style="float:right;">
+					  	<form class="form-search" action="'.get_app_info('path').'/index.php/site/search-all-brands" method="GET" style="float:right;">
 							<input type="text" class="input-medium search-query" name="s" style="width: 200px;">
 							<button type="submit" class="btn"><i class="icon-search"></i> '._('Search brands').'</button>
 						</form>
@@ -138,7 +138,7 @@
 
 			  			//Brand logo
 			  			if($brand_logo_filename=='') $logo_image = 'https://www.google.com/s2/favicons?domain='.$get_domain;
-			  			else $logo_image = get_app_info('path').'uploads/logos/'.$brand_logo_filename;
+			  			else $logo_image = get_app_info('path').'/uploads/logos/'.$brand_logo_filename;
 
 			  			//Check if limit needs to be reset
 						$today_unix_timestamp = time();
@@ -174,7 +174,7 @@
 								if(!$no_expiry)
 								{
 									//Reset current limit to 0 and set the month_of_next_reset & year_of_next_reset to the next month
-									$q2 = 'UPDATE apps SET current_quota = 0, month_of_next_reset = "'.$month_next.'", year_of_next_reset = "'.$year_next.'" WHERE id = '.$id;
+									$q2 = 'UPDATE '.APPS.' SET current_quota = 0, month_of_next_reset = "'.$month_next.'", year_of_next_reset = "'.$year_next.'" WHERE id = '.$id;
 									$r2 = mysqli_query($mysqli, $q2);
 									if($r2)
 									{
@@ -204,10 +204,10 @@
 			  			echo '
 			  			<tr id="'.$id.'">
 			  				<td><span class="label brand-id">'.$id.'</span></td>
-			  				<td><a href="'.get_app_info('path').'app?i='.$id.'" title=""><img src="'.$logo_image.'" style="margin:-3px 5px 0 0; width:16px; height: 16px;"/>'.$title.'</a></td>
+			  				<td><a href="'.get_app_info('path').'/index.php/site/app?i='.$id.'" title=""><img src="'.$logo_image.'" style="margin:-3px 5px 0 0; width:16px; height: 16px;"/>'.$title.'</a></td>
 			  				<td>'.$allocated_quota.' '.$limit_type.'</td>
 			  				<td>'.$current_quota.'</td>
-			  				<td><a href="'.get_app_info('path').'edit-brand?i='.$id.'" title=""><span class="icon icon-pencil"></span></a></td>
+			  				<td><a href="'.get_app_info('path').'/index.php/site/edit-brand?i='.$id.'" title=""><span class="icon icon-pencil"></span></a></td>
 			  				<td><a href="#" title="'._('Delete').' '.$title.'" id="delete-btn-'.$id.'"><span class="icon icon-trash"></span></a></td>
 			  				<script type="text/javascript">
 					    	$("#delete-btn-'.$id.'").click(function(e){
@@ -215,7 +215,7 @@
 							c = confirm("'._('All campaigns, lists, subscribers will be permanently deleted. Confirm delete').' '.$title.'?");
 							if(c)
 							{
-								$.post("includes/app/delete.php", { id: '.$id.' },
+								$.post("'.get_app_info('path').'/index.php/site/app/delete", { id: '.$id.' },
 								  function(data) {
 								      if(data)
 								      {
@@ -264,7 +264,7 @@
 	{
 		global $mysqli;
 
-		$q = 'SELECT COUNT(*) FROM apps';
+		$q = 'SELECT COUNT(*) FROM '.APPS;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -305,9 +305,9 @@
 			//Prev btn
 			if($curpage>=2)
 				if($prev_page_num==1)
-					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'\'"><span class="icon icon icon-arrow-left"></span></button>';
+					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site\'"><span class="icon icon icon-arrow-left"></span></button>';
 				else
-					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'?p='.$prev_page_num.'\'"><span class="icon icon icon-arrow-left"></span></button>';
+					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site?p='.$prev_page_num.'\'"><span class="icon icon icon-arrow-left"></span></button>';
 			else
 				echo '<button class="btn disabled"><span class="icon icon icon-arrow-left"></span></button>';
 
@@ -315,7 +315,7 @@
 			if($curpage==$total_pages)
 				echo '<button class="btn disabled"><span class="icon icon icon-arrow-right"></span></button>';
 			else
-				echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'?p='.$next_page_num.'\'"><span class="icon icon icon-arrow-right"></span></button>';
+				echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site?p='.$next_page_num.'\'"><span class="icon icon icon-arrow-right"></span></button>';
 
 			echo '</div>';
 		}

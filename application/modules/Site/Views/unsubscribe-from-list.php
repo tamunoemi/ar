@@ -14,10 +14,10 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/unsubscribe-from-list?i='.get_app_info('restricted_to_app').'&l='.$lid.'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'index.php/site/unsubscribe-from-list?i='.get_app_info('restricted_to_app').'&l='.$lid.'"</script>';
 			exit;
 		}
-		$q = 'SELECT app FROM lists WHERE id = '.$lid;
+		$q = 'SELECT app FROM '.LISTS.' WHERE id = '.$lid;
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
@@ -27,7 +27,7 @@
 		    }  
 		    if($a!=get_app_info('restricted_to_app'))
 		    {
-			    echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/list?i='.get_app_info('restricted_to_app').'"</script>';
+			    echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/list?i='.get_app_info('restricted_to_app').'"</script>';
 				exit;
 		    }
 		}
@@ -71,14 +71,14 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
-	    	<p><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $_GET['l'];?>"><span class="label label-info"><?php echo get_list_data('name');?></span></a></p>
+	    	<p><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/index.php/site/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $_GET['l'];?>"><span class="label label-info"><?php echo get_list_data('name');?></span></a></p>
 	    	<br/>
     	</div>
     	<h2><?php echo _('Mass unsubscribe via CSV file');?></h2><br/>
-	    <form action="<?php echo get_app_info('path')?>/includes/subscribers/import-unsubscribe.php" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="import-unsubscribe-form">
+	    <form action="<?php echo get_app_info('path')?>/index.php/site/subscribers/import-unsubscribe" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="import-unsubscribe-form">
 	        
 	        <?php if($_GET['e']==1):?>
 			<div class="alert alert-error">
@@ -119,7 +119,7 @@
 	    <br/>
 	    
 	    <h2><?php echo _('Unsubscribe email per line');?></h2><br/>
-	    <form action="<?php echo get_app_info('path')?>/includes/subscribers/line-unsubscribe.php" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="line-import-form">
+	    <form action="<?php echo get_app_info('path')?>/includes/subscribers/line-unsubscribe" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="line-import-form">
 	        
 	        <?php if($_GET['e']==2):?>
 			<div class="alert alert-error">

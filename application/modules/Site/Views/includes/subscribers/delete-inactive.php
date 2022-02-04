@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php include('housekeeping.php');?>
 <?php 
 	$app = isset($_POST['app']) && is_numeric($_POST['app']) ? mysqli_real_escape_string($mysqli, (int)$_POST['app']) : 0;
@@ -20,7 +20,7 @@
 	}
 	
 	//Delete subscribers
-	$q = 'DELETE FROM subscribers WHERE id IN ('.$sub_ids.')';
+	$q = 'DELETE FROM '.SUBSCRIBERS.' WHERE id IN ('.$sub_ids.')';
 	$r = mysqli_query($mysqli, $q);	
 	if($r)
 	{
@@ -42,7 +42,7 @@
 	{
 		global $mysqli;
 		
-		$q = 'SELECT COUNT(*) FROM subscribers WHERE list = '.$lid.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
+		$q = 'SELECT COUNT(*) FROM '.SUBSCRIBERS.' WHERE list = '.$lid.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) return number_format($row['COUNT(*)']);
 	}

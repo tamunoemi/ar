@@ -8,7 +8,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM apps WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -28,7 +28,7 @@
 		$clicks_array = array();
 		$clicks_unique = 0;
 		
-		$q = 'SELECT * FROM links WHERE campaign_id = '.$cid;
+		$q = 'SELECT * FROM '.LINKS.' WHERE campaign_id = '.$cid;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -55,9 +55,9 @@
 		global $mysqli;
 			
 		if($type=='app')
-			$q = 'SELECT id FROM campaigns WHERE app = '.$app.' AND userID = '.get_app_info('main_userID');
+			$q = 'SELECT id FROM '.CAMPAIGNS.' WHERE app = '.$app.' AND userID = '.get_app_info('main_userID');
 		else if($type=='reports')
-			$q = 'SELECT id FROM campaigns WHERE app = '.$app.' AND sent!="" AND userID = '.get_app_info('main_userID');
+			$q = 'SELECT id FROM '.CAMPAIGNS.' WHERE app = '.$app.' AND sent!="" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r) return mysqli_num_rows($r);
 	}
@@ -94,9 +94,9 @@
 			//Prev btn
 			if($curpage>=2)
 				if($prev_page_num==1)
-					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/'.$type.'?i='.get_app_info('app').'\'"><span class="icon icon icon-arrow-left"></span></button>';
+					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site'.$type.'?i='.get_app_info('app').'\'"><span class="icon icon icon-arrow-left"></span></button>';
 				else
-					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/'.$type.'?i='.get_app_info('app').'&p='.$prev_page_num.'\'"><span class="icon icon icon-arrow-left"></span></button>';
+					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site'.$type.'?i='.get_app_info('app').'&p='.$prev_page_num.'\'"><span class="icon icon icon-arrow-left"></span></button>';
 			else
 				echo '<button class="btn disabled"><span class="icon icon icon-arrow-left"></span></button>';
 			
@@ -104,7 +104,7 @@
 			if($curpage==$total_pages)
 				echo '<button class="btn disabled"><span class="icon icon icon-arrow-right"></span></button>';
 			else
-				echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/'.$type.'?i='.get_app_info('app').'&p='.$next_page_num.'\'"><span class="icon icon icon-arrow-right"></span></button>';
+				echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site'.$type.'?i='.get_app_info('app').'&p='.$next_page_num.'\'"><span class="icon icon icon-arrow-right"></span></button>';
 					
 			echo '</div>';
 		}
@@ -115,7 +115,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT last_campaign FROM subscribers WHERE last_campaign = '.mysqli_real_escape_string($mysqli, $c).' AND bounced = 1';
+		$q = 'SELECT last_campaign FROM '.SUBSCRIBERS.' WHERE last_campaign = '.mysqli_real_escape_string($mysqli, $c).' AND bounced = 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -132,7 +132,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(*) FROM template WHERE app = '.get_app_info('app').' AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT COUNT(*) FROM '.TEMPLATE.' WHERE app = '.get_app_info('app').' AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{

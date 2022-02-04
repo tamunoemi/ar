@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	/********************************/
 	$l = isset($_GET['l']) && is_numeric($_GET['l']) ? mysqli_real_escape_string($mysqli, (int)$_GET['l']) : '';
@@ -8,7 +8,7 @@
 	/********************************/
 	
 	//Get all skipped eamils from last import
-	$q = 'SELECT email, reason FROM skipped_emails use index (s_list) WHERE list = '.$l.' ORDER BY reason ASC, email ASC';
+	$q = 'SELECT email, reason FROM '.SKIPPED_EMAILS.' use index (s_list) WHERE list = '.$l.' ORDER BY reason ASC, email ASC';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{

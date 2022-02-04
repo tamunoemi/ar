@@ -1,7 +1,7 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
-<?php include('../helpers/PHPMailerAutoload.php');?>
-<?php include('../helpers/short.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
+<?php include('includes/helpers/PHPMailerAutoload.php');?>
+<?php include('includes/helpers/short.php');?>
 <?php
 
 //POST variables
@@ -12,7 +12,7 @@ $test_email = str_replace(" ", "", $test_email);
 $test_email_array = explode(',', $test_email);
 
 //select campaign to send test email
-$q = 'SELECT * FROM campaigns WHERE id = '.$campaign_id.' AND userID = '.get_app_info('main_userID');
+$q = 'SELECT * FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id.' AND userID = '.get_app_info('main_userID');
 $r = mysqli_query($mysqli, $q);
 if ($r && mysqli_num_rows($r) > 0)
 {
@@ -27,7 +27,7 @@ if ($r && mysqli_num_rows($r) > 0)
     }  
     
     //get smtp settings
-	$q3 = 'SELECT apps.id, apps.smtp_host, apps.smtp_port, apps.smtp_ssl, apps.smtp_username, apps.smtp_password, apps.allocated_quota, apps.custom_domain, apps.custom_domain_protocol, apps.custom_domain_enabled FROM campaigns, apps WHERE apps.id = campaigns.app AND campaigns.id = '.$campaign_id;
+	$q3 = 'SELECT '.APPS.'.id, '.APPS.'.smtp_host, '.APPS.'.smtp_port, '.APPS.'.smtp_ssl, '.APPS.'.smtp_username, '.APPS.'.smtp_password, '.APPS.'.allocated_quota, '.APPS.'.custom_domain, '.APPS.'.custom_domain_protocol, '.APPS.'.custom_domain_enabled FROM '.CAMPAIGNS.', '.APPS.' WHERE '.APPS.'.id = '.CAMPAIGNS.'.app AND '.CAMPAIGNS.'.id = '.$campaign_id;
 	$r3 = mysqli_query($mysqli, $q3);
 	if ($r3 && mysqli_num_rows($r3) > 0)
 	{
@@ -55,10 +55,10 @@ if ($r && mysqli_num_rows($r) > 0)
 	    }  
 	}
 	
-	$webversion = $app_path.'/w/'.short($campaign_id);
+	$webversion = $app_path.'/index.php/site/w/'.short($campaign_id);
 	
 	//Get `test_email_prefix` value
-	$q4 = 'SELECT test_email_prefix FROM apps WHERE id = '.$app;
+	$q4 = 'SELECT test_email_prefix FROM '.APPS.' WHERE id = '.$app;
 	$r4 = mysqli_query($mysqli, $q4);
 	if ($r4 && mysqli_num_rows($r4) > 0) while($row = mysqli_fetch_array($r4)) $test_email_prefix = $row['test_email_prefix'];
     
@@ -125,14 +125,14 @@ if ($r && mysqli_num_rows($r) > 0)
 	$plain_text = str_replace('[webversion]', $webversion, $plain_text);
 	
 	//set unsubscribe links
-	$html_text = str_replace('<unsubscribe', '<a href="'.$app_path.'/unsubscribe-success.php?c='.$campaign_id.'" ', $html_text);
+	$html_text = str_replace('<unsubscribe', '<a href="'.$app_path.'/index.php/site/unsubscribe-success.php?c='.$campaign_id.'" ', $html_text);
 	$html_text = str_replace('</unsubscribe>', '</a>', $html_text);
-	$html_text = str_replace('[unsubscribe]', $app_path.'/unsubscribe-success.php?c='.$campaign_id, $html_text);
-	$plain_text = str_replace('[unsubscribe]', $app_path.'/unsubscribe-success.php?c='.$campaign_id, $plain_text);
+	$html_text = str_replace('[unsubscribe]', $app_path.'/index.php/site/unsubscribe-success.php?c='.$campaign_id, $html_text);
+	$plain_text = str_replace('[unsubscribe]', $app_path.'/index.php/site/unsubscribe-success.php?c='.$campaign_id, $plain_text);
 	
 	//set reconsent links
-	$html_text = str_replace('[reconsent]', $app_path.'/reconsent-success?c='.$campaign_id, $html_text);
-	$plain_text = str_replace('[reconsent]', $app_path.'/reconsent-success.php?c='.$campaign_id, $plain_text);
+	$html_text = str_replace('[reconsent]', $app_path.'/index.php/site/reconsent-success?c='.$campaign_id, $html_text);
+	$plain_text = str_replace('[reconsent]', $app_path.'/index.php/site/reconsent-success.php?c='.$campaign_id, $plain_text);
 	
 	//convert date tags
 	if(get_app_info('timezone')!='') date_default_timezone_set(get_app_info('timezone'));
@@ -185,14 +185,14 @@ for($i=0;$i<count($test_email_array);$i++)
 	$mail->IsHTML(true);
 	$mail->AddAddress($test_email_array[$i], '');
 	$mail->AddReplyTo($reply_to, $from_name);
-	$mail->AddCustomHeader('List-Unsubscribe: <'.$app_path.'/unsubscribe-success.php?c='.$campaign_id.'>');
-	if(file_exists('../../uploads/attachments/'.$campaign_id))
+	$mail->AddCustomHeader('List-Unsubscribe: <'.$app_path.'/index.php/site/unsubscribe-success.php?c='.$campaign_id.'>');
+	if(file_exists('uploads/attachments/'.$campaign_id))
 	{
-		foreach(glob('../../uploads/attachments/'.$campaign_id.'/*') as $attachment)
+		foreach(glob('uploads/attachments/'.$campaign_id.'/*') as $attachment)
 		{
 			$attachment = filter_var($attachment,FILTER_SANITIZE_SPECIAL_CHARS);
 			$attachment_filename = basename($attachment);
-			$attachment = '../../uploads/attachments/'.$campaign_id.'/'.$attachment_filename;
+			$attachment = 'uploads/attachments/'.$campaign_id.'/'.$attachment_filename;
 			
 			if(file_exists($attachment))
 			    $mail->AddAttachment($attachment);
@@ -214,12 +214,12 @@ for($i=0;$i<count($test_email_array);$i++)
 	if($allocated_quota!=-1)
 	{
 		//if so, update quota
-		$q4 = 'UPDATE apps SET current_quota = current_quota+1 WHERE id = '.$app;
+		$q4 = 'UPDATE '.APPS.' SET current_quota = current_quota+1 WHERE id = '.$app;
 		mysqli_query($mysqli, $q4);
 	}
 	
 	//Save last used test email
-	mysqli_query($mysqli, 'UPDATE apps SET test_email = "'.$test_email.'" WHERE id = '.$app);
+	mysqli_query($mysqli, 'UPDATE '.APPS.' SET test_email = "'.$test_email.'" WHERE id = '.$app);
 }
 
 ?>

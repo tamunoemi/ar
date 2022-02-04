@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      	INIT                       //
@@ -25,15 +25,15 @@
 	if($edit)
 	{
 		//Delete all conditions from this segment and update seg name
-		$q = 'DELETE FROM seg_cons WHERE seg_id = '.$sid;
-		$q2 = 'UPDATE seg SET name = "'.$seg_name.'" WHERE id = '.$sid;
+		$q = 'DELETE FROM '.SEG_CONS.' WHERE seg_id = '.$sid;
+		$q2 = 'UPDATE '.SEG.' SET name = "'.$seg_name.'" WHERE id = '.$sid;
 		mysqli_query($mysqli, $q);
 		mysqli_query($mysqli, $q2);
 	}
 	else
 	{
 		//Insert segmentation name into database
-		$q = 'INSERT INTO seg (name, app, list) VALUES ("'.$seg_name.'", '.$app.', '.$lid.')';
+		$q = 'INSERT INTO '.SEG.' (name, app, list) VALUES ("'.$seg_name.'", '.$app.', '.$lid.')';
 		$r = mysqli_query($mysqli, $q);
 		if ($r) 
 			$sid = mysqli_insert_id($mysqli);
@@ -66,7 +66,7 @@
 			}
 			
 			//Insert into 'seg_cons' table
-			$q = 'INSERT INTO seg_cons (seg_id, grouping, operator, field, comparison, val) VALUES ('.$sid.', '.$i.', "'.$operator.'", "'.$field.'", "'.$comparison.'", "'.$val.'")';
+			$q = 'INSERT INTO '.SEG_CONS.' (seg_id, grouping, operator, field, comparison, val) VALUES ('.$sid.', '.$i.', "'.$operator.'", "'.$field.'", "'.$comparison.'", "'.$val.'")';
 			$r = mysqli_query($mysqli, $q);
 			if (!$r)
 			{

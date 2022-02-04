@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      VARIABLES                       //
@@ -13,7 +13,7 @@
 	//------------------------------------------------------//
 	
 	//get campaign's data
-	$q = 'SELECT from_name, from_email, reply_to, title, label, plain_text, html_text, query_string, bounce_setup, complaint_setup, opens_tracking, links_tracking FROM campaigns WHERE id = '.$campaign_id;
+	$q = 'SELECT from_name, from_email, reply_to, title, label, plain_text, html_text, query_string, bounce_setup, complaint_setup, opens_tracking, links_tracking FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -35,10 +35,10 @@
 	}
 	
 	//Insert into database
-	$q3 = 'INSERT INTO campaigns (userID, app, from_name, from_email, reply_to, title, label, plain_text, html_text, query_string, bounce_setup, complaint_setup, wysiwyg, opens_tracking, links_tracking) VALUES ('.get_app_info('main_userID').', '.$app_id.', "'.$from_name.'", "'.$from_email.'", "'.$reply_to.'", "'.addslashes($title).'", "'.addslashes($label).'", "'.addslashes($plain_text).'", "'.addslashes($html_text).'", "'.addslashes($query_string).'", '.$bounce_setup.', '.$complaint_setup.', 1, '.$opens_tracking.', '.$links_tracking.')';
+	$q3 = 'INSERT INTO '.CAMPAIGNS.' (userID, app, from_name, from_email, reply_to, title, label, plain_text, html_text, query_string, bounce_setup, complaint_setup, wysiwyg, opens_tracking, links_tracking) VALUES ('.get_app_info('main_userID').', '.$app_id.', "'.$from_name.'", "'.$from_email.'", "'.$reply_to.'", "'.addslashes($title).'", "'.addslashes($label).'", "'.addslashes($plain_text).'", "'.addslashes($html_text).'", "'.addslashes($query_string).'", '.$bounce_setup.', '.$complaint_setup.', 1, '.$opens_tracking.', '.$links_tracking.')';
 	$r3 = mysqli_query($mysqli, $q3);
 	if ($r3)
-	     header("Location: ".get_app_info('path')."/app?i=".$app_id);
+	     header("Location: ".get_app_info('path')."/index.php/site/app?i=".$app_id);
 	else
 		echo 'Error duplicating.';
 ?>

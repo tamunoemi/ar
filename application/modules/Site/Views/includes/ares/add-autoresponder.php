@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      VARIABLES                       //
@@ -24,7 +24,7 @@
 	
 	if($cfa=='inuse')
 	{
-		header("Location: ".get_app_info('path')."/autoresponders-list?i=$app&l=$list_id&e=1");
+		header("Location: ".get_app_info('path')."/index.php/site/autoresponders-list?i=$app&l=$list_id&e=1");
 		exit;
 	}
 	
@@ -32,11 +32,11 @@
 	//                      FUNCTIONS                       //
 	//------------------------------------------------------//
 	
-	$q = 'INSERT INTO ares (name, type, list, custom_field) VALUES ("'.$name.'", "'.$type.'", "'.$list_id.'", "'.$custom_field.'")';
+	$q = 'INSERT INTO '.ARES.' (name, type, list, custom_field) VALUES ("'.$name.'", "'.$type.'", "'.$list_id.'", "'.$custom_field.'")';
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
 		$ares_id = mysqli_insert_id($mysqli);
-		header("Location: ".get_app_info('path')."/autoresponders-create?i=$app&a=$ares_id");
+		header("Location: ".get_app_info('path')."/index.php/site/autoresponders-create?i=$app&a=$ares_id");
 	}
 ?>

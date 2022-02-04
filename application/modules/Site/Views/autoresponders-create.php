@@ -7,7 +7,7 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/list?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/list?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 	}
@@ -93,14 +93,14 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 	    	</div>
-	    	<h2><?php echo _('Create autoresponder email');?></h2><?php echo _('For');?>: <a href="<?php echo get_app_info('path')?>/autoresponders-emails?i=<?php echo get_app_info('app')?>&a=<?php echo $ar?>" title=""><span class="label label-info"><?php echo get_ares_data('name');?></span></a> <span>(<?php echo get_ares_type_name('type');?>)</span> <br/><br/>
+	    	<h2><?php echo _('Create autoresponder email');?></h2><?php echo _('For');?>: <a href="<?php echo get_app_info('path')?>/index.php/site/autoresponders-emails?i=<?php echo get_app_info('app')?>&a=<?php echo $ar?>" title=""><span class="label label-info"><?php echo get_ares_data('name');?></span></a> <span>(<?php echo get_ares_type_name('type');?>)</span> <br/><br/>
     	</div>
     	
-    	<form action="<?php echo get_app_info('path')?>/includes/ares/save-autoresponder-email.php?i=<?php echo get_app_info('app')?>&a=<?php echo $ar?>" method="POST" accept-charset="utf-8" class="form-vertical" id="edit-form" enctype="multipart/form-data">
+    	<form action="<?php echo get_app_info('path')?>/index.php/site/ares/save-autoresponder-email?i=<?php echo get_app_info('app')?>&a=<?php echo $ar?>" method="POST" accept-charset="utf-8" class="form-vertical" id="edit-form" enctype="multipart/form-data">
     	
     	<div class="row-fluid">
     		<div class="span12 well">
@@ -265,13 +265,13 @@
 		        <a href="javascript:void(0)" id="autoresponder-save-only-btn" class="btn"><i class="icon-ok icon-white"></i> <?php echo _('Save');?></a> 
 		        <button type="submit" class="btn btn-inverse"><i class="icon-ok icon-white"></i> <?php echo _('Save & exit');?></button>
 		        <br/><br/>
-		        <a href="<?php echo get_app_info('path');?>/autoresponders-emails?i=<?php echo $app?>&a=<?php echo get_ares_data('id');?>" title=""><i class="icon icon-chevron-left"></i> <?php echo _('Back to autoresponder email list');?></a>
+		        <a href="<?php echo get_app_info('path');?>/index.php/site/autoresponders-emails?i=<?php echo $app?>&a=<?php echo get_ares_data('id');?>" title=""><i class="icon icon-chevron-left"></i> <?php echo _('Back to autoresponder email list');?></a>
 		        
 		    </div>   
 		    <div class="span9">
 			    <!-- Grammarly error -->
 			    <?php 
-				    $app_path_no_http_array = explode('/', get_app_info('path'));
+				    $app_path_no_http_array = explode('/', get_app_info('path').'/index.php/site');
 				    $app_path_no_http = $app_path_no_http_array[2];
 			    ?>
 			    <div class="alert alert-error" id="grammarly-error" style="display:none;">

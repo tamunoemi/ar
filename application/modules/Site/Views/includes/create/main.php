@@ -8,7 +8,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM apps WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -26,7 +26,7 @@
 		global $mysqli;
 		global $edit;
 		
-		$q = 'SELECT '.$val.' FROM campaigns WHERE id = "'.mysqli_real_escape_string($mysqli, $_GET['c']).'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.CAMPAIGNS.' WHERE id = "'.mysqli_real_escape_string($mysqli, $_GET['c']).'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -83,7 +83,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(list) FROM subscribers use index (s_list) WHERE list = '.$val.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
+		$q = 'SELECT COUNT(list) FROM '.SUBSCRIBERS.' use index (s_list) WHERE list = '.$val.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -99,7 +99,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM apps WHERE id = '.mysqli_real_escape_string($mysqli, (int)$_GET['i']);
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = '.mysqli_real_escape_string($mysqli, (int)$_GET['i']);
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -122,7 +122,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT paypal FROM login WHERE id = '.get_app_info('main_userID');
+		$q = 'SELECT paypal FROM '.LOGIN.' WHERE id = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -138,7 +138,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT delivery_fee, cost_per_recipient FROM apps WHERE id = '.mysqli_real_escape_string($mysqli, (int)$_GET['i']);
+		$q = 'SELECT delivery_fee, cost_per_recipient FROM '.APPS.' WHERE id = '.mysqli_real_escape_string($mysqli, (int)$_GET['i']);
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -166,7 +166,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(*) FROM template WHERE app = '.get_app_info('app').' AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT COUNT(*) FROM '.TEMPLATE.' WHERE app = '.get_app_info('app').' AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -183,7 +183,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(*) FROM seg WHERE app = '.get_app_info('app');
+		$q = 'SELECT COUNT(*) FROM '.SEG.' WHERE app = '.get_app_info('app');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{

@@ -21,7 +21,7 @@
 	});
 </script>
 
-<form action="<?php echo get_app_info('path')?>/includes/list/edit.php" method="POST" accept-charset="utf-8" class="form-vertical">
+<form action="<?php echo get_app_info('path')?>/index.php/site/list/edit" method="POST" accept-charset="utf-8" class="form-vertical">
 
 <div class="row-fluid">
 	<div class="span2">
@@ -37,7 +37,7 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 		    	</div>

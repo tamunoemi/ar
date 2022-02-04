@@ -30,13 +30,15 @@ class MY_Controller extends MX_Controller {
     public function view($arr, $arg = "") {
         $page = $arr['page'];
         $module = $arr['module'];
-        // echo $this->config->item('modules_locations')."$module/pages/".$page.'.php'; exit;
+
+        //echo $this->config->item('modules_locations')."$module/views/".$page.'.php'; exit();
         // var_dump($arr);
         // var_dump($this->config->item('modules_locations'). "$module/views/");
 
         if (!file_exists($this->config->item('modules_locations') . "$module/views/" . $page . '.php')) {
             show_404();
         }
+
         $data['title'] = ucfirst($page); // Capitalize the first letter
         $res = array_merge($data, $arr);
         $resp = "";

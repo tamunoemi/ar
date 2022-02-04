@@ -1,8 +1,42 @@
-<?php 	include('includes/config.php');	//--------------------------------------------------------------//	function dbConnect() { //Connect to database	//--------------------------------------------------------------//	    // Access global variables	    global $mysqli;	    global $dbHost;	    global $dbUser;	    global $dbPass;	    global $dbName;	    global $dbPort;	    	    // Attempt to connect to database server	    if(isset($dbPort)) $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName, $dbPort);	    else $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);		    // If connection failed...	    if ($mysqli->connect_error) {	        fail();	    }	    	    global $charset; mysqli_set_charset($mysqli, isset($charset) ? $charset : "utf8");	    	    return $mysqli;	}	//--------------------------------------------------------------//	function fail() { //Database connection fails	//--------------------------------------------------------------//	    print 'Database error';	    exit;	}	// connect to database	dbConnect();?>
+<?php 
+	include('includes/config.php');
+	//--------------------------------------------------------------//
+	function dbConnect() { //Connect to database
+	//--------------------------------------------------------------//
+	    // Access global variables
+	    global $mysqli;
+	    global $dbHost;
+	    global $dbUser;
+	    global $dbPass;
+	    global $dbName;
+	    global $dbPort;
+	    
+	    // Attempt to connect to database server
+	    if(isset($dbPort)) $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName, $dbPort);
+	    else $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+	
+	    // If connection failed...
+	    if ($mysqli->connect_error) {
+	        fail();
+	    }
+	    
+	    global $charset; mysqli_set_charset($mysqli, isset($charset) ? $charset : "utf8");
+	    
+	    return $mysqli;
+	}
+	//--------------------------------------------------------------//
+	function fail() { //Database connection fails
+	//--------------------------------------------------------------//
+	    print 'Database error';
+	    exit;
+	}
+	// connect to database
+	dbConnect();
+?>
 <?php
 
 //setup cron
-$q = 'SELECT id, cron_seg, timezone FROM login LIMIT 1';
+$q = 'SELECT id, cron_seg, timezone FROM '.LOGIN.' LIMIT 1';
 $r = mysqli_query($mysqli, $q);
 if ($r)
 {
@@ -14,7 +48,7 @@ if ($r)
 		
 		if($cron==0)
 		{
-			$q2 = 'UPDATE login SET cron_seg=1 WHERE id = '.$userid;
+			$q2 = 'UPDATE '.LOGIN.' SET cron_seg=1 WHERE id = '.$userid;
 			$r2 = mysqli_query($mysqli, $q2);
 			if ($r2) exit;
 		}
@@ -22,7 +56,7 @@ if ($r)
 }
 
 //Update segmentation results wherever segments are found
-$q = 'SELECT * FROM seg';
+$q = 'SELECT * FROM '.SEG;
 $r = mysqli_query($mysqli, $q);
 if ($r && mysqli_num_rows($r) > 0)
 {
@@ -33,12 +67,12 @@ if ($r && mysqli_num_rows($r) > 0)
 		$list = $row['list'];
 		
 		//Check if any campaign is sending to this list, if so, don't update segment while the campaign is sending
-		$q2 = 'SELECT id FROM campaigns WHERE app = '.$app.' AND sent != "" AND recipients < to_send';
+		$q2 = 'SELECT id FROM '.CAMPAIGNS.' WHERE app = '.$app.' AND sent != "" AND recipients < to_send';
 		$r2 = mysqli_query($mysqli, $q2);
 		if (mysqli_num_rows($r2) == 0) // No campaigns are currently sending in the brand
 		{
 		    //Then update segment
-			file_get_contents_curl(APP_PATH.'/includes/segments/segmentate.php?i='.$app.'&l='.$list.'&s='.$id.'&t='.$timezone); 
+			file_get_contents_curl(APP_PATH.'/index.php/site/segments/segmentate?i='.$app.'&l='.$list.'&s='.$id.'&t='.$timezone); 
 		}
     }  
 }

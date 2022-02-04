@@ -46,13 +46,13 @@
 	$total_recipients = $_GET['recipients'];
 	
 	//Set language
-	$q = 'SELECT login.language FROM campaigns, login WHERE campaigns.id = '.$campaign_id.' AND login.app = campaigns.app';
+	$q = 'SELECT '.LOGIN.'.language FROM '.CAMPAIGNS.', login WHERE '.CAMPAIGNS.'.id = '.$campaign_id.' AND '.LOGIN.'.app = '.CAMPAIGNS.'.app';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $language = $row['language'];
 	set_locale($language);
 	
 	//check if sent
-	$q = 'SELECT sent, quota_deducted FROM campaigns WHERE id = '.$campaign_id;
+	$q = 'SELECT sent, quota_deducted FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -64,7 +64,7 @@
 	}
 	
 	//Check if monthly quota needs to be updated
-	$q = 'SELECT allocated_quota, current_quota FROM apps WHERE id = '.$app;
+	$q = 'SELECT allocated_quota, current_quota FROM '.APPS.' WHERE id = '.$app;
 	$r = mysqli_query($mysqli, $q);
 	if($r) 
 	{
@@ -82,7 +82,7 @@
 		$updated_quota = ($current_quota + $total_recipients) - $current_quota_deducted;
 		
 		//if so, update quota
-		$q = 'UPDATE apps SET current_quota = '.$updated_quota.' WHERE id = '.$app;
+		$q = 'UPDATE '.APPS.' SET current_quota = '.$updated_quota.' WHERE id = '.$app;
 		mysqli_query($mysqli, $q);
 	}
 
@@ -93,7 +93,7 @@ if($schedule=='true'):
 	$the_date = mysqli_real_escape_string($mysqli, $_GET['date']);
 	$timezone = mysqli_real_escape_string($mysqli, $_GET['timezone']);
 	
-	$q = 'UPDATE campaigns SET send_date = "'.$the_date.'", lists = "'.$email_list.'", lists_excl = "'.$email_list_exclude.'", segs = "'.$email_lists_segs.'", segs_excl = "'.$email_lists_segs_excl.'", timezone = "'.$timezone.'", quota_deducted = '.$total_recipients.' WHERE id = '.$campaign_id;
+	$q = 'UPDATE '.CAMPAIGNS.' SET send_date = "'.$the_date.'", lists = "'.$email_list.'", lists_excl = "'.$email_list_exclude.'", segs = "'.$email_lists_segs.'", segs_excl = "'.$email_lists_segs_excl.'", timezone = "'.$timezone.'", quota_deducted = '.$total_recipients.' WHERE id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if($r):
 	?>
@@ -202,7 +202,7 @@ if($schedule=='true'):
 						list_excl_segs = "0";
 					<?php endif;?>
 					
-					$.post("<?php echo APP_PATH;?>/includes/create/send-now.php", { campaign_id: <?php echo $campaign_id;?>, email_list: list, email_list_exclude: list_excl, email_lists_segs: list_segs, email_lists_segs_excl: list_excl_segs, app: <?php echo $app;?>, cron: <?php echo $cron;?>, total_recipients: <?php echo $total_recipients;?> },
+					$.post("<?php echo APP_PATH;?>/index.php/site/create/send-now.php", { campaign_id: <?php echo $campaign_id;?>, email_list: list, email_list_exclude: list_excl, email_lists_segs: list_segs, email_lists_segs_excl: list_excl_segs, app: <?php echo $app;?>, cron: <?php echo $cron;?>, total_recipients: <?php echo $total_recipients;?> },
 					  function(data) {
 					      if(data){}
 					  }

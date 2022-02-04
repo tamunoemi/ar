@@ -172,7 +172,7 @@ $(document).ready(function() {
 	  }
 	  else exlists_seg = 0;
       
-      $.post("./includes/create/calculate-totals.php", { include_lists: inlists, exclude_lists: exlists, include_lists_seg: inlists_seg, exclude_lists_seg: exlists_seg },
+      $.post("./includes/create/calculate-totals", { include_lists: inlists, exclude_lists: exlists, include_lists_seg: inlists_seg, exclude_lists_seg: exlists_seg },
 		  function(data) {
 		      if(data == 'failed')
 		      {
@@ -218,7 +218,7 @@ $(document).ready(function() {
 				);
 		      }
 		  }
-		);
+		); 
     })
     .trigger('change');
 	

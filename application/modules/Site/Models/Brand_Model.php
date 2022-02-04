@@ -79,40 +79,40 @@ defined('BASEPATH') OR exit('No direct script access allowed');
          $data = array(
              'userID' => get_app_info('userID'),
              'app_name' => $app_name,
-             'from_name' => $this->input->post('from_name'),
-             'from_email' => $this->input->post('from_email'),
-             'reply_to' => $this->input->post('reply_to'),
-             'allowed_attachments' => $this->input->post('allowed_attachments'),
-             'currency' => $this->input->post('currency'),
-             'delivery_fee' => $this->input->post('delivery_fee'),
-             'cost_per_recipient' => $this->input->post('cost_per_recipient'),
-             'smtp_host' => $this->input->post('smtp_host'),
-             'smtp_port' => $this->input->post('smtp_port'),
-             'smtp_ssl' => $this->input->post('smtp_ssl'),
-             'smtp_username' => $this->input->post('smtp_username'),
-             'smtp_password' => $this->input->post('smtp_password'),
+             'from_name' => $from_name,
+             'from_email' => $from_email,
+             'reply_to' => $reply_to,
+             'allowed_attachments' => $allowed_attachments,
+             'currency' => $currency,
+             'delivery_fee' => $delivery_fee,
+             'cost_per_recipient' => $cost_per_recipient,
+             'smtp_host' => $smtp_host,
+             'smtp_port' => $smtp_port,
+             'smtp_ssl' => $smtp_ssl,
+             'smtp_username' => $smtp_username,
+             'smtp_password' => $smtp_password,
              'app_key' => ran_string(30, 30, true, false, true),
              'allocated_quota' => $monthly_limit,
              'day_of_reset' => $reset_on_day,
              'month_of_next_reset' => $month_to_reset,
              'no_expiry' => $no_expiry,
-             'reports_only' => null != $this->input->post('reports') ? 0 : 1,
-             'campaigns_only' => null != $this->input->post('campaigns') ? 0 : 1,
-             'templates_only' => null != $this->input->post('templates') ? 0 : 1,
-             'lists_only' => null != $this->input->post('lists-subscribers') ? 0 : 1,
-             'notify_campaign_sent' => null != $this->input->post('notify_campaign_sent') ? 1 : 0,
-             'campaign_report_rows' => is_numeric($this->input->post('campaign_report_rows')) ? (int)$this->input->post('campaign_report_rows') : 10,
-             'query_string' => $this->input->post('query_string'),
-             'gdpr_only' => null != $this->input->post('gdpr_only') ? 1 : 0,
-             'gdpr_only_ar' => null != $this->input->post('gdpr_only_ar') ? 1 : 0,
-             'gdpr_options' => null != $this->input->post('gdpr_options') ? 1 : 0,
-             'recaptcha_sitekey' => $this->input->post('recaptcha_sitekey'),
-             'recaptcha_secretkey' => $this->input->post('recaptcha_secretkey'),
-             'test_email_prefix' => $this->input->post('test_email_prefix'),
-             'custom_domain_protocol' => $this->input->post('protocol'),
-             'custom_domain' => $this->input->post('custom_domain'),
-             'custom_domain_enabled' => is_numeric($this->input->post('custom_domain_status')) ? (int)$this->input->post('custom_domain_status') : 0,
-             'templates_lists_sorting' => $this->input->post('sort-by')
+             'reports_only' => $reports,
+             'campaigns_only' => $campaigns,
+             'templates_only' => $templates,
+             'lists_only' => $lists,
+             'notify_campaign_sent' => $notify_campaign_sent,
+             'campaign_report_rows' => $campaign_report_rows,
+             'query_string' => $query_string,
+             'gdpr_only' => $gdpr_only,
+             'gdpr_only_ar' => $gdpr_only_ar,
+             'gdpr_options' => $gdpr_options,
+             'recaptcha_sitekey' => $recaptcha_sitekey,
+             'recaptcha_secretkey' => $recaptcha_secretkey,
+             'test_email_prefix' => $test_email_prefix,
+             'custom_domain_protocol' => $custom_domain_protocol,
+             'custom_domain' => $custom_domain,
+             'custom_domain_enabled' => $custom_domain_enabled,
+             'templates_lists_sorting' => $templates_lists_sorting
          );
 
          $this->db->insert('apps', $data);
@@ -143,7 +143,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
      }
 
      public function update_brand($update_array, $where_object, $table_name){
-		$this->db->where($where_object->key, $where_object->value);
+		$this->db->where($where_object["key"], $where_object["value"]);
 		$this->db->update($table_name, $update_array);
 		//Reset any pending password requests
 		// $reset_password_update = array('reset_password_key' => "");

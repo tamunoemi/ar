@@ -8,12 +8,12 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/housekeeping-inactive?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/housekeeping-inactive?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 		else if(get_app_info('campaigns_only')==1 && get_app_info('templates_only')==1 && get_app_info('lists_only')==1 && get_app_info('reports_only')==1)
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/logout"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/auth/logout"</script>';
 			exit;
 		}
 		else if(get_app_info('lists_only')==1)
@@ -38,7 +38,7 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 		    	</div>
@@ -46,7 +46,7 @@
 				<br/>
 		    	<div class="well">
 			    	<div class="btn-group" data-toggle="buttons-radio">
-					  <a href="<?php echo get_app_info('path');?>/housekeeping-unconfirmed?i=<?php echo get_app_info('app');?>" title="" class="btn"><i class="icon icon-meh"></i> <?php echo _('Unconfirmed subscribers');?></a>
+					  <a href="<?php echo get_app_info('path');?>/index.php/site/housekeeping-unconfirmed?i=<?php echo get_app_info('app');?>" title="" class="btn"><i class="icon icon-meh"></i> <?php echo _('Unconfirmed subscribers');?></a>
 					  <a href="javascript:void(0)" title="" class="btn active"><i class="icon icon-moon"></i> <?php echo _('Inactive subscribers');?></a>
 					</div>
 		    	</div>
@@ -68,7 +68,7 @@
 						$lists = '';
 						
 						//Get lists that all existing campaigns were sent to
-						$q = 'SELECT to_send_lists FROM campaigns WHERE app = '.get_app_info('app').' AND to_send = recipients';
+						$q = 'SELECT to_send_lists FROM '.CAMPAIGNS.' WHERE app = '.get_app_info('app').' AND to_send = recipients';
 						$r = mysqli_query($mysqli, $q);
 						if ($r && mysqli_num_rows($r) > 0)
 						{
@@ -80,7 +80,7 @@
 						}
 						
 						//Get lists from segments that all existing campaigns were sent to
-						$q = 'SELECT seg.list FROM seg LEFT JOIN campaigns ON (seg.id IN (campaigns.segs)) WHERE campaigns.app = '.get_app_info('app').' AND campaigns.segs!="" AND campaigns.to_send = campaigns.recipients';
+						$q = 'SELECT '.SEG.'.list FROM '.SEG.' LEFT JOIN '.CAMPAIGNS.' ON (seg.id IN ('.CAMPAIGNS.'.segs)) WHERE '.CAMPAIGNS.'.app = '.get_app_info('app').' AND '.CAMPAIGNS.'.segs!="" AND '.CAMPAIGNS.'.to_send = '.CAMPAIGNS.'.recipients';
 						$r = mysqli_query($mysqli, $q);
 						if ($r && mysqli_num_rows($r) > 0)
 						{
@@ -98,10 +98,10 @@
 						
 						//Load lists
 						$total_lists = 0;
-						$q = '  SELECT lists.id, lists.name FROM lists 
-								LEFT JOIN campaigns ON (lists.id IN ('.$lists_implode.')) 
-								WHERE campaigns.app = '.get_app_info('app').' AND campaigns.to_send = campaigns.recipients 
-								GROUP BY lists.id 
+						$q = '  SELECT '.LISTS.'.id, '.LISTS.'.name FROM '.LISTS.' 
+								LEFT JOIN '.CAMPAIGNS.' ON ('.LISTS.'.id IN ('.$lists_implode.')) 
+								WHERE '.CAMPAIGNS.'.app = '.get_app_info('app').' AND '.CAMPAIGNS.'.to_send = '.CAMPAIGNS.'.recipients 
+								GROUP BY '.LISTS.'.id 
 								ORDER BY name ASC';
 						$r = mysqli_query($mysqli, $q);
 						if (mysqli_num_rows($r) != 0):
@@ -120,10 +120,10 @@
 							$total_pages = ceil($total_lists/$limit);
 							$offset = $p!=null ? ($p-1) * $limit : 0;
 		                		                	
-		                	$q = 'SELECT lists.id, lists.name FROM lists 
-								LEFT JOIN campaigns ON (lists.id IN ('.$lists_implode.')) 
-								WHERE campaigns.app = '.get_app_info('app').' AND campaigns.to_send = campaigns.recipients 
-								GROUP BY lists.id 
+		                	$q = 'SELECT '.LISTS.'.id, '.LISTS.'.name FROM '.LISTS.' 
+								LEFT JOIN '.CAMPAIGNS.' ON (lists.id IN ('.$lists_implode.')) 
+								WHERE '.CAMPAIGNS.'.app = '.get_app_info('app').' AND '.CAMPAIGNS.'.to_send = '.CAMPAIGNS.'.recipients 
+								GROUP BY '.LISTS.'.id 
 								ORDER BY name ASC 
 								LIMIT '.$offset.','.$limit;
 		                	$r = mysqli_query($mysqli, $q);
@@ -139,7 +139,7 @@
 		                			
 		                			echo '
 		                			<tr id="uc-'.$lid.'">
-			                			<td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$lid.'">'.$list_name.' <span class="badge badge-success" id="total-'.$lid.'">'.get_totals('a', '', $lid).'</span></a></td>
+			                			<td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$lid.'">'.$list_name.' <span class="badge badge-success" id="total-'.$lid.'">'.get_totals('a', '', $lid).'</span></a></td>
 			                			<td><span class="label">'._('Inactive').'</span></td>
 			                			<td>
 			                				'.$subscriber_count_notopened.'
@@ -152,7 +152,7 @@
 			                			$(document).ready(function() {
 				                			
 				                			//Get no opens and clicks figures
-				                			$.post("'.get_app_info('path').'/includes/subscribers/housekeeping-no-opens.php", { lid: '.$lid.', app: '.get_app_info('app').' }, function(data) { 
+				                			$.post("'.get_app_info('path').'/index.php/site/subscribers/housekeeping-no-opens", { lid: '.$lid.', app: '.get_app_info('app').' }, function(data) { 
 					                			if(data) 
 					                			{
 						                			$("#count-'.$lid.'-notopened").text(data); 
@@ -165,7 +165,7 @@
 												        {
 													        $("#count-'.$lid.'-notopened").html("<img src=\''.get_app_info('path').'/img/loader.gif\' style=\'width:16px;\'/>");
 													        e.preventDefault(); 
-															$.post("includes/subscribers/delete-inactive.php", { lid: '.$lid.', app: '.get_app_info('app').', action: "1"},
+															$.post('.get_app_info('path').'"index.php/site/subscribers/delete-inactive", { lid: '.$lid.', app: '.get_app_info('app').', action: "1"},
 															  function(data) {
 															      if(!data)
 															      	alert("'._('Sorry, unable to remove subscribers. Please try again later!').'");
@@ -187,7 +187,7 @@
 							                		}
 					                			}
 				                			});
-				                			$.post("'.get_app_info('path').'/includes/subscribers/housekeeping-no-clicks.php", { lid: '.$lid.', app: '.get_app_info('app').' }, function(data) { 
+				                			$.post("'.get_app_info('path').'/index.php/site/subscribers/housekeeping-no-clicks", { lid: '.$lid.', app: '.get_app_info('app').' }, function(data) { 
 				                				if(data) 
 				                				{
 				                					$("#count-'.$lid.'-notclicked").text(data); 

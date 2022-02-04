@@ -1,9 +1,12 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      VARIABLES                       //
 	//------------------------------------------------------//
+	use Ion_auth_model;
+	$ion_auth_model = new Ion_auth_model();
+	$salt = $ion_auth_model->salt();
 	
 	$userID = isset($_POST['uid']) && is_numeric($_POST['uid']) ? mysqli_real_escape_string($mysqli, (int)$_POST['uid']) : exit;
 	$company = mysqli_real_escape_string($mysqli, $_POST['company']);
@@ -45,7 +48,8 @@
 	else
 	{
 		$change_pass = true;
-		$pass_encrypted = hash('sha512', $password.'PectGtma');		
+		$pass_encrypted = $ion_auth_model->hash_password($password, $salt);
+		//$pass_encrypted = hash('sha512', $password.'PectGtma');		
 	}
 	
 	//------------------------------------------------------//
@@ -53,7 +57,7 @@
 	//------------------------------------------------------//
 	
 	//Check if email exists in login table
-	$q = 'SELECT username FROM login WHERE username = "'.$email.'" AND id != '.get_app_info('userID');
+	$q = 'SELECT username FROM '.LOGIN.' WHERE username = "'.$email.'" AND id != '.get_app_info('userID');
 	$r = mysqli_query($mysqli, $q);
 	if (mysqli_num_rows($r) > 0)
 	{
@@ -64,16 +68,16 @@
 	if(!get_app_info('is_sub_user'))
 	{
 		if($change_pass)
-			$q = 'UPDATE login SET company="'.$company.'", name="'.$name.'", username="'.$email.'", password="'.$pass_encrypted.'", s3_key="'.$aws_key.'", s3_secret="'.$aws_secret.'", paypal="'.$paypal.'", timezone = "'.$timezone.'", language = "'.$language.'", ses_endpoint = "'.$ses_endpoint.'", brands_rows = '.$brands_rows.' WHERE id = '.$userID;
+			$q = 'UPDATE '.LOGIN.' SET company="'.$company.'", name="'.$name.'", username="'.$email.'", password="'.$pass_encrypted.'", s3_key="'.$aws_key.'", s3_secret="'.$aws_secret.'", paypal="'.$paypal.'", timezone = "'.$timezone.'", language = "'.$language.'", ses_endpoint = "'.$ses_endpoint.'", brands_rows = '.$brands_rows.' WHERE id = '.$userID;
 		else
-			$q = 'UPDATE login SET company="'.$company.'", name="'.$name.'", username="'.$email.'", s3_key="'.$aws_key.'", s3_secret="'.$aws_secret.'", paypal="'.$paypal.'", timezone = "'.$timezone.'", language = "'.$language.'", ses_endpoint = "'.$ses_endpoint.'", brands_rows = '.$brands_rows.' WHERE id = '.$userID;
+			$q = 'UPDATE '.LOGIN.' SET company="'.$company.'", name="'.$name.'", username="'.$email.'", s3_key="'.$aws_key.'", s3_secret="'.$aws_secret.'", paypal="'.$paypal.'", timezone = "'.$timezone.'", language = "'.$language.'", ses_endpoint = "'.$ses_endpoint.'", brands_rows = '.$brands_rows.' WHERE id = '.$userID;
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
 			if($send_rate!='' && $ses_send_rate!='')
 			{
 				//Update send_rate in database
-				mysqli_query($mysqli, 'UPDATE login SET send_rate = '.$send_rate);
+				mysqli_query($mysqli, 'UPDATE '.LOGIN.' SET send_rate = '.$send_rate);
 			}
 			
 			echo true; 
@@ -85,9 +89,9 @@
 		if($userID != get_app_info('userID')) exit;
 		
 		if($change_pass)
-			$q = 'UPDATE login SET company="'.$company.'", name="'.$name.'", username="'.$email.'", password="'.$pass_encrypted.'", timezone = "'.$timezone.'", language = "'.$language.'" WHERE id = '.$userID;
+			$q = 'UPDATE '.LOGIN.' SET company="'.$company.'", name="'.$name.'", username="'.$email.'", password="'.$pass_encrypted.'", timezone = "'.$timezone.'", language = "'.$language.'" WHERE id = '.$userID;
 		else
-			$q = 'UPDATE login SET company="'.$company.'", name="'.$name.'", username="'.$email.'", timezone = "'.$timezone.'", language = "'.$language.'" WHERE id = '.$userID;
+			$q = 'UPDATE '.LOGIN.' SET company="'.$company.'", name="'.$name.'", username="'.$email.'", timezone = "'.$timezone.'", language = "'.$language.'" WHERE id = '.$userID;
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
@@ -107,7 +111,7 @@
 				$additional_line3 = '';
 			
 		    //save sending app data
-			$q2 = 'UPDATE apps SET app_name = "'.$company.'" '.$additional_line3.' '.$additional_line1.' '.$additional_line2.' WHERE id = '.get_app_info('restricted_to_app').' AND userID = '.get_app_info('main_userID');
+			$q2 = 'UPDATE '.APPS.' SET app_name = "'.$company.'" '.$additional_line3.' '.$additional_line1.' '.$additional_line2.' WHERE id = '.get_app_info('restricted_to_app').' AND userID = '.get_app_info('main_userID');
 			$r2 = mysqli_query($mysqli, $q2);
 			if ($r2)
 			{

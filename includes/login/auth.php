@@ -1,6 +1,7 @@
 <?php 
 	if(isset($_COOKIE['logged_in'])) $cookie = $_COOKIE['logged_in'];
 	else $cookie = '';
+	//
 	
 	if(
 		!is_null(get_app_info('userID')) && 
@@ -15,10 +16,11 @@
 		$request_uri_array = explode('/', $request_uri);
 		$redirect_to = $request_uri_array[count($request_uri_array)-1];
 		
-		if($redirect_to=='')
+		if($redirect_to==''){
 			echo '<script type="text/javascript">window.location = "'.addslashes(get_app_info('path')).'/index.php/auth/login";</script>';
-		else
+		}else{
 			echo '<script type="text/javascript">window.location = "'.addslashes(get_app_info('path')).'/index.php/auth/login?redirect='.addslashes($redirect_to).'";</script>';
+		}
 		exit;
 	}
 ?>

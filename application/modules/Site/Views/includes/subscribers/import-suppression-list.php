@@ -1,7 +1,7 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
-<?php require_once('../helpers/EmailAddressValidator.php');?>
-<?php require_once('../helpers/parsecsv.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
+<?php require_once('includes/helpers/EmailAddressValidator.php');?>
+<?php require_once('includes/helpers/parsecsv.php');?>
 <?php
 
 /********************************/
@@ -16,7 +16,7 @@ if($csvfile_ext1=='php' || $csvfile_ext2!='csv' || $csvfilename=='.htaccess') ex
 $csv = new parseCSV();
 $csv->heading = false;
 $csv->auto($csvfile);
-$databasetable = "suppression_list";
+$databasetable = SUPPRESSION_LIST;
 $fieldseparator = ",";
 $lineseparator = "\n";
 $app = isset($_POST['app']) && is_numeric($_POST['app']) ? mysqli_real_escape_string($mysqli, (int)$_POST['app']) : exit;
@@ -24,7 +24,7 @@ $time = time();
 /********************************/
 
 //get comma separated lists belonging to this app
-$q2 = 'SELECT id FROM lists WHERE app = '.$app;
+$q2 = 'SELECT id FROM '.LISTS.' WHERE app = '.$app;
 $r2 = mysqli_query($mysqli, $q2);
 if ($r2)
 {
@@ -34,7 +34,7 @@ if ($r2)
 }
 
 if(!file_exists($csvfile)) {
-	header("Location: ".get_app_info('path').'/blacklist-suppression?i='.$app.'&e=2'); 
+	header("Location: ".get_app_info('path').'/index.php/site/blacklist-suppression?i='.$app.'&e=2'); 
 	exit;
 }
 
@@ -75,7 +75,7 @@ foreach(explode($lineseparator,$csvcontent) as $line)
 	//check if there's more than 1 column
 	if($columns>1)
 	{
-		header("Location: ".get_app_info('path').'/blacklist-suppression?i='.$app.'&e=1'); 
+		header("Location: ".get_app_info('path').'/index.php/site/blacklist-suppression?i='.$app.'&e=1'); 
 		exit;
 	}
 	
@@ -94,7 +94,7 @@ foreach(explode($lineseparator,$csvcontent) as $line)
 		}
 		
 		//delete email from any existing lists within the brand
-		$q2 = 'DELETE FROM subscribers WHERE list IN ('.$all_lists.') AND email = "'.trim($line).'"';
+		$q2 = 'DELETE FROM '.SUBSCRIBERS.' WHERE list IN ('.$all_lists.') AND email = "'.trim($line).'"';
 		mysqli_query($mysqli, $q2);
 	}
 }
@@ -104,6 +104,6 @@ foreach(explode($lineseparator,$csvcontent) as $line)
 unlink($csvfile);
 
 //return
-header("Location: ".get_app_info('path').'/blacklist-suppression?i='.$app); 
+header("Location: ".get_app_info('path').'/index.php/site/blacklist-suppression?i='.$app); 
 
 ?>

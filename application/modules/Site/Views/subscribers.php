@@ -10,7 +10,7 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/list?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/list?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 		$q = 'SELECT app FROM lists WHERE id = '.$lid;
@@ -23,7 +23,7 @@
 		    }  
 		    if($a!=get_app_info('restricted_to_app'))
 		    {
-			    echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/list?i='.get_app_info('restricted_to_app').'"</script>';
+			    echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/list?i='.get_app_info('restricted_to_app').'"</script>';
 				exit;
 		    }
 		}
@@ -71,15 +71,15 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
     	</div>
     	<h2><?php echo _('Subscriber lists');?></h2> <br/>
 
-    	<button class="btn" onclick="window.location='<?php echo get_app_info('path');?>/update-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>'"><i class="icon-plus-sign"></i> <?php echo _('Add subscribers');?></button> 
-    	<button class="btn" onclick="window.location='<?php echo get_app_info('path');?>/delete-from-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>'"><i class="icon-minus-sign"></i> <?php echo _('Delete subscribers');?></button> 
-    	<button class="btn" onclick="window.location='<?php echo get_app_info('path');?>/unsubscribe-from-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>'"><i class="icon-ban-circle"></i> <?php echo _('Mass unsubscribe');?></button> 
+    	<button class="btn" onclick="window.location='<?php echo get_app_info('path');?>/index.php/site/update-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>'"><i class="icon-plus-sign"></i> <?php echo _('Add subscribers');?></button> 
+    	<button class="btn" onclick="window.location='<?php echo get_app_info('path');?>/index.php/site/delete-from-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>'"><i class="icon-minus-sign"></i> <?php echo _('Delete subscribers');?></button> 
+    	<button class="btn" onclick="window.location='<?php echo get_app_info('path');?>/index.php/site/unsubscribe-from-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>'"><i class="icon-ban-circle"></i> <?php echo _('Mass unsubscribe');?></button> 
     	<?php 
     		//export according to which section user is on
     		if($a=='' && $c=='' && $u=='' && $b=='' && $cp=='' && $g=='')
@@ -125,9 +125,9 @@
 	    		$export_title = _('GDPR subscribers');
     		}     	
     	?>
-    	<button class="btn" onclick="window.location='<?php echo get_app_info('path');?>/includes/subscribers/export-csv.php?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>&<?php echo $filter.'='.$filter_val;?>'"><i class="icon-download-alt"></i> <?php echo _('Export').' '.$export_title;?></button>
+    	<button class="btn" onclick="window.location='<?php echo get_app_info('path');?>/index.php/site/includes/subscribers/export-csv?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>&<?php echo $filter.'='.$filter_val;?>'"><i class="icon-download-alt"></i> <?php echo _('Export').' '.$export_title;?></button>
 		
-		<form class="form-search" action="<?php echo get_app_info('path');?>/subscribers" method="GET" style="float:right;">
+		<form class="form-search" action="<?php echo get_app_info('path');?>/index.php/site/subscribers" method="GET" style="float:right;">
     		<input type="hidden" name="i" value="<?php echo get_app_info('app');?>">
     		<input type="hidden" name="l" value="<?php echo $lid;?>">
     		<?php if($a!=''):?>
@@ -148,13 +148,13 @@
 		</form>
     	
     	<br/><br/>
-    	<p class="well"><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" title=""><span class="label label-info"><?php echo get_lists_data('name', $lid);?></span></a> | <a href="<?php echo get_app_info('path')?>/list?i=<?php echo get_app_info('app');?>" title=""><?php echo _('Back to lists');?></a>
-    	<a href="<?php echo get_app_info('path');?>/edit-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" style="float:right;"><i class="icon-wrench"></i> <?php echo _('List settings');?></a>
+    	<p class="well"><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/index.php/site/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" title=""><span class="label label-info"><?php echo get_lists_data('name', $lid);?></span></a> | <a href="<?php echo get_app_info('path')?>/index.php/site/list?i=<?php echo get_app_info('app');?>" title=""><?php echo _('Back to lists');?></a>
+    	<a href="<?php echo get_app_info('path');?>/index.php/site/edit-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" style="float:right;"><i class="icon-wrench"></i> <?php echo _('List settings');?></a>
     	<a href="#subscribeform" style="float:right;margin-right:20px;" data-toggle="modal"><i class="icon-list-alt"></i> <?php echo _('Subscribe form');?></a>
     	
     	
     	<span class="badge" style="float:right;margin:0 20px 0 -15px;"><?php echo get_segments_count();?></span>
-    	<a href="<?php echo get_app_info('path');?>/segments-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" style="float:right;margin-right:20px;"><i class="icon-filter"></i> <?php echo _('Segments');?></a>
+    	<a href="<?php echo get_app_info('path');?>/index.php/site/segments-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" style="float:right;margin-right:20px;"><i class="icon-filter"></i> <?php echo _('Segments');?></a>
     	
     	<?php 
 	    	$q = 'SELECT cron_ares FROM login WHERE id = '.get_app_info('main_userID');
@@ -167,17 +167,17 @@
 	    	if($cron_ares):
     	?>    	
     	<span class="badge" style="float:right;margin:0 20px 0 -15px;"><?php echo get_autoresponder_count();?></span>
-    	<a href="<?php echo get_app_info('path');?>/autoresponders-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" style="float:right;margin-right:20px;"><i class="icon-time"></i> <?php echo _('Autoresponders');?></a>
+    	<a href="<?php echo get_app_info('path');?>/index.php/site/autoresponders-list?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" style="float:right;margin-right:20px;"><i class="icon-time"></i> <?php echo _('Autoresponders');?></a>
     	<?php else:?>
     	<a href="#ares_cron" style="float:right;margin-right:20px;" data-toggle="modal"><i class="icon-time"></i> <?php echo _('Autoresponders');?></a>
     	<?php endif;?>
     	<span class="badge" style="float:right;margin:0 20px 0 -15px;"><?php echo get_custom_fields_count();?></span>
-    	<a href="<?php echo get_app_info('path');?>/custom-fields?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" style="float:right;margin-right:20px;"><i class="icon-list"></i> <?php echo _('Custom fields');?></a>
+    	<a href="<?php echo get_app_info('path');?>/index.php/site/custom-fields?i=<?php echo get_app_info('app');?>&l=<?php echo $lid;?>" style="float:right;margin-right:20px;"><i class="icon-list"></i> <?php echo _('Custom fields');?></a>
     	</p><br/>
     	
     	<?php 
 	    	//Get gdpr_options
-			$q = 'SELECT gdpr_options, custom_domain, custom_domain_protocol, custom_domain_enabled FROM apps WHERE id = '.get_app_info('app');
+			$q = 'SELECT gdpr_options, custom_domain, custom_domain_protocol, custom_domain_enabled FROM '.APPS.' WHERE id = '.get_app_info('app');
 			$r = mysqli_query($mysqli, $q);
 			if ($r) 
 			{
@@ -195,7 +195,7 @@
 						$app_path = str_replace($domain, $custom_domain, get_app_info('path'));
 						$app_path = str_replace($protocol, $custom_domain_protocol, $app_path);
 					}
-					else $app_path = get_app_info('path');
+					else $app_path = get_app_info('path')."/index.php/site";
 				}
 			}
     	?>
@@ -224,7 +224,7 @@
             <p><?php echo _('The following is an embeddable subscribe form HTML code for this list');?>.</p>
             
             <?php 
-	            $q = 'SELECT gdpr_enabled, marketing_permission, what_to_expect FROM lists WHERE id = '.$lid;
+	            $q = 'SELECT gdpr_enabled, marketing_permission, what_to_expect FROM '.LISTS.' WHERE id = '.$lid;
 				$r = mysqli_query($mysqli, $q);
 				if ($r)
 				{
@@ -247,7 +247,7 @@
 	});
 </script>
 			<br/>
-			<p><?php if(!get_app_info('is_sub_user')): echo _('You can setup reCAPTCHA in the brand settings.'); else: echo _('You can setup reCAPTCHA in the main settings.'); endif;?><br/><?php if(!get_app_info('is_sub_user')): echo _('To subscribe users programmatically, use the API');?> → <a href="https://sendy.co/api?app_path=<?php echo get_app_info('path');?>" style="text-decoration: underline;" target="_blank">https://sendy.co/api</a>.<?php endif;?></p>
+			<p><?php if(!get_app_info('is_sub_user')): echo _('You can setup reCAPTCHA in the brand settings.'); else: echo _('You can setup reCAPTCHA in the main settings.'); endif;?><br/><?php if(!get_app_info('is_sub_user')): echo _('To subscribe users programmatically, use the API');?> → <a href="https://sendy.co/api?app_path=<?php echo get_app_info('path').'/index.php/site';?>" style="text-decoration: underline;" target="_blank">https://sendy.co/api</a>.<?php endif;?></p>
 			</div>
 			
 			<?php if($gdpr_options):?>
@@ -278,7 +278,7 @@
 							    //Load subscribe form HTML code into <pre>
 								function load_subscribe_form_code()
 								{
-									$.post("includes/subscribers/subscribe-form.php", { lid: <?php echo $lid;?>, app: <?php echo get_app_info('app')?>, from_email: "<?php echo get_app_data('from_email');?>" },
+									$.post("subscribers/subscribe-form", { lid: <?php echo $lid;?>, app: <?php echo get_app_info('app')?>, from_email: "<?php echo get_app_data('from_email');?>" },
 									  function(data) {
 									      if(data) $("#form-code").text(data);
 									      else alert("Unable to load subscribe form HTML code. Please try again later!");
@@ -292,7 +292,7 @@
 									    $("#form-code").text("Loading..");
 									    $("#gdpr-description").slideUp();
 									    $("#gdpr-settings").slideDown();
-									    $.post("includes/subscribers/save-gdpr.php", { lid:<?php echo $lid?>, enable_gdpr:"yes", enabled_disable_only:"yes" },
+									    $.post("subscribers/save-gdpr", { lid:<?php echo $lid?>, enable_gdpr:"yes", enabled_disable_only:"yes" },
 							    		  function(data) {
 							    		      if(data) load_subscribe_form_code();
 							    		      else alert("Error saving. Please try again.");
@@ -304,7 +304,7 @@
 									    $("#form-code").text("Loading..");
 									    $("#gdpr-description").slideDown();
 									    $("#gdpr-settings").slideUp();
-									    $.post("includes/subscribers/save-gdpr.php", { lid:<?php echo $lid?>, enable_gdpr:"no", enabled_disable_only:"yes" },
+									    $.post("subscribers/save-gdpr", { lid:<?php echo $lid?>, enable_gdpr:"no", enabled_disable_only:"yes" },
 							    		  function(data) {
 							    		      if(data) load_subscribe_form_code();
 								    		  else alert("Error saving. Please try again.");
@@ -322,7 +322,7 @@
 						    		$("#form-code").text("Loading..");
 						    		$("#gdpr-msg").text("");
 						    		
-									$.post("includes/subscribers/save-gdpr.php", { lid:<?php echo $lid?>, enable_gdpr:enable_gdpr, marketing_permission:marketing_permission, what_to_expect:what_to_expect },
+									$.post("subscribers/save-gdpr", { lid:<?php echo $lid?>, enable_gdpr:enable_gdpr, marketing_permission:marketing_permission, what_to_expect:what_to_expect },
 						    		  function(data) {
 						    		      if(data)
 						    		      {
@@ -364,7 +364,7 @@
 					//Load subscribe form HTML code into <pre>
 					function load_subscribe_form_code()
 					{
-						$.post("includes/subscribers/subscribe-form.php", { lid: <?php echo $lid;?>, app: <?php echo get_app_info('app')?>, from_email: "<?php echo get_app_data('from_email');?>" },
+						$.post("<?php echo get_app_info('path')?>/index.php/site/subscribers/subscribe-form", { lid: <?php echo $lid;?>, app: <?php echo get_app_info('app')?>, from_email: "<?php echo get_app_data('from_email');?>" },
 						  function(data) {
 						      if(data) $("#form-code").text(data);
 						      else alert("Unable to load subscribe form HTML code. Please try again later!");
@@ -393,7 +393,7 @@
 	    
 	    <?php 
     		//Count number of emails skipped during last import
-    		$q = 'SELECT COUNT(*) FROM skipped_emails WHERE list = '.$lid;
+    		$q = 'SELECT COUNT(*) FROM '.SKIPPED_EMAILS.' WHERE list = '.$lid;
     		$r = mysqli_query($mysqli, $q);
     		if ($r) while($row = mysqli_fetch_array($r)) $no_of_skipped_emails = $row['COUNT(*)'];
     		if($no_of_skipped_emails!=0):
@@ -402,7 +402,7 @@
     		<div class="span12">
 	    		<div class="alert">
 		    		<span>
-			    		<span class="icon icon-info-sign"></span> <?php echo $no_of_skipped_emails;?> <?php echo _('emails were skipped from your last import');?>. <?php echo _('To see the list and reasons, export the CSV.');?> <a href="<?php echo get_app_info('path');?>/includes/list/export-skipped-emails.php?l=<?php echo $lid;?>" title="<?php echo _('Export skipped email addresses from your last import');?>"><span class="icon icon-download-alt"></span></a> 
+			    		<span class="icon icon-info-sign"></span> <?php echo $no_of_skipped_emails;?> <?php echo _('emails were skipped from your last import');?>. <?php echo _('To see the list and reasons, export the CSV.');?> <a href="<?php echo get_app_info('path');?>/index.php/site/list/export-skipped-emails?l=<?php echo $lid;?>" title="<?php echo _('Export skipped email addresses from your last import');?>"><span class="icon icon-download-alt"></span></a> 
 		    		</span>
 		    		<span style="float:right;">
 			    		<a href="javascript:void(0)" id="dismiss" title="<?php echo _('Dismiss this notice (CSV will no longer be available for download)');?>"><?php echo _('Dismiss');?> <span class="icon icon-remove"></span></a>
@@ -410,7 +410,7 @@
 		    		<script type="text/javascript">
 			    		$(document).ready(function() {
 				    		$("#dismiss").click(function(){
-					    		$.post("<?php echo get_app_info('path');?>/includes/list/dismiss.php", { l: <?php echo $lid;?> },
+					    		$.post("<?php echo get_app_info('path');?>/index.php/site/list/dismiss", { l: <?php echo $lid;?> },
 			    				  function(data) {
 			    				      if(data) $("#skipped-emails").fadeOut();
 			    				      else alert("Sorry, unable to dismiss. Please try again later!");
@@ -427,17 +427,17 @@
 	    <div class="row-fluid">
 		    <div class="span12">				
 				<ul class="nav nav-tabs">
-				  <li><a href="<?php echo get_app_info('path')?>/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>" id="all"><?php echo _('All');?> <span class="badge badge-info"><?php echo get_totals('', '');?></span></a></li>
-				  <li><a href="<?php echo get_app_info('path')?>/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&a=1" id="active"><?php echo _('Active');?> <span class="badge badge-success"><?php echo get_totals('a', '');?></span></a></li>
+				  <li><a href="<?php echo get_app_info('path')?>/index.php/site/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>" id="all"><?php echo _('All');?> <span class="badge badge-info"><?php echo get_totals('', '');?></span></a></li>
+				  <li><a href="<?php echo get_app_info('path')?>/index.php/site/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&a=1" id="active"><?php echo _('Active');?> <span class="badge badge-success"><?php echo get_totals('a', '');?></span></a></li>
 				  
 				  <?php if(get_totals('gdpr', 1)!=0): //Show GDPR tab only when there are GDPR subscribers?>
-				  <li><a href="<?php echo get_app_info('path')?>/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&g=1" id="gdpr"><?php echo _('GDPR');?> <span class="badge badge-warning"><?php echo get_totals('gdpr', 1);?></span></a></li>
+				  <li><a href="<?php echo get_app_info('path')?>/index.php/site/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&g=1" id="gdpr"><?php echo _('GDPR');?> <span class="badge badge-warning"><?php echo get_totals('gdpr', 1);?></span></a></li>
 				  <?php endif;?>
 					  
-				  <li><a href="<?php echo get_app_info('path')?>/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&c=0" id="unconfirmed"><?php echo _('Unconfirmed');?> <span class="badge"><?php echo get_totals('confirmed', 0);?></span></a></li>
-				  <li><a href="<?php echo get_app_info('path')?>/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&u=1" id="unsubscribed"><?php echo _('Unsubscribed');?> <span class="badge badge-important"><?php echo get_totals('unsubscribed', 1);?></span></a></li>
-				  <li><a href="<?php echo get_app_info('path')?>/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&b=1" id="bounced"><?php echo _('Bounced');?> <span class="badge badge-inverse"><?php echo get_totals('bounced', 1);?></span></a></li>
-				  <li><a href="<?php echo get_app_info('path')?>/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&cp=1" id="complaint"><?php echo _('Marked as spam');?> <span class="badge badge-inverse"><?php echo get_totals('complaint', 1);?></span></a></li>
+				  <li><a href="<?php echo get_app_info('path')?>/index.php/site/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&c=0" id="unconfirmed"><?php echo _('Unconfirmed');?> <span class="badge"><?php echo get_totals('confirmed', 0);?></span></a></li>
+				  <li><a href="<?php echo get_app_info('path')?>/index.php/site/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&u=1" id="unsubscribed"><?php echo _('Unsubscribed');?> <span class="badge badge-important"><?php echo get_totals('unsubscribed', 1);?></span></a></li>
+				  <li><a href="<?php echo get_app_info('path')?>/index.php/site/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&b=1" id="bounced"><?php echo _('Bounced');?> <span class="badge badge-inverse"><?php echo get_totals('bounced', 1);?></span></a></li>
+				  <li><a href="<?php echo get_app_info('path')?>/index.php/site/subscribers?i=<?php echo $_GET['i']?>&l=<?php echo $lid?>&cp=1" id="complaint"><?php echo _('Marked as spam');?> <span class="badge badge-inverse"><?php echo get_totals('complaint', 1);?></span></a></li>
 				</ul>
 		    </div>
 	    </div>
@@ -490,19 +490,19 @@
 		  		$search_line = $s=='' ? '' : 'AND (name LIKE "%'.$s.'%" OR email LIKE "%'.$s.'%" OR custom_fields LIKE "%'.$s.'%" OR notes LIKE "%'.$s.'%")';
 		  		
 		  		if($a=='' && $c=='' && $u=='' && $b=='' && $cp=='' && $g=='')
-					$q = 'SELECT * FROM subscribers WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
+					$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
 				else if($a!='')
-					$q = 'SELECT * FROM subscribers WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND confirmed = 1 AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
+					$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND confirmed = 1 AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
 				else if($c!='')
-					$q = 'SELECT * FROM subscribers WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND confirmed = '.$c.' AND bounced = 0 AND complaint = 0 '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
+					$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND confirmed = '.$c.' AND bounced = 0 AND complaint = 0 '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
 				else if($u!='')
-					$q = 'SELECT * FROM subscribers WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND unsubscribed = '.$u.' AND bounced = 0 '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
+					$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND unsubscribed = '.$u.' AND bounced = 0 '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
 				else if($b!='')
-					$q = 'SELECT * FROM subscribers WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND bounced = '.$b.' '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
+					$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND bounced = '.$b.' '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
 				else if($cp!='')
-					$q = 'SELECT * FROM subscribers WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND complaint = '.$cp.' '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
+					$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND complaint = '.$cp.' '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
 				else if($g!='')
-					$q = 'SELECT * FROM subscribers WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1 AND gdpr = '.$g.' '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
+					$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE list = '.mysqli_real_escape_string($mysqli, $lid).' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1 AND gdpr = '.$g.' '.$search_line.' ORDER BY timestamp DESC LIMIT '.$offset.','.$limit;
 			  	$r = mysqli_query($mysqli, $q);
 			  	if ($r && mysqli_num_rows($r) > 0)
 			  	{
@@ -581,7 +581,7 @@
 							$("#unsubscribe-btn-'.$id.'").click(function(e){
 								e.preventDefault(); 
 								action = $("#unsubscribe-btn-'.$id.'").data("action'.$id.'");
-								$.post("includes/subscribers/unsubscribe.php", { subscriber_id: '.$id.', action: action},
+								$.post("subscribers/unsubscribe", { subscriber_id: '.$id.', action: action},
 								  function(data) {
 								      if(data)
 								      {
@@ -669,7 +669,7 @@
 <script type="text/javascript">
 	$("#delete-subscriber-1").click(function(e){
 		e.preventDefault(); 
-		$.post("includes/subscribers/delete.php", { subscriber_id: $(this).attr("data-id"), option: 1, app: <?php echo get_app_info('app')?> },
+		$.post("<?php echo get_app_info('path')?>/index.php/site/subscribers/delete", { subscriber_id: $(this).attr("data-id"), option: 1, app: <?php echo get_app_info('app')?> },
 		  function(data) {
 		      if(data) 
 		      {
@@ -682,7 +682,7 @@
 	});
 	$("#delete-subscriber-2").click(function(e){
 		e.preventDefault(); 
-		$.post("includes/subscribers/delete.php", { subscriber_id: $(this).attr("data-id"), option: 2, app: <?php echo get_app_info('app')?> },
+		$.post("<?php echo get_app_info('path')?>/index.php/site/subscribers/delete", { subscriber_id: $(this).attr("data-id"), option: 2, app: <?php echo get_app_info('app')?> },
 		  function(data) {
 		      if(data) 
 		      {
@@ -697,7 +697,7 @@
 		s_id = $(this).data("id");
 		$("#subscriber-text").html("<?php echo _('Fetching');?>..");
 		
-		$.post("<?php echo get_app_info('path');?>/includes/subscribers/subscriber-info.php", { id: s_id, app:<?php echo get_app_info('app');?> },
+		$.post("<?php echo get_app_info('path');?>/index.php/site/subscribers/subscriber-info", { id: s_id, app:<?php echo get_app_info('app');?> },
 		  function(data) {
 		      if(data)
 		      {
@@ -737,7 +737,7 @@
 
 <?php 
 	if(!$cron_ares):
-	$server_path_array = explode('subscribers.php', $_SERVER['SCRIPT_FILENAME']);
+	$server_path_array = explode('subscribers', $_SERVER['SCRIPT_FILENAME']);
     $server_path = $server_path_array[0];
 ?>
 <!-- Autoresponder cron instructions -->
@@ -751,7 +751,7 @@
 <h3><?php echo _('Time Interval');?></h3>
 <pre id="command">*/1 * * * * </pre>
 <h3><?php echo _('Command');?></h3>
-<pre id="command">php <?php echo $server_path;?>autoresponders.php > /dev/null 2>&amp;1</pre>
+<pre id="command">php <?php echo $server_path;?>autoresponders > /dev/null 2>&amp;1</pre>
 <p><?php echo _('This command needs to be run every minute in order to check the database for any autoresponder emails to send.');?> <br/><em>(<?php echo _('Note that adding cron jobs vary from hosts to hosts, most offer a UI to add a cron job easily. Check your hosting control panel or consult your host if unsure.');?>)</em>.</p>
 <p><?php echo _('Once added, wait one minute. If your cron job is functioning correctly, you\'ll see the autoresponder options instead of this modal window when you click on the "Autoresponders" button.');?></p>
 </div>
@@ -795,7 +795,7 @@
 						<?php 
 							$month_array = array();
 							$year_array = array();
-							$q = 'SELECT MAX(timestamp) FROM subscribers use index (s_list) WHERE list = '.$lid;
+							$q = 'SELECT MAX(timestamp) FROM '.SUBSCRIBERS.' use index (s_list) WHERE list = '.$lid;
 							$r = mysqli_query($mysqli, $q);
 							if ($r && mysqli_num_rows($r) > 0)
 							{
@@ -915,7 +915,7 @@
 	 						SUM( IF( s.timestamp <= UNIX_TIMESTAMP(NOW() - INTERVAL 1 MONTH), 1, 0 ) ),
 	 						SUM( IF( s.timestamp <= UNIX_TIMESTAMP(NOW()), 1, 0 ) )
 	 
-	 						FROM subscribers s use index (s_list) WHERE list = '.intval($lid).' AND unsubscribed=0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
+	 						FROM '.SUBSCRIBERS.' s use index (s_list) WHERE list = '.intval($lid).' AND unsubscribed=0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
 	 						
 	 			            $r = mysqli_query($mysqli, $q);
 			 				if ($r && mysqli_num_rows($r)  > 0)

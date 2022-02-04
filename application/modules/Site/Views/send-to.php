@@ -1,9 +1,10 @@
-<?php include('includes/header.php');?>
-<?php include('includes/login/auth.php');?>
-<?php include('includes/create/main.php');?>
+<?php require('includes/header.php');?>
+<?php require('includes/login/auth.php');?>
+<?php require('includes/create/main.php');?>
 <?php include('includes/helpers/short.php');?>
-<?php include('includes/create/timezone.php');?>
+<?php require('includes/create/timezone.php');?>
 <?php require_once('includes/helpers/ses.php'); ?>
+
 <?php
 	//IDs
 	$cid = isset($_GET['c']) && is_numeric($_GET['c']) ? mysqli_real_escape_string($mysqli, (int)$_GET['c']) : exit;
@@ -13,7 +14,7 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/send-to?i='.get_app_info('restricted_to_app').'&c='.$cid.'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/send-to?i='.get_app_info('restricted_to_app').'&c='.$cid.'"</script>';
 			exit;
 		}
 	}
@@ -22,7 +23,7 @@
 	$aws_keys_available = get_app_info('s3_key')!='' && get_app_info('s3_secret')!='' ? 'true' : 'false';
 ?>
 
-<?php include('js/create/main.php');?>
+<?php require('js/create/main.php');?>
 <script type="text/javascript" src="<?php echo get_app_info('path');?>/js/pickaday/pikaday.js"></script>
 <script type="text/javascript" src="<?php echo get_app_info('path');?>/js/pickaday/pikaday.jquery.js"></script>
 <link rel="stylesheet" type="text/css" href="<?php echo get_app_info('path');?>/js/pickaday/pikaday.css" />
@@ -36,7 +37,7 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
     	</div>
@@ -58,7 +59,7 @@
 
 		<?php
 	    	//check if cron is set up and get main user's email address
-	    	$q = 'SELECT username, cron FROM login WHERE id = '.get_app_info('main_userID');
+	    	$q = 'SELECT username, cron FROM '.LOGIN.' WHERE id = '.get_app_info('main_userID');
 	    	$r = mysqli_query($mysqli, $q);
 	    	if ($r)
 	    	{
@@ -72,7 +73,7 @@
 	    	$timezone = get_app_info('timezone');
 
 	    	//get scheduled settings
-		    $q = 'SELECT send_date, timezone, from_email FROM campaigns WHERE id = '.$cid;
+		    $q = 'SELECT send_date, timezone, from_email FROM '.CAMPAIGNS.' WHERE id = '.$cid;
   			$r = mysqli_query($mysqli, $q);
   			if ($r)
   			{
@@ -267,14 +268,14 @@
 			}
 
 			//Get sorting preference
-			$q = 'SELECT templates_lists_sorting FROM apps WHERE id = '.get_app_info('app');
+			$q = 'SELECT templates_lists_sorting FROM '.APPS.' WHERE id = '.get_app_info('app');
 			$r = mysqli_query($mysqli, $q);
 			if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $templates_lists_sorting = $row['templates_lists_sorting'];
 			$sortby = $templates_lists_sorting=='date' ? 'id DESC' : 'name ASC';
 	    ?>
 
     	<h2><?php echo _('Test send this campaign');?></h2><br/>
-	    <form action="<?php echo get_app_info('path')?>/includes/create/test-send.php" method="POST" accept-charset="utf-8" class="form-vertical" id="test-form">
+	    <form action="<?php echo get_app_info('path')?>/index.php/site/create/test-send" method="POST" accept-charset="utf-8" class="form-vertical" id="test-form">
 	    	<label class="control-label" for="test_email"><?php echo _('Test email(s)');?></label>
 	    	<div class="control-group">
 		    	<div class="controls">
@@ -290,12 +291,12 @@
 	    <h2><?php echo _('Define recipients');?></h2><br/>
 		    <?php if(get_app_info('is_sub_user')):?>
 			    <?php if(paid()):?>
-				<form action="<?php echo get_app_info('path')?>/includes/create/send-now.php" method="POST" accept-charset="utf-8" class="form-vertical" id="real-form">
+				<form action="<?php echo get_app_info('path')?>/index.php/site/create/send-now" method="POST" accept-charset="utf-8" class="form-vertical" id="real-form">
 			    <?php else:?>
-				<form action="<?php echo get_app_info('path')?>/payment" method="POST" accept-charset="utf-8" class="form-vertical" id="pay-form">
+				<form action="<?php echo get_app_info('path')?>/index.php/site/payment" method="POST" accept-charset="utf-8" class="form-vertical" id="pay-form">
 			    <?php endif;?>
 			<?php else:?>
-				<form action="<?php echo get_app_info('path')?>/includes/create/send-now.php" method="POST" accept-charset="utf-8" class="form-vertical" id="real-form">
+				<form action="<?php echo get_app_info('path')?>/index.php/site/create/send-now" method="POST" accept-charset="utf-8" class="form-vertical" id="real-form">
 			<?php endif;?>
 	    	<div class="control-group">
 	            <label class="control-label" for="multiSelect"><?php echo _('Choose your lists & segments');?></label>
@@ -313,7 +314,7 @@
 									$list_name = stripslashes($row['name']);
 									$list_selected = '';
 
-									$q2 = 'SELECT lists FROM campaigns WHERE id = '.$cid;
+									$q2 = 'SELECT lists FROM '.CAMPAIGNS.' WHERE id = '.$cid;
 									$r2 = mysqli_query($mysqli, $q2);
 									if ($r2)
 									{
@@ -338,7 +339,7 @@
 						<?php if(have_segments()):?>
 							<optgroup label="<?php echo _('Segments');?>">
 							<?php
-								$q = 'SELECT id, name, list FROM seg WHERE app = '.get_app_info('app');
+								$q = 'SELECT id, name, list FROM '.SEG.' WHERE app = '.get_app_info('app');
 								$r = mysqli_query($mysqli, $q);
 								if ($r && mysqli_num_rows($r) > 0)
 								{
@@ -349,7 +350,7 @@
 										$seg_list_id = $row['list'];
 										$list_selected = '';
 
-										$q2 = 'SELECT segs FROM campaigns WHERE id = '.$cid;
+										$q2 = 'SELECT segs FROM '.CAMPAIGNS.' WHERE id = '.$cid;
 										$r2 = mysqli_query($mysqli, $q2);
 										if ($r2)
 										{
@@ -391,7 +392,7 @@
 					<select multiple="multiple" id="email_list_exclude" name="email_list_exclude[]" style="height:200px; width: 85%;">
 						<optgroup label="Lists">
 						<?php
-							$q = 'SELECT * FROM lists WHERE app = '.get_app_info('app').' AND userID = '.get_app_info('main_userID').' ORDER BY '.$sortby;
+							$q = 'SELECT * FROM '.LISTS.' WHERE app = '.get_app_info('app').' AND userID = '.get_app_info('main_userID').' ORDER BY '.$sortby;
 							$r = mysqli_query($mysqli, $q);
 							if ($r && mysqli_num_rows($r) > 0)
 							{
@@ -401,7 +402,7 @@
 									$list_name = stripslashes($row['name']);
 									$list_selected = '';
 
-									$q2 = 'SELECT lists_excl, segs_excl FROM campaigns WHERE id = '.$cid;
+									$q2 = 'SELECT lists_excl, segs_excl FROM '.CAMPAIGNS.' WHERE id = '.$cid;
 									$r2 = mysqli_query($mysqli, $q2);
 									if ($r2)
 									{
@@ -436,7 +437,7 @@
 						<?php if(have_segments()):?>
 							<optgroup label="<?php echo _('Segments');?>">
 							<?php
-								$q = 'SELECT id, name, list FROM seg WHERE app = '.get_app_info('app');
+								$q = 'SELECT id, name, list FROM seg WHERE '.APPS.' = '.get_app_info('app');
 								$r = mysqli_query($mysqli, $q);
 								if ($r && mysqli_num_rows($r) > 0)
 								{
@@ -447,7 +448,7 @@
 										$seg_list_id = $row['list'];
 										$list_selected = '';
 
-										$q2 = 'SELECT segs_excl FROM campaigns WHERE id = '.$cid;
+										$q2 = 'SELECT segs_excl FROM '.CAMPAIGNS.' WHERE id = '.$cid;
 										$r2 = mysqli_query($mysqli, $q2);
 										if ($r2)
 										{
@@ -473,7 +474,7 @@
             </div>
 	        <input type="hidden" name="cid" value="<?php echo $cid;?>">
 	        <input type="hidden" name="uid" value="<?php echo $aid;?>">
-	        <input type="hidden" name="path" value="<?php echo get_app_info('path');?>">
+	        <input type="hidden" name="path" value="<?php echo get_app_info('path');?>/index.php/site">
 	        <input type="hidden" name="grand_total_val" id="grand_total_val">
 	        <input type="hidden" name="cron" value="<?php echo $cron;?>">
 	        <input type="hidden" name="total_recipients" id="total_recipients">
@@ -541,7 +542,7 @@
 							if(!$no_expiry)
 							{
 								//Reset current limit to 0 and set the month_of_next_reset to the next month
-								$q = 'UPDATE apps SET current_quota = 0, month_of_next_reset = "'.$month_next.'", year_of_next_reset = "'.$year_next.'" WHERE id = '.get_app_info('app');
+								$q = 'UPDATE '.APPS.' SET current_quota = 0, month_of_next_reset = "'.$month_next.'", year_of_next_reset = "'.$year_next.'" WHERE id = '.get_app_info('app');
 								$r = mysqli_query($mysqli, $q);
 								if($r)
 								{
@@ -673,12 +674,12 @@
 							{
 								$TopicArn = $subscription['TopicArn'];
 								$Endpoint = $subscription['Endpoint'];
-								if($Endpoint==get_app_info('path').'/includes/campaigns/bounces.php' || $Endpoint==get_app_info('path').'includes/campaigns/bounces.php')
+								if($Endpoint==get_app_info('path').'/index.php/site/campaigns/bounces' || $Endpoint==get_app_info('path').'index.php/site/campaigns/bounces')
 								{
 									$bounces_topic_arn = $TopicArn;
 									$bounces_subscription_arn = $Endpoint;
 								}
-								if($Endpoint==get_app_info('path').'/includes/campaigns/complaints.php' || $Endpoint==get_app_info('path').'includes/campaigns/complaints.php')
+								if($Endpoint==get_app_info('path').'/index.php/site/campaigns/complaints' || $Endpoint==get_app_info('path').'includes/campaigns/complaints.')
 								{
 									$complaints_topic_arn = $TopicArn;
 									$complaints_subscription_arn = $Endpoint;
@@ -697,11 +698,11 @@
 						    if($bounces_topic_arn!='' && $complaints_topic_arn!='')
 						    {
 							    //Create 'bounces' SNS subscription
-								try {$bounces_subscribe_endpoint = $sns->Subscribe($bounces_topic_arn, $protocol, get_app_info('path').'/includes/campaigns/bounces.php');}
+								try {$bounces_subscribe_endpoint = $sns->Subscribe($bounces_topic_arn, $protocol, get_app_info('path').'/index.php/site/campaigns/bounces');}
 								catch (SNSException $e) {echo '<p class="error">'._('Error').' ($sns->Subscribe(\'bounces\')): '.$e->getMessage().'. '._('Please try again by refreshing this page. If this error persist, visit your Amazon SNS console and delete all \'Topics\' and \'Subscriptions\' and try again.')."<br/><br/></p>";}
 
 								//Create 'complaints' SNS subscription
-								try {$complaints_subscribe_endpoint = $sns->Subscribe($complaints_topic_arn, $protocol, get_app_info('path').'/includes/campaigns/complaints.php');}
+								try {$complaints_subscribe_endpoint = $sns->Subscribe($complaints_topic_arn, $protocol, get_app_info('path').'/index.php/site/campaigns/complaints');}
 								catch (SNSException $e) {echo '<p class="error">'._('Error').' ($sns->Subscribe(\'complaints\')): '.$e->getMessage().'. '._('Please try again by refreshing this page. If this error persist, visit your Amazon SNS console and delete all \'Topics\' and \'Subscriptions\' and try again.')."<br/><br/></p>";}
 						    }
 						    else echo '<p class="error">'._('Error: Unable to create bounces and complaints SNS topics, please try again by refreshing this page.')."<br/><br/></p>";
@@ -825,7 +826,7 @@
 	    </form>
 
 	    <?php if(!$cron):
-		    $server_path_array = explode('send-to.php', $_SERVER['SCRIPT_FILENAME']);
+		    $server_path_array = explode('send-to', $_SERVER['SCRIPT_FILENAME']);
 		    $server_path = $server_path_array[0];
 	    ?>
 	    <div id="cron-instructions" class="modal hide fade">
@@ -838,7 +839,7 @@
             <h3><?php echo _('Time Interval');?></h3>
 <pre id="command">*/5 * * * * </pre>
             <h3><?php echo _('Command');?></h3>
-            <pre id="command">php <?php echo $server_path;?>scheduled.php > /dev/null 2>&amp;1</pre>
+            <pre id="command">php <?php echo $server_path;?>scheduled > /dev/null 2>&amp;1</pre>
             <p><?php echo _('This command needs to be run every 5 minutes in order to check the database for any scheduled campaigns to send.');?><br/><em><?php echo _('(Note that adding cron jobs vary from hosts to hosts, most offer a UI to add a cron job easily. Check your hosting control panel or consult your host if unsure.)');?></em>.</p>
             <p><?php echo _('Once added, wait around 5 minutes. If your cron job is functioning correctly, you\'ll see the scheduling options instead of this modal window when you click on "Schedule this campaign?".');?></p>
             </div>
@@ -858,17 +859,17 @@
 	    <div class="well" id="schedule-form-wrapper" <?php echo $schedule_form_style;?>>
 	    	<?php if(get_app_info('is_sub_user')):?>
 			    <?php if(paid()):?>
-			    <form action="<?php echo get_app_info('path');?>/includes/create/send-later.php" method="POST" accept-charset="utf-8" id="schedule-form">
+			    <form action="<?php echo get_app_info('path');?>/index.php/site/create/send-later" method="POST" accept-charset="utf-8" id="schedule-form">
 			    <input type="hidden" name="total_recipients2" id="total_recipients2">
 		    	<?php else:?>
-			    <form action="<?php echo get_app_info('path');?>/payment" method="POST" accept-charset="utf-8" id="schedule-form">
+			    <form action="<?php echo get_app_info('path');?>/index.php/site/payment" method="POST" accept-charset="utf-8" id="schedule-form">
 			    <input type="hidden" name="pay-and-schedule" value="true"/>
 			    <input type="hidden" name="paypal2" value="<?php echo get_paypal();?>">
 			    <input type="hidden" name="grand_total_val2" id="grand_total_val2">
 			    <input type="hidden" name="total_recipients2" id="total_recipients2">
 			    <?php endif;?>
 			<?php else:?>
-				<form action="<?php echo get_app_info('path');?>/includes/create/send-later.php" method="POST" accept-charset="utf-8" id="schedule-form">
+				<form action="<?php echo get_app_info('path');?>/index.php/site/create/send-later" method="POST" accept-charset="utf-8" id="schedule-form">
 				<input type="hidden" name="total_recipients2" id="total_recipients2">
 		    <?php endif;?>
 		    	<h3><i class="icon-ok icon-time" style="margin-top:5px;"></i> <?php echo _('Schedule this campaign');?></h3><br/>
@@ -952,7 +953,7 @@
 				<?php endif;?>
 	    	</form>
     	</div>
-	    <div id="edit-newsletter"><a href="<?php echo get_app_info('path')?>/edit?i=<?php echo get_app_info('app')?>&c=<?php echo $cid;?>" title=""><i class="icon-pencil"></i> <?php echo _('Edit newsletter');?></a></div>
+	    <div id="edit-newsletter"><a href="<?php echo get_app_info('path')?>/index.php/site/edit?i=<?php echo get_app_info('app')?>&c=<?php echo $cid;?>" title=""><i class="icon-pencil"></i> <?php echo _('Edit newsletter');?></a></div>
     </div>
 
     <div class="span7">
@@ -968,10 +969,10 @@
 	    	<p><strong><?php echo _('Opens tracking');?></strong> <?php echo get_saved_data('opens_tracking') ? '<span class="label label-success">'._('Enabled').'</span>' : '<span class="label">'._('Disabled').'</span>';?></p>
 	    	<p><strong><?php echo _('Clicks tracking');?></strong> <?php echo get_saved_data('links_tracking') ? '<span class="label label-success">'._('Enabled').'</span>' : '<span class="label">'._('Disabled').'</span>';?></p>
 	    	<?php
-		        if (file_exists('uploads/attachments/'.$cid))
+		        if (file_exists('././././././uploads/attachments/'.$cid))
 				{
 					echo '<p><strong>'._('Attachments').'</strong>';
-					if($handle = opendir('uploads/attachments/'.$cid))
+					if($handle = opendir('././././././uploads/attachments/'.$cid))
 					{
 						$i = -1;
 					    while (false !== ($file = readdir($handle)))
@@ -985,8 +986,8 @@
 											if(strlen($filen)>30) $filen = substr($file, 0, 30).'...';
 											echo $filen;
 										?>
-										(<?php echo round((filesize('uploads/attachments/'.$cid.'/'.$file)/1000000), 2);?>MB)
-										<a href="<?php echo get_app_info('path');?>/includes/create/delete-attachment.php" data-filename="<?php echo $file;?>" title="<?php echo _('Delete');?>" id="delete<?php echo $i;?>"><i class="icon icon-trash"></i></a>
+										(<?php echo round((filesize('././././././uploads/attachments/'.$cid.'/'.$file)/1000000), 2);?>MB)
+										<a href="<?php echo get_app_info('path');?>/index.php/site/create/delete-attachment" data-filename="<?php echo $file;?>" title="<?php echo _('Delete');?>" id="delete<?php echo $i;?>"><i class="icon icon-trash"></i></a>
 										<script type="text/javascript">
 											$("#delete<?php echo $i?>").click(function(e){
 												e.preventDefault();
@@ -1027,7 +1028,7 @@
 				}
 	        ?>
 	    	</div>
-	    	<iframe src="<?php echo get_app_info('path');?>/w/<?php echo short($cid);?>?<?php echo time();?>" id="preview-iframe"></iframe>
+	    	<iframe src="<?php echo get_app_info('path');?>/index.php/site/w/<?php echo short($cid);?>?<?php echo time();?>" id="preview-iframe"></iframe>
     	</blockquote>
     </div>
 </div>

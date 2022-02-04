@@ -8,7 +8,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM apps WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -65,7 +65,7 @@
 		$clicks_array = array();
 		$clicks_unique = 0;
 		
-		$q = 'SELECT * FROM links WHERE ares_emails_id = '.$cid;
+		$q = 'SELECT * FROM '.LINKS.' WHERE ares_emails_id = '.$cid;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -94,7 +94,7 @@
 		
 		$id = $ares_email_id==0 ? mysqli_real_escape_string($mysqli, (int)$_GET['ae']) : $ares_email_id;
 		
-		$q = 'SELECT '.$val.' FROM ares_emails WHERE id = '.$id;
+		$q = 'SELECT '.$val.' FROM '.ARES_EMAILS.' WHERE id = '.$id;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{

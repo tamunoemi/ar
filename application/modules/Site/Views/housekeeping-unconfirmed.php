@@ -8,12 +8,12 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/housekeeping-unconfirmed?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/housekeeping-unconfirmed?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 		else if(get_app_info('campaigns_only')==1 && get_app_info('templates_only')==1 && get_app_info('lists_only')==1 && get_app_info('reports_only')==1)
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/logout"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/auth/logout"</script>';
 			exit;
 		}
 		else if(get_app_info('lists_only')==1)
@@ -38,7 +38,7 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 		    	</div>
@@ -66,7 +66,7 @@
 	                <tr>
 		              <?php 
 			              //Check if there are any double opt-in lists, if not, hide the table headers
-			              $q = 'SELECT id FROM lists WHERE app = '.get_app_info('app').' AND opt_in = 1';
+			              $q = 'SELECT id FROM '.LISTS.' WHERE app = '.get_app_info('app').' AND opt_in = 1';
 			              $r = mysqli_query($mysqli, $q);
 			              if (mysqli_num_rows($r) != 0):
 			              $total_lists = mysqli_num_rows($r);
@@ -93,10 +93,10 @@
 						        else if(e.currentTarget.id=="delete-btn-2weeks") action = "3";
 						        else if(e.currentTarget.id=="delete-btn-all") action = "0";
 						        
-								$.post("includes/subscribers/delete-unconfirmed.php", { app: <?php echo get_app_info('app');?>, action: action},
+								$.post("index.php/site/subscribers/delete-unconfirmed", { app: <?php echo get_app_info('app');?>, action: action},
 								  function(data) {
 								      if(data)
-								      	window.location = "<?php echo get_app_info('path');?>/housekeeping-unconfirmed?i=<?php echo get_app_info('app');?>";
+								      	window.location = "<?php echo get_app_info('path');?>/index.php/site/housekeeping-unconfirmed?i=<?php echo get_app_info('app');?>";
 								      else
 								      	alert("<?php echo _('Sorry, unable to remove subscribers. Please try again later!');?>");
 								  }
@@ -112,7 +112,7 @@
 							$total_pages = ceil($total_lists/$limit);
 							$offset = $p!=null ? ($p-1) * $limit : 0;
 								                	
-		                	$q = 'SELECT id, name FROM lists WHERE app = '.get_app_info('app').' AND userID = '.get_app_info('main_userID').' AND opt_in = 1 ORDER BY name ASC LIMIT '.$offset.','.$limit;
+		                	$q = 'SELECT id, name FROM '.LISTS.' WHERE app = '.get_app_info('app').' AND userID = '.get_app_info('main_userID').' AND opt_in = 1 ORDER BY name ASC LIMIT '.$offset.','.$limit;
 		                	$r = mysqli_query($mysqli, $q);
 		                	if ($r && mysqli_num_rows($r) > 0)
 		                	{
@@ -138,13 +138,13 @@
 		                			
 		                			echo '
 		                			<tr id="uc-'.$lid.'">
-			                			<td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$lid.'">'.$list_name.' <span class="badge badge-success">'.get_totals('a', '', $lid).'</span></a></td>
-			                			<td><span class="label"><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$lid.'&c=0">'._('Unconfirmed').'</a></span></td>
+			                			<td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$lid.'">'.$list_name.' <span class="badge badge-success">'.get_totals('a', '', $lid).'</span></a></td>
+			                			<td><span class="label"><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$lid.'&c=0">'._('Unconfirmed').'</a></span></td>
 			                			<td>'.$unconfirmed_delete_btn1.' '.$subscriber_count_1week.'</td>
 			                			<td>'.$unconfirmed_delete_btn2.' '.$subscriber_count_2week.'</td>
 			                			<td>'.$unconfirmed_delete_btn3.' '.$subscriber_count_2week_more.'</td>
 			                			<td>'.$unconfirmed_delete_btn4.' '.$subscriber_count_all.'</td>
-			                			<td><a href="'.get_app_info('path').'/includes/subscribers/export-csv.php?i='.get_app_info('app').'&l='.$lid.'&c=0" title="Export all unconfirmed subscribers"><i class="icon icon-download-alt"></i></a></td>
+			                			<td><a href="'.get_app_info('path').'/index.php/site/subscribers/export-csv?i='.get_app_info('app').'&l='.$lid.'&c=0" title="Export all unconfirmed subscribers"><i class="icon icon-download-alt"></i></a></td>
 			                			
 			                			<script type="text/javascript">
 								        $("#delete-btn-'.$lid.'-1week").click(function(e){

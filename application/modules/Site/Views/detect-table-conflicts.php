@@ -36,7 +36,7 @@
 	dbConnect();
 	
 	//Tables to check
-	$table_name = array('apps', 'ares', 'ares_emails', 'campaigns', 'links', 'lists', 'login', 'queue', 'subscribers', 'template', 'zapier');
+	$table_name = array(APPS, ARES, ARES_EMAILS, CAMPAIGNS, LINKS, LINKS, LOGIN, QUEUE, SUBSCRIBERS, TEMPLATE, ZAPIER);
 	
 	//Check conflicts
 	for($i=0;$i<count($table_name);$i++)

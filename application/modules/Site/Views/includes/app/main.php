@@ -10,7 +10,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM apps WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('userID');
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -28,7 +28,7 @@
 		global $mysqli;
 		global $app;
 		
-		$q = 'SELECT '.$val.' FROM apps WHERE id = "'.mysqli_real_escape_string($mysqli, $app).'" AND userID = '.get_app_info('userID');
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = "'.mysqli_real_escape_string($mysqli, $app).'" AND userID = '.get_app_info('userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -46,7 +46,7 @@
 		global $mysqli;
 		global $app;
 		
-		$q = 'SELECT '.$val.' FROM login WHERE app = '.mysqli_real_escape_string($mysqli, $app);
+		$q = 'SELECT '.$val.' FROM '.LOGIN.' WHERE app = '.mysqli_real_escape_string($mysqli, $app);
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{

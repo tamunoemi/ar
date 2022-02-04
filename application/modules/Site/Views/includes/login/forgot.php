@@ -7,11 +7,11 @@
 //                          INIT                        //
 //------------------------------------------------------//
 
-include('../functions.php');
-include('../helpers/PHPMailerAutoload.php');
-require_once('../helpers/ses.php');
-require_once('../helpers/EmailAddressValidator.php');
-require_once('../helpers/short.php');
+include('includes/functions.php');
+include('includes/helpers/PHPMailerAutoload.php');
+require_once('includes/helpers/ses.php');
+require_once('includes/helpers/EmailAddressValidator.php');
+require_once('includes/helpers/short.php');
 
 $email = mysqli_real_escape_string($mysqli, $_POST['email']);
 $email_domain_array = explode('@', $email);
@@ -23,7 +23,7 @@ $app_path = get_app_info('path');
 //------------------------------------------------------//
 
 //Get 'main user' login email address
-$r = mysqli_query($mysqli, 'SELECT id, username, s3_key, s3_secret, ses_endpoint, api_key FROM login ORDER BY id ASC LIMIT 1');
+$r = mysqli_query($mysqli, 'SELECT id, username, s3_key, s3_secret, ses_endpoint, api_key FROM '.LOGIN.' ORDER BY id ASC LIMIT 1');
 if ($r) 
 {
 	while($row = mysqli_fetch_array($r)) 
@@ -37,7 +37,7 @@ if ($r)
 	}
 }
 
-$q = 'SELECT id, company, app FROM login WHERE username = "'.$email.'" LIMIT 1';
+$q = 'SELECT id, company, app FROM '.LOGIN.' WHERE username = "'.$email.'" LIMIT 1';
 $r = mysqli_query($mysqli, $q);
 if ($r && mysqli_num_rows($r) > 0)
 {
@@ -49,14 +49,14 @@ if ($r && mysqli_num_rows($r) > 0)
     } 
     
     $rpk = ran_string(20, 20, true, false, true);    
-    $q2 = 'UPDATE login SET reset_password_key = "'.$rpk.'" WHERE id = '.$main_user_id;
+    $q2 = 'UPDATE '.LOGIN.' SET reset_password_key = "'.$rpk.'" WHERE id = '.$main_user_id;
     $r2 = mysqli_query($mysqli, $q2);
     if ($r2)
     {
 	    $password_reset_link = $app_path.'/includes/login/reset.php?d='.short('{"rpk":"'.$rpk.'", "id":"'.$uid.'"}');    
     }
     
-    $q2 = 'SELECT from_email FROM apps WHERE id = '.$app;
+    $q2 = 'SELECT from_email FROM '.APPS.' WHERE id = '.$app;
     $r2 = mysqli_query($mysqli, $q2);
     if ($r2) while($row = mysqli_fetch_array($r2)) $from_email = $row['from_email'];
     $from_email = $from_email=='' ? $email : $from_email;

@@ -84,7 +84,7 @@
 		}
 		
 		//Set language
-		$q = 'SELECT login.language FROM lists, login WHERE lists.id = '.$list_id.' AND login.app = lists.app';
+		$q = 'SELECT '.LOGIN.'.language FROM '.LISTS.', '.LOGIN.' WHERE '.LISTS.'.id = '.$list_id.' AND '.LOGIN.'.app = '.LISTS.'.app';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $language = $row['language'];
 		set_locale($language);
@@ -126,7 +126,7 @@
 		$return_boolean = mysqli_real_escape_string($mysqli, $_POST['boolean']); //compulsory
 		
 		//Set language
-		$q = 'SELECT login.language FROM lists, login WHERE lists.id = '.$list_id.' AND login.app = lists.app';
+		$q = 'SELECT '.LOGIN.'.language FROM '.LISTS.', '.LOGIN.' WHERE '.LISTS.'.id = '.$list_id.' AND '.LOGIN.'.app = '.LISTS.'.app';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $language = $row['language'];
 		set_locale($language);
@@ -165,7 +165,7 @@
 	}
 	
 	//Check if email exists in the list
-	$q = 'SELECT id FROM subscribers WHERE email = "'.$email.'" AND list = '.$list_id;
+	$q = 'SELECT id FROM '.SUBSCRIBERS.' WHERE email = "'.$email.'" AND list = '.$list_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) == 0)
 	{
@@ -178,12 +178,12 @@
 	}
 	
 	//Get app id of this subscriber
-	$q = 'SELECT app FROM lists WHERE id = '.$list_id;
+	$q = 'SELECT app FROM '.LISTS.' WHERE id = '.$list_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r) while($row = mysqli_fetch_array($r)) $app = $row['app'];
 	
 	//Check if user set "double opt-out" in the list settings
-	$q = 'SELECT unsubscribe_confirm FROM lists WHERE id = '.$list_id;
+	$q = 'SELECT unsubscribe_confirm FROM '.LISTS.' WHERE id = '.$list_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r) while($row = mysqli_fetch_array($r)) $unsubscribe_confirm = $row['unsubscribe_confirm'];
 	
@@ -192,7 +192,7 @@
 		$feedback = !isset($_GET['confirm']) ? _('Confirm unsubscribe?') : '';
 		
 	//get from name and from email
-	$q3 = 'SELECT from_name, from_email, reply_to, smtp_host, smtp_port, smtp_ssl, smtp_username, smtp_password, allocated_quota, custom_domain, custom_domain_protocol, custom_domain_enabled FROM apps WHERE id = '.$app;
+	$q3 = 'SELECT from_name, from_email, reply_to, smtp_host, smtp_port, smtp_ssl, smtp_username, smtp_password, allocated_quota, custom_domain, custom_domain_protocol, custom_domain_enabled FROM '.APPS.' WHERE id = '.$app;
 	$r3 = mysqli_query($mysqli, $q3);
 	if ($r3)
 	{
@@ -228,7 +228,7 @@
 	&& $feedback!=_('Confirm unsubscribe?'))
 	{
 		//check if unsubscribe_all_list
-		$q = 'SELECT userID, unsubscribe_all_list, unsubscribed_url, goodbye, goodbye_subject, goodbye_message FROM lists WHERE id = '.$list_id;
+		$q = 'SELECT userID, unsubscribe_all_list, unsubscribed_url, goodbye, goodbye_subject, goodbye_message FROM '.LISTS.' WHERE id = '.$list_id;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -244,7 +244,7 @@
 		}
 		
 		//get comma separated lists belonging to this app
-		$q = 'SELECT id FROM lists WHERE app = '.$app;
+		$q = 'SELECT id FROM '.LISTS.' WHERE app = '.$app;
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
@@ -256,31 +256,31 @@
 		if(empty($campaign_id) || $return_boolean=='true')
 		{
 			if($unsubscribe_all_list) //if user wants to unsubscribe email from ALL lists
-				$q = 'UPDATE subscribers SET unsubscribed = 1, timestamp = '.$time.' WHERE email = "'.$email.'" AND list IN ('.$all_lists.')';
+				$q = 'UPDATE '.SUBSCRIBERS.' SET unsubscribed = 1, timestamp = '.$time.' WHERE email = "'.$email.'" AND list IN ('.$all_lists.')';
 			else
-				$q = 'UPDATE subscribers SET unsubscribed = 1, timestamp = '.$time.' WHERE email = "'.$email.'" AND list = '.$list_id;
+				$q = 'UPDATE '.SUBSCRIBERS.' SET unsubscribed = 1, timestamp = '.$time.' WHERE email = "'.$email.'" AND list = '.$list_id;
 		}
 		else
 		{
 			if($unsubscribe_all_list) //if user wants to unsubscribe email from ALL lists
 			{
 				//unsubscribe email from all lists
-				$q = 'UPDATE subscribers SET unsubscribed = 1, timestamp = '.$time.' WHERE email = "'.$email.'" AND list IN ('.$all_lists.')'; 
+				$q = 'UPDATE '.SUBSCRIBERS.' SET unsubscribed = 1, timestamp = '.$time.' WHERE email = "'.$email.'" AND list IN ('.$all_lists.')'; 
 				
 				//then update last_campaign for only the list user unsubscribed from (so that report will show unsubscribed number correctly)
 				//if this is an autoresponder unsubscribe,
 				if(count($i_array)==4 && $i_array[3]=='a')
-					mysqli_query($mysqli, 'UPDATE subscribers SET last_ares = '.$campaign_id.' WHERE email = "'.$email.'" AND list = '.$list_id); 
+					mysqli_query($mysqli, 'UPDATE '.SUBSCRIBERS.' SET last_ares = '.$campaign_id.' WHERE email = "'.$email.'" AND list = '.$list_id); 
 				else
-					mysqli_query($mysqli, 'UPDATE subscribers SET last_campaign = '.$campaign_id.' WHERE email = "'.$email.'" AND list = '.$list_id); 
+					mysqli_query($mysqli, 'UPDATE '.SUBSCRIBERS.' SET last_campaign = '.$campaign_id.' WHERE email = "'.$email.'" AND list = '.$list_id); 
 			}
 			else
 			{
 				//if this is an autoresponder unsubscribe,
 				if(count($i_array)==4 && $i_array[3]=='a')
-					$q = 'UPDATE subscribers SET unsubscribed = 1, timestamp = '.$time.', last_ares = '.$campaign_id.' WHERE email = "'.$email.'" AND list = '.$list_id;
+					$q = 'UPDATE '.SUBSCRIBERS.' SET unsubscribed = 1, timestamp = '.$time.', last_ares = '.$campaign_id.' WHERE email = "'.$email.'" AND list = '.$list_id;
 				else
-					$q = 'UPDATE subscribers SET unsubscribed = 1, timestamp = '.$time.', last_campaign = '.$campaign_id.' WHERE email = "'.$email.'" AND list = '.$list_id;
+					$q = 'UPDATE '.SUBSCRIBERS.' SET unsubscribed = 1, timestamp = '.$time.', last_campaign = '.$campaign_id.' WHERE email = "'.$email.'" AND list = '.$list_id;
 			}
 		}
 		$r = mysqli_query($mysqli, $q);
@@ -288,7 +288,7 @@
 			$feedback = _('You\'re unsubscribed.');
 			
 			//Retrieve subscriber's name
-			$q = 'SELECT id, name FROM subscribers WHERE email = "'.$email.'" AND list = "'.$list_id.'"';
+			$q = 'SELECT id, name FROM '.SUBSCRIBERS.' WHERE email = "'.$email.'" AND list = "'.$list_id.'"';
 			$r = mysqli_query($mysqli, $q);
 			if ($r && mysqli_num_rows($r) > 0) //if a record exists, then trigger Zapier below
 			{
@@ -304,7 +304,7 @@
 		}
 		
 		//get AWS creds
-		$q = 'SELECT s3_key, s3_secret FROM login WHERE id = '.$userID;
+		$q = 'SELECT s3_key, s3_secret FROM '.LOGIN.' WHERE id = '.$userID;
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
@@ -326,9 +326,9 @@
 			$goodbye_subject = str_replace('[Email]', $email, $goodbye_subject);
 			
 			//Resubscribe tag
-			$goodbye_message = str_replace('<resubscribe', '<a href="'.$app_path.'/subscribe/'.short($email).'/'.short($list_id).'" ', $goodbye_message);
+			$goodbye_message = str_replace('<resubscribe', '<a href="'.$app_path.'/index.php/site/subscribe/'.short($email).'/'.short($list_id).'" ', $goodbye_message);
 	    	$goodbye_message = str_replace('</resubscribe>', '</a>', $goodbye_message);
-			$goodbye_message = str_replace('[resubscribe]', $app_path.'/subscribe/'.short($email).'/'.short($list_id), $goodbye_message);
+			$goodbye_message = str_replace('[resubscribe]', $app_path.'/index.php/site/subscribe/'.short($email).'/'.short($list_id), $goodbye_message);
 			
 			//Send goodbye email
 			send_email($goodbye_subject, $goodbye_message, $email, '');
@@ -342,7 +342,7 @@ else:
 	if($unsubscribed_url != ''):
 		$unsubscribed_url = str_replace('%e', $email, $unsubscribed_url);
 		$unsubscribed_url = str_replace('%l', short($list_id), $unsubscribed_url);
-		$unsubscribed_url = str_replace('%s', $app_path.'/subscribe/'.short($email).'/'.short($list_id), $unsubscribed_url);
+		$unsubscribed_url = str_replace('%s', $app_path.'/index.php/site/subscribe/'.short($email).'/'.short($list_id), $unsubscribed_url);
 		header("Location: ".$unsubscribed_url);
 	else:
 ?>
@@ -405,9 +405,9 @@ else:
 			<?php echo $feedback==_('You\'re unsubscribed.') ? '<p><img src="'.$app_path.'/img/tick.jpg" height="92" /></p>' : '';?>
 			<?php if($feedback!=_('Email address is invalid.') && $feedback!=_('Email does not exist.')):?>
 				<?php if($feedback==_('Confirm unsubscribe?')):?>
-					<p><a href="<?php echo $app_path; ?>/unsubscribe/<?php echo short($email);?>/<?php echo short($list_id);?>/<?php echo short($campaign_id);?>&confirm" title=""><?php echo _('Yes. Unsubscribe me.');?></a></p>
+					<p><a href="<?php echo $app_path; ?>/index.php/site/unsubscribe/<?php echo short($email);?>/<?php echo short($list_id);?>/<?php echo short($campaign_id);?>&confirm" title=""><?php echo _('Yes. Unsubscribe me.');?></a></p>
 				<?php else:?>
-					<p><a href="<?php echo $app_path; ?>/subscribe/<?php echo short($email);?>/<?php echo short($list_id);?>" title=""><?php echo _('Re-subscribe?');?></a></p>
+					<p><a href="<?php echo $app_path; ?>/index.php/site/subscribe/<?php echo short($email);?>/<?php echo short($list_id);?>" title=""><?php echo _('Re-subscribe?');?></a></p>
 				<?php endif;?>
 			<?php endif;?>
 		</div>

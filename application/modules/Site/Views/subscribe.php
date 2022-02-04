@@ -82,7 +82,7 @@
 		}
 		
 		//Set language
-		$q = 'SELECT login.language FROM lists, login WHERE lists.id = '.$list_id.' AND login.app = lists.app';
+		$q = 'SELECT '.LOGIN.'.language FROM '.LISTS.', '.LOGIN.' WHERE lists.id = '.$list_id.' AND '.LOGIN.'.app = '.LISTS.'.app';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $language = $row['language'];
 		set_locale($language);
@@ -185,7 +185,7 @@
 		$added_via = 2; //1 = Sendy app, 2 = API, 3 = Sendy's subscribe form
 		
 		//Set language
-		$q = 'SELECT login.language, lists.gdpr_enabled as gdpr_enabled FROM lists, login WHERE lists.id = '.$list_id.' AND login.app = lists.app';
+		$q = 'SELECT '.LOGIN.'.language, '.LISTS.'.gdpr_enabled as gdpr_enabled FROM '.LISTS.', '.LOGIN.' WHERE '.LISTS.'.id = '.$list_id.' AND '.LOGIN.'.app = '.LISTS.'.app';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0) 
 		{
@@ -242,7 +242,7 @@
 		}
 		
 		//Check if email is bounced anywhere in the database 
-		$q = 'SELECT id FROM subscribers WHERE email = "'.$email.'" AND bounced = 1';
+		$q = 'SELECT id FROM '.SUBSCRIBERS.' WHERE email = "'.$email.'" AND bounced = 1';
 		$r = mysqli_query($mysqli, $q);
 		if (mysqli_num_rows($r) > 0)
 		{
@@ -265,7 +265,7 @@
 	}
 	
 	//get app id and list name
-	$q = 'SELECT userID, app, name, opt_in, subscribed_url, thankyou, thankyou_subject, thankyou_message, confirmation_subject, confirmation_email, custom_fields, notify_new_signups, notification_email, no_consent_url, already_subscribed_url FROM lists WHERE id = '.$list_id;
+	$q = 'SELECT userID, app, name, opt_in, subscribed_url, thankyou, thankyou_subject, thankyou_message, confirmation_subject, confirmation_email, custom_fields, notify_new_signups, notification_email, no_consent_url, already_subscribed_url FROM '.LISTS.' WHERE id = '.$list_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r) 
 	{
@@ -290,7 +290,7 @@
 	}
 	
 	//get IAM keys
-	$q = 'SELECT s3_key, s3_secret FROM login WHERE id = '.$userID;
+	$q = 'SELECT s3_key, s3_secret FROM '.LOGIN.' WHERE id = '.$userID;
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
@@ -302,7 +302,7 @@
 	}
 	
 	//get data from apps
-	$q = 'SELECT from_name, from_email, reply_to, smtp_host, smtp_port, smtp_ssl, smtp_username, smtp_password, allocated_quota, recaptcha_secretkey, custom_domain, custom_domain_protocol, custom_domain_enabled FROM apps WHERE id = '.$app;
+	$q = 'SELECT from_name, from_email, reply_to, smtp_host, smtp_port, smtp_ssl, smtp_username, smtp_password, allocated_quota, recaptcha_secretkey, custom_domain, custom_domain_protocol, custom_domain_enabled FROM '.APPS.' WHERE id = '.$app;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -449,7 +449,7 @@
 		}
 		
 		//check if user is in this list
-		$q = 'SELECT id, userID, custom_fields, unsubscribed, confirmed, bounced, complaint, timestamp FROM subscribers WHERE email = "'.$email.'" AND list = '.$list_id;
+		$q = 'SELECT id, userID, custom_fields, unsubscribed, confirmed, bounced, complaint, timestamp FROM '.SUBSCRIBERS.' WHERE email = "'.$email.'" AND list = '.$list_id;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0) //if so, update subscriber
 		{
@@ -513,12 +513,12 @@
 			{
 				$confirmed = $unsubscribed && $confirmed ? 0 : $confirmed;				
 				$name_line = !isset($_POST['name']) ? '' : 'name = "'.$name.'",';				
-				$q = 'UPDATE subscribers SET unsubscribed = 0, last_campaign = NULL, timestamp = '.$time.', confirmed = '.$confirmed.', '.$name_line.' custom_fields = "'.substr($cf_value, 0, -3).'" '.$gdpr1.', notes = "'.$notes.'" WHERE email = "'.$email.'" AND list = '.$list_id;
+				$q = 'UPDATE '.SUBSCRIBERS.' SET unsubscribed = 0, last_campaign = NULL, timestamp = '.$time.', confirmed = '.$confirmed.', '.$name_line.' custom_fields = "'.substr($cf_value, 0, -3).'" '.$gdpr1.', notes = "'.$notes.'" WHERE email = "'.$email.'" AND list = '.$list_id;
 			}
 			else
 			{
 				$name_line = !isset($_POST['name']) ? '' : ', name = "'.$name.'"';				
-				$q = 'UPDATE subscribers SET unsubscribed = 0, last_campaign = NULL, timestamp = '.$time.', confirmed = 1 '.$name_line.', custom_fields = "'.substr($cf_value, 0, -3).'" '.$gdpr1.', notes = "'.$notes.'" WHERE email = "'.$email.'" AND list = '.$list_id;
+				$q = 'UPDATE '.SUBSCRIBERS.' SET unsubscribed = 0, last_campaign = NULL, timestamp = '.$time.', confirmed = 1 '.$name_line.', custom_fields = "'.substr($cf_value, 0, -3).'" '.$gdpr1.', notes = "'.$notes.'" WHERE email = "'.$email.'" AND list = '.$list_id;
 			}
 			$r = mysqli_query($mysqli, $q);
 			if ($r)
@@ -564,21 +564,21 @@
 		//if user does not exist in list, insert subscriber into database
 		else
 		{
-			$q = 'SELECT userID FROM lists WHERE id = '.$list_id;
+			$q = 'SELECT userID FROM '.LISTS.' WHERE id = '.$list_id;
 			$r = mysqli_query($mysqli, $q);
 			if ($r && mysqli_num_rows($r) > 0)
 			{
 			    while($row = mysqli_fetch_array($r)) $userID = $row['userID'];
 			    
-			    $q2 = '(SELECT id FROM suppression_list WHERE email = "'.$email.'" AND app = '.$app.') UNION (SELECT id FROM blocked_domains WHERE domain = "'.$email_domain.'" AND app = '.$app.')';
+			    $q2 = '(SELECT id FROM '.SUPPRESSION_LIST.' WHERE email = "'.$email.'" AND app = '.$app.') UNION (SELECT id FROM '.BLOCKED_DOMAINS.' WHERE domain = "'.$email_domain.'" AND app = '.$app.')';
 				$r2 = mysqli_query($mysqli, $q2);
 				if (mysqli_num_rows($r2) == 0)
 				{
 				    //if not, insert user into list
 				    if($opt_in) //if double opt in,
-						$q = 'INSERT INTO subscribers (userID, email, name, custom_fields, list, timestamp, confirmed, method, added_via '.$ip1.' '.$country1.' '.$referrer1.' '.$gdpr2.' '.$notes1.') VALUES ('.$userID.', "'.$email.'", "'.$name.'", "'.substr($cf_vals, 0, -3).'", '.$list_id.', '.$time.', 0, 2, '.$added_via.' '.$ip2.' '.$country2.' '.$referrer2.' '.$gdpr3.' '.$notes2.')';
+						$q = 'INSERT INTO '.SUBSCRIBERS.' (userID, email, name, custom_fields, list, timestamp, confirmed, method, added_via '.$ip1.' '.$country1.' '.$referrer1.' '.$gdpr2.' '.$notes1.') VALUES ('.$userID.', "'.$email.'", "'.$name.'", "'.substr($cf_vals, 0, -3).'", '.$list_id.', '.$time.', 0, 2, '.$added_via.' '.$ip2.' '.$country2.' '.$referrer2.' '.$gdpr3.' '.$notes2.')';
 					else
-						$q = 'INSERT INTO subscribers (userID, email, name, custom_fields, list, timestamp, join_date, method, added_via '.$ip1.' '.$country1.' '.$referrer1.' '.$gdpr2.' '.$notes1.') VALUES ('.$userID.', "'.$email.'", "'.$name.'", "'.substr($cf_vals, 0, -3).'", '.$list_id.', '.$time.', '.$join_date.', 1, '.$added_via.' '.$ip2.' '.$country2.' '.$referrer2.' '.$gdpr3.' '.$notes2.')';
+						$q = 'INSERT INTO '.SUBSCRIBERS.' (userID, email, name, custom_fields, list, timestamp, join_date, method, added_via '.$ip1.' '.$country1.' '.$referrer1.' '.$gdpr2.' '.$notes1.') VALUES ('.$userID.', "'.$email.'", "'.$name.'", "'.substr($cf_vals, 0, -3).'", '.$list_id.', '.$time.', '.$join_date.', 1, '.$added_via.' '.$ip2.' '.$country2.' '.$referrer2.' '.$gdpr3.' '.$notes2.')';
 					$r = mysqli_query($mysqli, $q);
 					if ($r){
 						
@@ -646,8 +646,8 @@
 				else
 				{
 					//Update block attempts count
-					$q = 'UPDATE suppression_list SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE email = "'.$email.'" AND app = '.$app;
-					$q2 = 'UPDATE blocked_domains SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE domain = "'.$email_domain.'" AND app = '.$app;
+					$q = 'UPDATE '.SUPPRESSION_LIST.' SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE email = "'.$email.'" AND app = '.$app;
+					$q2 = 'UPDATE '.BLOCKED_DOMAINS.' SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE domain = "'.$email_domain.'" AND app = '.$app;
 					mysqli_query($mysqli, $q);
 					mysqli_query($mysqli, $q2);
 					
@@ -671,7 +671,7 @@
 			//send confirmation email if list is double opt in
 			if($opt_in && $confirmed!=1 && $bounced!=1 && $complaint!=1)
 			{			
-				$confirmation_link = $app_path.'/confirm?e='.short($subscriber_id).'&l='.short($list_id);
+				$confirmation_link = $app_path.'/index.php/site/confirm?e='.short($subscriber_id).'&l='.short($list_id);
 				
 				if($confirmation_subject=='')
 					$confirmation_subject = _('Confirm your subscription to').' '.$from_name;
@@ -732,9 +732,9 @@
 					$thankyou_subject = str_replace('[Email]', $email, $thankyou_subject);
 					
 					//Unsubscribe tag
-					$thankyou_message = str_replace('<unsubscribe', '<a href="'.$app_path.'/unsubscribe/'.short($email).'/'.short($list_id).'" ', $thankyou_message);
+					$thankyou_message = str_replace('<unsubscribe', '<a href="'.$app_path.'/index.php/site/unsubscribe/'.short($email).'/'.short($list_id).'" ', $thankyou_message);
 			    	$thankyou_message = str_replace('</unsubscribe>', '</a>', $thankyou_message);
-					$thankyou_message = str_replace('[unsubscribe]', $app_path.'/unsubscribe/'.short($email).'/'.short($list_id), $thankyou_message);
+					$thankyou_message = str_replace('[unsubscribe]', $app_path.'/index.php/site/unsubscribe/'.short($email).'/'.short($list_id), $thankyou_message);
 					
 					//Send thank you email
 					send_email($thankyou_subject, $thankyou_message, $email, '');

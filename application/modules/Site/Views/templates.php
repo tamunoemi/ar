@@ -6,12 +6,12 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/templates?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/templates?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 		else if(get_app_info('campaigns_only')==1 && get_app_info('templates_only')==1 && get_app_info('lists_only')==1 && get_app_info('reports_only')==1)
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/logout"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/auth/logout"</script>';
 			exit;
 		}
 		else if(get_app_info('templates_only')==1)
@@ -30,13 +30,13 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
     	</div>
     	<h2><?php echo _('All templates');?></h2><br/>
     	<div style="clear:both;">
-    		<a href="<?php echo get_app_info('path');?>/create-template?i=<?php echo get_app_info('app');?>" class="btn"><i class="icon-plus-sign"></i> <?php echo _('Create a new template');?></a>    		
+    		<a href="<?php echo get_app_info('path');?>/index.php/site/create-template?i=<?php echo get_app_info('app');?>" class="btn"><i class="icon-plus-sign"></i> <?php echo _('Create a new template');?></a>    		
     	</div>
     	
     	<br/>
@@ -57,7 +57,7 @@
 			  
 			<?php 
 				//Get sorting preference
-				$q = 'SELECT templates_lists_sorting FROM apps WHERE id = '.get_app_info('app');
+				$q = 'SELECT templates_lists_sorting FROM '.APPS.' WHERE id = '.get_app_info('app');
 				$r = mysqli_query($mysqli, $q);
 				if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $templates_lists_sorting = $row['templates_lists_sorting'];
 				$sortby = $templates_lists_sorting=='date' ? 'id DESC' : 'template_name ASC';
@@ -70,7 +70,7 @@
 				$p = isset($_GET['p']) ? $_GET['p'] : null;
 				$offset = $p!=null ? ($p-1) * $limit : 0;
 				
-			  	$q = 'SELECT id, template_name FROM template WHERE userID = '.get_app_info('main_userID').' AND app='.get_app_info('app').' ORDER BY '.$sortby.' LIMIT '.$offset.','.$limit;
+			  	$q = 'SELECT id, template_name FROM '.TEMPLATE.' WHERE userID = '.get_app_info('main_userID').' AND app='.get_app_info('app').' ORDER BY '.$sortby.' LIMIT '.$offset.','.$limit;
 			  	$r = mysqli_query($mysqli, $q);
 			  	if ($r && mysqli_num_rows($r) > 0)
 			  	{
@@ -82,10 +82,10 @@
 			  			echo '
 					  		<tr id="'.$id.'">
 						      <td><a href="edit-template?i='.get_app_info('app').'&t='.$id.'" title=""><i class="icon icon-file-text-alt" style="margin-right:5px;"></i> '.$template_name.'</a></td>
-						      <td><a href="'.get_app_info('path').'/template-preview?t='.$id.'" title="" id="preview-btn-'.$id.'" class="iframe-preview"><i class="icon icon-eye-open"></i></a></td>
+						      <td><a href="'.get_app_info('path').'/index.php/site/template-preview?t='.$id.'" title="" id="preview-btn-'.$id.'" class="iframe-preview"><i class="icon icon-eye-open"></i></a></td>
 						      ';
 						if(!get_app_info('is_sub_user') || (get_app_info('is_sub_user') && get_app_info('campaigns_only')==0))
-						echo '<td><a href="includes/templates/use-template.php?i='.get_app_info('app').'&t='.$id.'" title="'._('Create a new campaign with this template').'"><i class="icon icon-edit"></i></a></td>'; 
+						echo '<td><a href="templates/use-template?i='.get_app_info('app').'&t='.$id.'" title="'._('Create a new campaign with this template').'"><i class="icon icon-edit"></i></a></td>'; 
 						echo '
 						      <td><a href="edit-template?i='.get_app_info('app').'&t='.$id.'" title=""><i class="icon icon-pencil"></i></a></td>
 						      <td><a href="javascript:void(0)" title="'._('Delete').' '.$template_name.'?" id="delete-btn-'.$id.'" class="delete-template"><i class="icon icon-trash"></i></a></td>
@@ -96,7 +96,7 @@
 								c = confirm("'._('This template will be permanently deleted. Confirm delete').' '.$template_name.'?");
 								if(c)
 								{
-									$.post("includes/templates/delete.php", { template_id: '.$id.' },
+									$.post("'.get_app_info('path').'/index.php/site/templates/delete", { template_id: '.$id.' },
 									  function(data) {
 									      if(data)
 									      {
@@ -120,7 +120,7 @@
 			  	{
 				  	echo '
 				  		<tr>
-					      <td>'._('No templates have been created yet').'. <a href="'.get_app_info('path').'/create-template?i='.get_app_info('app').'" title="" style="text-decoration: underline;">'._('Create one').'</a>!</td>
+					      <td>'._('No templates have been created yet').'. <a href="'.get_app_info('path').'/index.php/site/create-template?i='.get_app_info('app').'" title="" style="text-decoration: underline;">'._('Create one').'</a>!</td>
 					      <td></td>
 					      <td></td>
 					      <td></td>

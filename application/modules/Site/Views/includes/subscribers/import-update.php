@@ -1,7 +1,7 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
-<?php require_once('../helpers/EmailAddressValidator.php');?>
-<?php require_once('../helpers/parsecsv.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
+<?php require_once('includes/helpers/EmailAddressValidator.php');?>
+<?php require_once('includes/helpers/parsecsv.php');?>
 <?php
 
 /********************************/
@@ -16,7 +16,7 @@ if($csvfile_ext1=='php' || $csvfile_ext2!='csv' || $csvfilename=='.htaccess') ex
 $csv = new parseCSV();
 $csv->heading = false;
 $csv->auto($csvfile);
-$databasetable = "subscribers";
+$databasetable = SUBSCRIBERS;
 $fieldseparator = ",";
 $lineseparator = "\n";
 $userID = get_app_info('main_userID');
@@ -28,11 +28,11 @@ $time = time();
 /********************************/
 	
 //Empty skipped_emails table
-$q = 'DELETE FROM skipped_emails WHERE list = '.$listID;
+$q = 'DELETE FROM '.SKIPPED_EMAILS.' WHERE list = '.$listID;
 mysqli_query($mysqli, $q);
 
 //get comma separated lists belonging to this app
-$q2 = 'SELECT id FROM lists WHERE app = '.$app;
+$q2 = 'SELECT id FROM '.LISTS.' WHERE app = '.$app;
 $r2 = mysqli_query($mysqli, $q2);
 if ($r2)
 {
@@ -42,7 +42,7 @@ if ($r2)
 }
 
 if(!file_exists($csvfile)) {
-	header("Location: ".get_app_info('path').'/update-list?i='.$app.'&l='.$listID.'&e=3'); 
+	header("Location: ".get_app_info('path').'/index.php/site/update-list?i='.$app.'&l='.$listID.'&e=3'); 
 	exit;
 }
 
@@ -71,23 +71,23 @@ foreach ($csv->data as $key => $line)
 	if($cron)
 	{
 		//Create /csvs/ directory in /uploads/ if it doesn't exist
-		if(!file_exists("../../uploads/csvs")) 
+		if(!file_exists("uploads/csvs")) 
 		{
 			//Create /csvs/ directory
-			if(!mkdir("../../uploads/csvs", 0777))
+			if(!mkdir("uploads/csvs", 0777))
 			{
-				header("Location: ".get_app_info('path').'/update-list?i='.$app.'&l='.$listID.'&e=4'); 
+				header("Location: ".get_app_info('path').'/index.php/site/update-list?i='.$app.'&l='.$listID.'&e=4'); 
 				exit;
 			}
 			else
 			{
 				//chmod uploaded file
-				chmod("../../uploads/csvs",0777);
+				chmod("uploads/csvs",0777);
 			}
 		}
 		
 		//Check if column count matches the list
-		$q2 = 'SELECT custom_fields FROM lists WHERE id = '.$listID;
+		$q2 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$listID;
 		$r2 = mysqli_query($mysqli, $q2);
 		if ($r2)
 		{
@@ -106,29 +106,29 @@ foreach ($csv->data as $key => $line)
 		
 		if($columns != $custom_fields_count+2)
 		{
-			header("Location: ".get_app_info('path').'/update-list?i='.$app.'&l='.$listID.'&e=1'); 
+			header("Location: ".get_app_info('path').'/index.php/site/update-list?i='.$app.'&l='.$listID.'&e=1'); 
 			exit;
 		}
 		else
 		{
 			//Move CSV file to /uploads/csvs/ directory
-			if(move_uploaded_file($csvfile, "../../uploads/csvs/".$userID.'-'.$listID.'.csv'))
+			if(move_uploaded_file($csvfile, "uploads/csvs/".$userID.'-'.$listID.'.csv'))
 			{
 				//chmod uploaded file
-				chmod("../../uploads/csvs/".$userID.'-'.$listID.'.csv',0777);
+				chmod("uploads/csvs/".$userID.'-'.$listID.'.csv',0777);
 				
 				//Update total_records
-				$linecount = count(file("../../uploads/csvs/".$userID.'-'.$listID.'.csv'));
-				$q = 'UPDATE lists SET total_records = '.$linecount.', gdpr = '.$gdpr_tag.' WHERE id = '.$listID;
+				$linecount = count(file("uploads/csvs/".$userID.'-'.$listID.'.csv'));
+				$q = 'UPDATE '.LISTS.' SET total_records = '.$linecount.', gdpr = '.$gdpr_tag.' WHERE id = '.$listID;
 				mysqli_query($mysqli, $q);
 				
 				//CSV uploaded successfully, redirect back to list
-				header("Location: ".get_app_info('path').'/list?i='.$app); 
+				header("Location: ".get_app_info('path').'/index.php/site/list?i='.$app); 
 			}
 			//If upload fail, throw an error with informational message
 			else
 			{
-				header("Location: ".get_app_info('path').'/update-list?i='.$app.'&l='.$listID.'&e=4'); 
+				header("Location: ".get_app_info('path').'/index.php/site/update-list?i='.$app.'&l='.$listID.'&e=4'); 
 				exit;
 			}
 		}
@@ -137,7 +137,7 @@ foreach ($csv->data as $key => $line)
 	}
 	
 	//If cron is NOT setup, import immediately. Start by checking for duplicates
-	$q = 'SELECT custom_fields FROM subscribers WHERE list = '.$listID.' AND (email = "'.$linearray[0].'" || email = "'.trim($linearray[1]).'") AND userID = '.$userID;
+	$q = 'SELECT custom_fields FROM '.SUBSCRIBERS.' WHERE list = '.$listID.' AND (email = "'.$linearray[0].'" || email = "'.trim($linearray[1]).'") AND userID = '.$userID;
 	$r = mysqli_query($mysqli, $q);
 	if (mysqli_num_rows($r) > 0) //if so, update subscriber
 	{
@@ -147,7 +147,7 @@ foreach ($csv->data as $key => $line)
 	    } 
 		
 		//Get the list of custom fields for this list
-		$q2 = 'SELECT custom_fields FROM lists WHERE id = '.$listID;
+		$q2 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$listID;
 		$r2 = mysqli_query($mysqli, $q2);
 		if ($r2)
 		{
@@ -212,9 +212,9 @@ foreach ($csv->data as $key => $line)
 		$gdpr_status = $gdpr_tag ? ', gdpr = '.$gdpr_tag : '';
 	    
 		if(!isset($name) || $name=='')
-			$q = 'UPDATE subscribers SET custom_fields = "'.substr($custom_fields_value, 0, -3).'" '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
+			$q = 'UPDATE '.SUBSCRIBERS.' SET custom_fields = "'.substr($custom_fields_value, 0, -3).'" '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
 		else
-			$q = 'UPDATE subscribers SET name = "'.$name.'", custom_fields = "'.substr($custom_fields_value, 0, -3).'" '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
+			$q = 'UPDATE '.SUBSCRIBERS.' SET name = "'.$name.'", custom_fields = "'.substr($custom_fields_value, 0, -3).'" '.$gdpr_status.' WHERE email = "'.$email.'" AND list = '.$listID;
 
 		mysqli_query($mysqli, $q);
 		
@@ -223,7 +223,7 @@ foreach ($csv->data as $key => $line)
 	else
 	{			
 		//Get the list of custom fields for this list
-		$q2 = 'SELECT custom_fields FROM lists WHERE id = '.$listID;
+		$q2 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$listID;
 		$r2 = mysqli_query($mysqli, $q2);
 		if ($r2)
 		{
@@ -267,7 +267,7 @@ foreach ($csv->data as $key => $line)
 		}
 		
 		//Check if user set the list to unsubscribe from all lists
-		$q = 'SELECT unsubscribe_all_list FROM lists WHERE id = '.$listID;
+		$q = 'SELECT unsubscribe_all_list FROM '.LISTS.' WHERE id = '.$listID;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) $unsubscribe_all_list = $row['unsubscribe_all_list'];
 		
@@ -281,13 +281,13 @@ foreach ($csv->data as $key => $line)
 		$email_domain2 = $email_explode2[1];
 		
 		//Check if this email is previously marked as bounced, if so, we shouldn't add it
-		$q = 'SELECT email from subscribers WHERE ( (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND bounced = 1 ) OR ( (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND list IN ('.$all_lists.') AND '.$unsubscribe_line.' )';
+		$q = 'SELECT email from '.SUBSCRIBERS.' WHERE ( (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND bounced = 1 ) OR ( (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND list IN ('.$all_lists.') AND '.$unsubscribe_line.' )';
 		$r = mysqli_query($mysqli, $q);
 		if (mysqli_num_rows($r) == 0)
 		{			
-			$q2 = '(SELECT id FROM suppression_list WHERE (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND app = '.$app.') 
+			$q2 = '(SELECT id FROM '.SUPPRESSION_LIST.' WHERE (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND app = '.$app.') 
 					UNION 
-					(SELECT id FROM blocked_domains WHERE (domain = "'.$email_domain.'" || domain = "'.$email_domain2.'") AND app = '.$app.')';
+					(SELECT id FROM '.BLOCKED_DOMAINS.' WHERE (domain = "'.$email_domain.'" || domain = "'.$email_domain2.'") AND app = '.$app.')';
 			
 			$r2 = mysqli_query($mysqli, $q2);
 			if (mysqli_num_rows($r2) == 0)
@@ -337,15 +337,15 @@ foreach ($csv->data as $key => $line)
 				}
 				else
 				{
-					header("Location: ".get_app_info('path').'/update-list?i='.$app.'&l='.$listID.'&e=1'); 
+					header("Location: ".get_app_info('path').'/index.php/site/update-list?i='.$app.'&l='.$listID.'&e=1'); 
 					exit;
 				}
 			}
 			else
 			{				
 				//Update block_attempts count				
-				$q3 = 'UPDATE suppression_list SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND app = '.$app;
-				$q4 = 'UPDATE blocked_domains SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE (domain = "'.$email_domain.'" || domain = "'.$email_domain2.'") AND app = '.$app;
+				$q3 = 'UPDATE '.SUPPRESSION_LIST.' SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE (email = "'.$linearray[0].'" || email = " '.$linearray[1].'" || email = "'.$linearray[1].'") AND app = '.$app;
+				$q4 = 'UPDATE '.BLOCKED_DOMAINS.' SET block_attempts = block_attempts+1, timestamp = "'.$time.'" WHERE (domain = "'.$email_domain.'" || domain = "'.$email_domain2.'") AND app = '.$app;
 				mysqli_query($mysqli, $q3);
 				mysqli_query($mysqli, $q4);
 				
@@ -361,7 +361,7 @@ foreach ($csv->data as $key => $line)
 
 //Once everything is imported, reset count and remove CSV
 //set currently_processing to 0
-$q = 'UPDATE lists SET currently_processing=0, prev_count=0, total_records=0 WHERE id = '.$listID;
+$q = 'UPDATE '.LISTS.' SET currently_processing=0, prev_count=0, total_records=0 WHERE id = '.$listID;
 mysqli_query($mysqli, $q);
 //delete CSV file
 unlink($csvfile);
@@ -379,10 +379,10 @@ function skipped_emails($email, $reason)
 	if($reason=='Exists') $reason = 3;
 	if($reason=='Suppressed') $reason = 4;
 	
-	$q = 'INSERT INTO skipped_emails (app, list, email, reason) VALUES ('.$app.', '.$listID.', "'.$email.'", '.$reason.')';
+	$q = 'INSERT INTO '.SKIPPED_EMAILS.' (app, list, email, reason) VALUES ('.$app.', '.$listID.', "'.$email.'", '.$reason.')';
 	mysqli_query($mysqli, $q);
 }
 
 //return
-header("Location: ".get_app_info('path').'/subscribers?i='.$app.'&l='.$listID);
+header("Location: ".get_app_info('path').'/index.php/site/subscribers?i='.$app.'&l='.$listID);
 ?>

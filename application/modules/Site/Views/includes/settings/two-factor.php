@@ -1,6 +1,6 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
-<?php include('../helpers/two-factor/lib/otphp.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
+<?php include('includes/helpers/two-factor/lib/otphp.php');?>
 <?php 
 	$userID = isset($_POST['uid']) && is_numeric($_POST['uid']) ? mysqli_real_escape_string($mysqli, (int)$_POST['uid']) : exit;
 	
@@ -19,7 +19,7 @@
 		$otp = $totp->now();
 		if($totp->verify($otp_code))
 		{
-			$q = 'UPDATE login SET auth_enabled = '.$enable.', auth_key = "'.$key.'" WHERE id = '.$userID;
+			$q = 'UPDATE '.LOGIN.' SET auth_enabled = '.$enable.', auth_key = "'.$key.'" WHERE id = '.$userID;
 			$r = mysqli_query($mysqli, $q);
 			if ($r) echo 'confirmed';
 			else echo 'not confirmed';
@@ -29,7 +29,7 @@
 	//Disable two factor authentication	
 	else if($enable==0)
 	{
-		$q = 'UPDATE login SET auth_enabled = 0, auth_key = NULL WHERE id = '.$userID;
+		$q = 'UPDATE '.LOGIN.' SET auth_enabled = 0, auth_key = NULL WHERE id = '.$userID;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) echo true;
 		else echo false;

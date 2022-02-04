@@ -8,6 +8,10 @@
 	//Define current version
 	define('CURRENT_VERSION', '4.0.3.1');
 
+	use Ion_auth_model;
+	$ion_auth_model = new Ion_auth_model();
+	$salt = $ion_auth_model->salt();
+
 	//check license
 	$url = $_SERVER["SERVER_NAME"];
 	$licensed = true;
@@ -256,7 +260,8 @@ AND (table_name = 'apps' OR table_name = 'campaigns' OR table_name = 'links' OR 
 		$email = mysqli_real_escape_string($mysqli, $_POST['email']);
 		$password = mysqli_real_escape_string($mysqli, $_POST['password']);
 		$timezone = mysqli_real_escape_string($mysqli, $_POST['timezone']);
-		$pass_encrypted = hash('sha512', $password.'PectGtma');
+		$pass_encrypted = $ion_auth_model->hash_password($password, $salt);
+		//$pass_encrypted = hash('sha512', $password.'PectGtma');
 		$aws_key = mysqli_real_escape_string($mysqli, $_POST['aws_key']);
 		$aws_secret = mysqli_real_escape_string($mysqli, $_POST['aws_secret']);
 		$api_key = str_makerand(20, 20, true, false, true);

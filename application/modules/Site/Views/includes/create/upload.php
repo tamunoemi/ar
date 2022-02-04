@@ -1,6 +1,6 @@
 <?php 
-	include('../functions.php');
-	include('../login/auth.php');
+	include('includes/functions.php');
+	include('includes/login/auth.php');
 	
 	//Init
 	$app = isset($_GET['app']) && is_numeric($_GET['app']) ? mysqli_real_escape_string($mysqli, (int)$_GET['app']) : exit;
@@ -12,14 +12,14 @@
 	if($extension2=='php' || $file_name=='.htaccess') exit;
 	
 	$time = time();
-	chmod("../../uploads",0777);
+	chmod("uploads",0777);
 	
 	//Check filetype
 	$allowed = array("jpeg", "jpg", "gif", "png");
 	if(in_array(strtolower($extension), $allowed)) //if file is an image, allow upload
 	{
 		//Upload file
-		move_uploaded_file($file, '../../uploads/'.$time.'.'.$extension);
+		move_uploaded_file($file, 'uploads/'.$time.'.'.$extension);
 		
 		//return result
 		//echo 'Image uploaded successfully!';
@@ -32,7 +32,7 @@
 		$langCode = $_GET['langCode'] ;
 		
 		//get smtp settings
-		$q = 'SELECT custom_domain, custom_domain_protocol, custom_domain_enabled FROM apps WHERE id = '.$app;
+		$q = 'SELECT custom_domain, custom_domain_protocol, custom_domain_enabled FROM '.APPS.' WHERE id = '.$app;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{

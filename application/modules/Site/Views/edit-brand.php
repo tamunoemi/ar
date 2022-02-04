@@ -7,12 +7,12 @@
 	{
 		if(get_app_info('reports_only'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/reports?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/reports?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 		else
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/app?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/app?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 	}
@@ -76,7 +76,7 @@
 	});
 </script>
 
-<form action="<?php echo get_app_info('path')?>/includes/app/edit.php" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="settings-form">
+<form action="<?php echo get_app_info('path')?>/index.php/site/app/edit" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="settings-form">
 
 <div class="row-fluid">
 	<div class="span2">
@@ -132,7 +132,7 @@
             			$("#api-error").hide();
             			$("#verified-email").hide();
             			
-	            		$.post("<?php echo get_app_info('path')?>/includes/app/check-email-verification.php", { from_email: $("#from_email").val(), auto_verify: 'no' },
+	            		$.post("<?php echo get_app_info('path')?>/index.php/site/app/check-email-verification", { from_email: $("#from_email").val(), auto_verify: 'no' },
             			  function(data) {
             			      if(data=='unverified')
             			      {
@@ -199,7 +199,7 @@
 			        $("#click-to-verify-btn").click(function(e){
             			e.preventDefault();
             			$("#click-to-verify-copy").html("<?php echo _('Please wait..');?>");
-            			$.post("<?php echo get_app_info('path')?>/includes/app/verify-email.php", { from_email: $("#from_email").val() },
+            			$.post("<?php echo get_app_info('path')?>/index.php/site/app/verify-email", { from_email: $("#from_email").val() },
         				  function(data) {
         				      if(data)
         				      {
@@ -248,7 +248,7 @@
 		            		c = confirm("<?php echo _('Confirm delete this logo?');?>");
 		            		if(c)
 		            		{
-			            		$.post("<?php echo get_app_info('path').'/includes/app/delete-logo.php'?>", { id: "<?php echo $_GET['i'];?>", filename: "<?php echo get_saved_data('brand_logo_filename');?>" },
+			            		$.post("<?php echo get_app_info('path').'/index.php/site/app/delete-logo'?>", { id: "<?php echo $_GET['i'];?>", filename: "<?php echo get_saved_data('brand_logo_filename');?>" },
 			            		  function(data) {
 			            		      if(data)
 			            		      {
@@ -359,7 +359,7 @@
 								      <td>
 									      <span id="sd">
 									      <?php 
-											$parse = parse_url(get_app_info('path'));
+											$parse = parse_url(get_app_info('path').'/index.php/site');
 											$domain = $parse['host'];
 											echo $domain;
 									      ?>
@@ -607,7 +607,7 @@
     <div class="span5">
 	    <h2><?php echo _('Brand settings');?></h2><br/>
 	    
-	    <div class="alert alert-info"><i class="icon icon-info-sign"></i> <?php echo _('If you\'re creating this brand for your client, you can allow them to send newsletters on their own at a fee you preset below.');?> <?php echo _('Send the');?> <strong><?php echo _('Client login details');?></strong> <?php echo _('to your client so that they can login to manage lists, subscribers and send newsletters.');?><br/><br/><?php echo _('Also, don\'t forget to set your PayPal account email address in');?> <a href="<?php echo get_app_info('path');?>/settings" style="text-decoration: underline;"><?php echo _('Settings');?></a>.</div>
+	    <div class="alert alert-info"><i class="icon icon-info-sign"></i> <?php echo _('If you\'re creating this brand for your client, you can allow them to send newsletters on their own at a fee you preset below.');?> <?php echo _('Send the');?> <strong><?php echo _('Client login details');?></strong> <?php echo _('to your client so that they can login to manage lists, subscribers and send newsletters.');?><br/><br/><?php echo _('Also, don\'t forget to set your PayPal account email address in');?> <a href="<?php echo get_app_info('path');?>/index.php/site/settings" style="text-decoration: underline;"><?php echo _('Settings');?></a>.</div>
 	    
 	    <div class="well">
 		    
@@ -620,7 +620,7 @@
 				    	<p><strong><?php echo _('Login URL');?></strong>: 
 				    		<span id="loginurl">
 					    	<?php
-						    	$parse = parse_url(get_app_info('path'));
+						    	$parse = parse_url(get_app_info('path') . '/index.php/site');
 								$protocol = $parse['scheme'];
 								$domain = $parse['host'];
 								$path = $parse['path']; 
@@ -646,7 +646,7 @@
 									e.preventDefault(); 
 									if(confirm("Are you sure you want to disable two-factor authentication?"))
 									{
-										$.post("<?php echo get_app_info("path");?>/includes/settings/two-factor.php", { enable: 0, otp: 0, uid: <?php echo get_login_data('id');?> },
+										$.post("<?php echo get_app_info("path");?>/index.php/site/settings/two-factor", { enable: 0, otp: 0, uid: <?php echo get_login_data('id');?> },
 										  function(data) {
 										      if(data)
 										      {
@@ -666,7 +666,7 @@
 					    	$("#generate-password").click(function(){
 					    		$("#form").submit();
 					    		
-					    		$.post('<?php echo get_app_info('path');?>/includes/app/generate-password.php', {app: <?php echo $_GET['i'];?>, brand_name: $("#app_name").val(), from_name: $("#from_name").val(), from_email: $("#from_email").val()},
+					    		$.post('<?php echo get_app_info('path');?>/index.php/site/app/generate-password', {app: <?php echo $_GET['i'];?>, brand_name: $("#app_name").val(), from_name: $("#from_name").val(), from_email: $("#from_email").val()},
 					    		  function(data) {
 					    		      if(data)
 					    		      {

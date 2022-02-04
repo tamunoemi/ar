@@ -1,5 +1,5 @@
 <?php 
-	include('../config.php');
+	include('includes/config.php');
 	//--------------------------------------------------------------//
 	function dbConnect() { //Connect to database
 	//--------------------------------------------------------------//
@@ -65,23 +65,23 @@
 			{
 				if(filter_var($from_email,FILTER_VALIDATE_EMAIL))
 				{
-					mysqli_query($mysqli, 'UPDATE apps SET bounce_setup=1 WHERE from_email = "'.$from_email.'"');
-					mysqli_query($mysqli, 'UPDATE campaigns SET bounce_setup=1 WHERE from_email = "'.$from_email.'"');
+					mysqli_query($mysqli, 'UPDATE '.APPS.' SET bounce_setup=1 WHERE from_email = "'.$from_email.'"');
+					mysqli_query($mysqli, 'UPDATE '.CAMPAIGNS.' SET bounce_setup=1 WHERE from_email = "'.$from_email.'"');
 				}
 			}
 			
 			//Update database of
 			if($bounceType == 'Transient')
-				$q = 'UPDATE subscribers SET bounce_soft = bounce_soft+1 WHERE email = "'.$problem_email.'"';
+				$q = 'UPDATE '.SUBSCRIBERS.' SET bounce_soft = bounce_soft+1 WHERE email = "'.$problem_email.'"';
 			else if($bounceType == 'Permanent')
-				$q = 'UPDATE subscribers SET bounced = 1, timestamp = '.$time.' WHERE email = "'.$problem_email.'"';
+				$q = 'UPDATE '.SUBSCRIBERS.' SET bounced = 1, timestamp = '.$time.' WHERE email = "'.$problem_email.'"';
 			$r = mysqli_query($mysqli, $q);
 			if ($r)
 			{
 				//check if recipient has soft bounced 3 times
 				if($bounceType == 'Transient')
 				{
-					$q2 = 'SELECT bounce_soft FROM subscribers WHERE email = "'.$problem_email.'" LIMIT 1';
+					$q2 = 'SELECT bounce_soft FROM '.SUBSCRIBERS.' WHERE email = "'.$problem_email.'" LIMIT 1';
 					$r2 = mysqli_query($mysqli, $q2);
 					if ($r2 && mysqli_num_rows($r2) > 0)
 					{
@@ -93,7 +93,7 @@
 					    //if soft bounced 3 times or more, set as hard bounce
 					    if($bounce_soft >= 3)
 					    {
-						    $q = 'UPDATE subscribers SET bounced = 1, timestamp = '.$time.' WHERE email = "'.$problem_email.'"';
+						    $q = 'UPDATE '.SUBSCRIBERS.' SET bounced = 1, timestamp = '.$time.' WHERE email = "'.$problem_email.'"';
 						    $r = mysqli_query($mysqli, $q);
 						    if($r){}
 					    }

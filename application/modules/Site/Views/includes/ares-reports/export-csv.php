@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 
 /********************************/
@@ -14,14 +14,14 @@ if($action == 'clicks')
 {
 	//file name
 	$filename = 'clicked.csv';
-	$additional_query = 'AND subscribers.unsubscribed = 0 AND subscribers.bounced = 0 AND subscribers.complaint = 0';
+	$additional_query = 'AND '.SUBSCRIBERS.'.unsubscribed = 0 AND '.SUBSCRIBERS.'.bounced = 0 AND '.SUBSCRIBERS.'.complaint = 0';
 	
 	//get
 	$clicks_join = '';
 	$clicks_array = array();
 	$clicks_unique = 0;
 	
-	$q = 'SELECT * FROM links WHERE ares_emails_id = '.$ares_id;
+	$q = 'SELECT * FROM '.LINKS.' WHERE ares_emails_id = '.$ares_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -42,9 +42,9 @@ else if($action == 'opens')
 {
 	//file name
 	$filename = 'opened.csv';
-	$additional_query = 'AND subscribers.unsubscribed = 0 AND subscribers.bounced = 0 AND subscribers.complaint = 0';
+	$additional_query = 'AND '.SUBSCRIBERS.'.unsubscribed = 0 AND '.SUBSCRIBERS.'.bounced = 0 AND '.SUBSCRIBERS.'.complaint = 0';
 	
-	$q = 'SELECT * FROM ares_emails WHERE id = '.$ares_id;
+	$q = 'SELECT * FROM '.ARES_EMAILS.' WHERE id = '.$ares_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -70,7 +70,7 @@ else if($action == 'unsubscribes')
 	//file name
 	$filename = 'unsubscribed.csv';
 	
-	$q = 'SELECT * FROM subscribers WHERE last_ares = '.$ares_id.' AND unsubscribed = 1';
+	$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE last_ares = '.$ares_id.' AND unsubscribed = 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -89,7 +89,7 @@ else if($action == 'bounces')
 	//file name
 	$filename = 'bounced.csv';
 	
-	$q = 'SELECT * FROM subscribers WHERE last_ares = '.$ares_id.' AND bounced = 1';
+	$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE last_ares = '.$ares_id.' AND bounced = 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -108,7 +108,7 @@ else if($action == 'complaints')
 	//file name
 	$filename = 'marked-as-spam.csv';
 	
-	$q = 'SELECT * FROM subscribers WHERE last_ares = '.$ares_id.' AND complaint = 1';
+	$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE last_ares = '.$ares_id.' AND complaint = 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -127,7 +127,7 @@ else
 	//file name
 	$filename = $action.'.csv';
 	
-	$q = 'SELECT * FROM ares_emails WHERE id = '.$ares_id;
+	$q = 'SELECT * FROM '.ARES_EMAILS.' WHERE id = '.$ares_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -159,11 +159,11 @@ else
 }
 
 //Export
-$select = 'SELECT subscribers.name, subscribers.email, subscribers.join_date, subscribers.list, subscribers.ip, subscribers.country, subscribers.referrer, subscribers.method, subscribers.added_via, lists.name as list_name  
-			FROM subscribers 
-			LEFT JOIN lists
-			ON (subscribers.list = lists.id)
-			where subscribers.id IN ('.$subscribers.') '.$additional_query;
+$select = 'SELECT '.SUBSCRIBERS.'.name, '.SUBSCRIBERS.'.email, '.SUBSCRIBERS.'.join_date, '.SUBSCRIBERS.'.list, '.SUBSCRIBERS.'.ip, '.SUBSCRIBERS.'.country, '.SUBSCRIBERS.'.referrer, '.SUBSCRIBERS.'.method, '.SUBSCRIBERS.'.added_via, '.LISTS.'.name as list_name  
+			FROM '.SUBSCRIBERS.' 
+			LEFT JOIN '.LISTS.'
+			ON ('.SUBSCRIBERS.'.list = '.LISTS.'.id)
+			where '.SUBSCRIBERS.'.id IN ('.$subscribers.') '.$additional_query;
 $export = mysqli_query($mysqli, $select);
 if($export)
 {

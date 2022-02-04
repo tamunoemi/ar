@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      	INIT                       //
@@ -27,37 +27,37 @@
 	}
 	
 	//Include main list query
-	$main_query = $email_list_incl == 0 ? '' : 'subscribers.list in ('.$email_list_incl.') ';
+	$main_query = $email_list_incl == 0 ? '' : SUBSCRIBERS.'.list in ('.$email_list_incl.') ';
 	
 	//Include segmentation query
 	$seg_query = $main_query != '' && $email_list_seg_incl != 0 ? 'OR ' : ''; 
-	$seg_query .= $email_list_seg_incl == 0 ? '' : '(subscribers_seg.seg_id IN ('.$email_list_seg_incl.')) ';
+	$seg_query .= $email_list_seg_incl == 0 ? '' : '('.SUBSCRIBERS_SEG.'.seg_id IN ('.$email_list_seg_incl.')) ';
 	
 	//Exclude list query
-	$exclude_query = $email_list_excl == 0 ? '' : 'subscribers.email NOT IN (SELECT email FROM subscribers WHERE list IN ('.$email_list_excl.')) ';
+	$exclude_query = $email_list_excl == 0 ? '' : SUBSCRIBERS.'.email NOT IN (SELECT email FROM '.SUBSCRIBERS.' WHERE list IN ('.$email_list_excl.')) ';
 	
 	//Exclude segmentation query
 	$exclude_seg_query = $exclude_query != '' && $email_list_seg_excl != 0 ? 'AND ' : ''; 
-	$exclude_seg_query .= $email_list_seg_excl == 0 ? '' : 'subscribers.email NOT IN (SELECT subscribers.email FROM subscribers LEFT JOIN subscribers_seg ON (subscribers.id = subscribers_seg.subscriber_id) WHERE subscribers_seg.seg_id IN ('.$email_list_seg_excl.'))';
+	$exclude_seg_query .= $email_list_seg_excl == 0 ? '' : SUBSCRIBERS.'.email NOT IN (SELECT '.SUBSCRIBERS.'.email FROM '.SUBSCRIBERS.' LEFT JOIN '.SUBSCRIBERS_SEG.' ON ('.SUBSCRIBERS.'.id = '.SUBSCRIBERS_SEG.'.subscriber_id) WHERE '.SUBSCRIBERS_SEG.'.seg_id IN ('.$email_list_seg_excl.'))';
 	
 	//------------------------------------------------------//
 	//                      FUNCTIONS                       //
 	//------------------------------------------------------//
 	
 	//Check if we should send to GDPR subscribers only
-	if($email_list_incl!=0) $q = 'SELECT gdpr_only FROM apps LEFT JOIN lists ON (apps.id = lists.app) WHERE lists.id IN ('.$email_list_incl.') LIMIT 1';
-	else $q = 'SELECT gdpr_only FROM apps LEFT JOIN seg ON (apps.id = seg.app) WHERE seg.id IN ('.$email_list_seg_incl.') LIMIT 1';
+	if($email_list_incl!=0) $q = 'SELECT gdpr_only FROM '.APPS.' LEFT JOIN '.LISTS.' ON ('.APPS.'.id = '.LISTS.'.app) WHERE '.LISTS.'.id IN ('.$email_list_incl.') LIMIT 1';
+	else $q = 'SELECT gdpr_only FROM '.APPS.' LEFT JOIN '.SEG.' ON ('.APPS.'.id = '.SEG.'.app) WHERE '.SEG.'.id IN ('.$email_list_seg_incl.') LIMIT 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r) while($row = mysqli_fetch_array($r)) $gdpr_only = $row['gdpr_only'];
 	$gdpr_line = $gdpr_only ? 'AND gdpr = 1 ' : '';
 	
 	//Get totals from lists
-	$q  = 'SELECT 1 FROM subscribers';
-	$q .= $email_list_seg_incl==0 && $email_list_seg_excl==0 ? ' ' : ' LEFT JOIN subscribers_seg ON (subscribers.id = subscribers_seg.subscriber_id) ';
+	$q  = 'SELECT 1 FROM '.SUBSCRIBERS;
+	$q .= $email_list_seg_incl==0 && $email_list_seg_excl==0 ? ' ' : ' LEFT JOIN '.SUBSCRIBERS_SEG.' ON ('.SUBSCRIBERS.'.id = '.SUBSCRIBERS_SEG.'.subscriber_id) ';
 	$q .= 'WHERE ('.$main_query.$seg_query.') ';
 	$q .= $exclude_query != '' || $exclude_seg_query != '' ? 'AND ('.$exclude_query.$exclude_seg_query.') ' : '';
-	$q .= 'AND subscribers.unsubscribed = 0 AND subscribers.bounced = 0 AND subscribers.complaint = 0 AND subscribers.confirmed = 1 '.$gdpr_line.'
-		   GROUP BY subscribers.email';
+	$q .= 'AND '.SUBSCRIBERS.'.unsubscribed = 0 AND '.SUBSCRIBERS.'.bounced = 0 AND '.SUBSCRIBERS.'.complaint = 0 AND '.SUBSCRIBERS.'.confirmed = 1 '.$gdpr_line.'
+		   GROUP BY '.SUBSCRIBERS.'.email';
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{

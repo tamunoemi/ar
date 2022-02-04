@@ -11,7 +11,7 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/update-list?i='.get_app_info('restricted_to_app').'&l='.$lid.'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/update-list?i='.get_app_info('restricted_to_app').'&l='.$lid.'"</script>';
 			exit;
 		}
 		$q = 'SELECT app FROM lists WHERE id = '.$lid;
@@ -24,7 +24,7 @@
 		    }  
 		    if($a!=get_app_info('restricted_to_app'))
 		    {
-			    echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/list?i='.get_app_info('restricted_to_app').'"</script>';
+			    echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/list?i='.get_app_info('restricted_to_app').'"</script>';
 				exit;
 		    }
 		}
@@ -68,14 +68,14 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
-	    	<p><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $_GET['l'];?>"><span class="label label-info"><?php echo get_list_data('name');?></span></a></p>
+	    	<p><?php echo _('List');?>: <a href="<?php echo get_app_info('path');?>/index.php/site/subscribers?i=<?php echo get_app_info('app');?>&l=<?php echo $_GET['l'];?>"><span class="label label-info"><?php echo get_list_data('name');?></span></a></p>
 	    	<br/>
     	</div>
     	<h2><?php echo _('Import via CSV file');?></h2><br/>
-	    <form action="<?php echo get_app_info('path')?>/includes/subscribers/import-update.php" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="import-update-form">
+	    <form action="<?php echo get_app_info('path')?>/index.php/site/subscribers/import-update" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="import-update-form">
 	        
 	        <?php if($err==1):?>
 			<div class="alert alert-error">
@@ -116,7 +116,7 @@
 				  	<th><?php echo _('Name');?></th>
 				  	<th><?php echo _('Email');?></th>
 				  	<?php 
-					      $q = 'SELECT custom_fields FROM lists WHERE id = '.$lid;
+					      $q = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$lid;
 					      $r = mysqli_query($mysqli, $q);
 					      if ($r)
 					      {
@@ -140,7 +140,7 @@
 			      <td>Philip Morris</td>
 			      <td>pmorris@gmail.com</td>
 			      <?php 
-					      $q = 'SELECT custom_fields FROM lists WHERE id = '.$lid;
+					      $q = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$lid;
 					      $r = mysqli_query($mysqli, $q);
 					      if ($r)
 					      {
@@ -163,7 +163,7 @@
 			      <td>Jane Webster</td>
 			      <td>jwebster@gmail.com</td>
 			      <?php 
-					      $q = 'SELECT custom_fields FROM lists WHERE id = '.$lid;
+					      $q = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$lid;
 					      $r = mysqli_query($mysqli, $q);
 					      if ($r)
 					      {
@@ -192,7 +192,7 @@
 	        
 	        <?php 
 		        //check if cron is set up
-		    	$q = 'SELECT cron_csv FROM login WHERE id = '.get_app_info('main_userID');
+		    	$q = 'SELECT cron_csv FROM '.LOGIN.' WHERE id = '.get_app_info('main_userID');
 		    	$r = mysqli_query($mysqli, $q);
 		    	if ($r)
 		    	    while($row = mysqli_fetch_array($r)) 
@@ -203,7 +203,7 @@
 			    $server_path = $server_path_array[0];
 			    
 			    //Get gdpr_options
-				$q = 'SELECT gdpr_options FROM apps WHERE id = '.get_app_info('app');
+				$q = 'SELECT gdpr_options FROM '.APPS.' WHERE id = '.get_app_info('app');
 				$r = mysqli_query($mysqli, $q);
 				if ($r) while($row = mysqli_fetch_array($r)) $gdpr_options = $row['gdpr_options'];
 	        ?>
@@ -260,7 +260,7 @@
 	    <hr/>
 	    
 	    <h2><?php echo _('Add name and email per line');?></h2><br/>
-	    <form action="<?php echo get_app_info('path')?>/includes/subscribers/line-update.php" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="line-import-form">
+	    <form action="<?php echo get_app_info('path')?>/index.php/site/subscribers/line-update" method="POST" accept-charset="utf-8" class="form-vertical" enctype="multipart/form-data" id="line-import-form">
 	        
 	        <?php if($err==2):?>
 			<div class="alert alert-error">

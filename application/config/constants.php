@@ -96,6 +96,27 @@ define('ADMIN', 'admins');
 define('SMTP', 'smtp');
 define('SETTINGS', 'settings');
 
+define('APPS', 'apps');
+define('ARES', 'ares');
+define('ARES_EMAILS', 'ares_emails');
+define('BLOCKED_DOMAINS', 'blocked_domains');
+define('CAMPAIGNS', 'campaigns');
+define('GROUPS', 'froups');
+define('LINKS', 'links');
+define('LISTS', 'lists');
+define('LOGIN', 'login');
+define('LOGIN_ATTEMPTS', 'login_attempts');
+define('QUEUE', 'queue');
+define('SEG', 'seg');
+define('SEG_CONS', 'seg_cons');
+define('SKIPPED_EMAILS', 'skipped_emails');
+define('SUBSCRIBERS', 'subscribers');
+define('SUBSCRIBERS_SEG', 'subscribers_seg');
+define('SUPPRESSION_LIST', 'suppression_list');
+define('TEMPLATE', 'template');
+define('USER_GROUPS', 'user_groups');
+define('ZAPIER', 'zapier');
+
 
 define('CONTACT_US', 'contact_us');
 define('LOGO_PATH', 'assets/images/logo-colored.png');

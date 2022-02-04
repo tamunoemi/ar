@@ -1,6 +1,6 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
-<?php include('../helpers/short.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
+<?php include('includes/helpers/short.php');?>
 <?php 
 	$lid = is_numeric($_POST['lid']) ? mysqli_real_escape_string($mysqli, $_POST['lid']) : exit;
 	$app = is_numeric($_POST['app']) ? mysqli_real_escape_string($mysqli, $_POST['app']) : exit;
@@ -8,7 +8,7 @@
 	$result = '';
 	
 	//Check if reCAPTCHA is enabled and get custom domain settings
-	$q = 'SELECT recaptcha_sitekey, recaptcha_secretkey, custom_domain, custom_domain_protocol, custom_domain_enabled FROM apps WHERE id = '.$app;
+	$q = 'SELECT recaptcha_sitekey, recaptcha_secretkey, custom_domain, custom_domain_protocol, custom_domain_enabled FROM '.APPS.' WHERE id = '.$app;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -36,14 +36,14 @@
 		$result .= "<script src='https://www.google.com/recaptcha/api.js'></script>
 ";
 	
-	$result .= '<form action="'.$app_path.'/subscribe" method="POST" accept-charset="utf-8">
+	$result .= '<form action="'.$app_path.'/index.php/site/subscribe" method="POST" accept-charset="utf-8">
 	<label for="name">Name</label><br/>
 	<input type="text" name="name" id="name"/>
 	<br/>
 	<label for="email">Email</label><br/>
 	<input type="email" name="email" id="email"/>';
 	
-	$q = 'SELECT custom_fields, gdpr_enabled, marketing_permission, what_to_expect FROM lists WHERE id = '.$lid;
+	$q = 'SELECT custom_fields, gdpr_enabled, marketing_permission, what_to_expect FROM '.LISTS.' WHERE id = '.$lid;
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{

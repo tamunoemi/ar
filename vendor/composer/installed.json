@@ -108,7 +108,7 @@
         ]
     },
     {
-        "name": "mikey179/vfsStream",
+        "name": "mikey179/vfsstream",
         "version": "v1.1.0",
         "version_normalized": "1.1.0.0",
         "source": {

@@ -8,7 +8,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;		
-		$q = 'SELECT '.$val.' FROM apps WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -24,7 +24,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM campaigns WHERE id = "'.mysqli_real_escape_string($mysqli, $_GET['c']).'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.CAMPAIGNS.' WHERE id = "'.mysqli_real_escape_string($mysqli, $_GET['c']).'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -83,7 +83,7 @@
 		$clicks_array = array();
 		$clicks_unique = 0;
 		
-		$q = 'SELECT * FROM links WHERE campaign_id = '.$cid;
+		$q = 'SELECT * FROM '.LINKS.' WHERE campaign_id = '.$cid;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -108,7 +108,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT last_campaign FROM subscribers WHERE last_campaign = '.mysqli_real_escape_string($mysqli, $_GET['c']).' AND unsubscribed = 1';
+		$q = 'SELECT last_campaign FROM '.SUBSCRIBERS.' WHERE last_campaign = '.mysqli_real_escape_string($mysqli, $_GET['c']).' AND unsubscribed = 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -125,8 +125,8 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		if($soft=='soft') $q = 'SELECT last_campaign FROM subscribers WHERE last_campaign = '.mysqli_real_escape_string($mysqli, $_GET['c']).' AND bounce_soft = 1';
-		else $q = 'SELECT last_campaign FROM subscribers WHERE last_campaign = '.mysqli_real_escape_string($mysqli, $_GET['c']).' AND bounced = 1';
+		if($soft=='soft') $q = 'SELECT last_campaign FROM '.SUBSCRIBERS.' WHERE last_campaign = '.mysqli_real_escape_string($mysqli, $_GET['c']).' AND bounce_soft = 1';
+		else $q = 'SELECT last_campaign FROM '.SUBSCRIBERS.' WHERE last_campaign = '.mysqli_real_escape_string($mysqli, $_GET['c']).' AND bounced = 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -143,7 +143,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT last_campaign FROM subscribers WHERE last_campaign = '.mysqli_real_escape_string($mysqli, $_GET['c']).' AND complaint = 1';
+		$q = 'SELECT last_campaign FROM '.SUBSCRIBERS.' WHERE last_campaign = '.mysqli_real_escape_string($mysqli, $_GET['c']).' AND complaint = 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -162,7 +162,7 @@
 		global $mysqli;
 		$name_array = array();
 		
-		$q = 'SELECT to_send_lists, segs FROM campaigns WHERE id = '.mysqli_real_escape_string($mysqli, $_GET['c']);
+		$q = 'SELECT to_send_lists, segs FROM '.CAMPAIGNS.' WHERE id = '.mysqli_real_escape_string($mysqli, $_GET['c']);
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) 
 		{
@@ -172,7 +172,7 @@
 		
 		if($to_send_lists!='')
 		{
-			$q2 = 'SELECT name FROM lists WHERE id IN ('.$to_send_lists.')';
+			$q2 = 'SELECT name FROM '.LISTS.' WHERE id IN ('.$to_send_lists.')';
 			$r2 = mysqli_query($mysqli, $q2);
 			if ($r2)
 			{
@@ -186,7 +186,7 @@
 		
 		if($segs!='')
 		{
-			$q3 = 'SELECT name FROM seg WHERE id IN ('.$segs.')';
+			$q3 = 'SELECT name FROM '.SEG.' WHERE id IN ('.$segs.')';
 			$r3 = mysqli_query($mysqli, $q3);
 			if ($r3)
 			{
@@ -212,7 +212,7 @@
 		global $mysqli;
 		$name_array = array();
 		
-		$q = 'SELECT lists_excl, segs_excl FROM campaigns WHERE id = '.mysqli_real_escape_string($mysqli, $_GET['c']);
+		$q = 'SELECT lists_excl, segs_excl FROM '.CAMPAIGNS.' WHERE id = '.mysqli_real_escape_string($mysqli, $_GET['c']);
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) 
 		{
@@ -222,7 +222,7 @@
 		
 		if($lists_excl!='')
 		{
-			$q2 = 'SELECT name FROM lists WHERE id IN ('.$lists_excl.')';
+			$q2 = 'SELECT name FROM '.LISTS.' WHERE id IN ('.$lists_excl.')';
 			$r2 = mysqli_query($mysqli, $q2);
 			if ($r2)
 			{
@@ -236,7 +236,7 @@
 		
 		if($segs_excl!='')
 		{
-			$q3 = 'SELECT name FROM seg WHERE id IN ('.$segs_excl.')';
+			$q3 = 'SELECT name FROM '.SEG.' WHERE id IN ('.$segs_excl.')';
 			$r3 = mysqli_query($mysqli, $q3);
 			if ($r3)
 			{
@@ -260,7 +260,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;		
-		$q = 'SELECT id FROM campaigns where app = '.$app.' AND sent != "" ORDER BY sent DESC LIMIT 1';
+		$q = 'SELECT id FROM '.CAMPAIGNS.' where app = '.$app.' AND sent != "" ORDER BY sent DESC LIMIT 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{

@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      	INIT                       //
@@ -13,6 +13,6 @@
 	//------------------------------------------------------//
 	
 	//delete file
-	if(unlink('../../uploads/attachments/a'.$ares_id.'/'.basename($filename)))
+	if(unlink('uploads/attachments/a'.$ares_id.'/'.basename($filename)))
 		echo true;
 ?>

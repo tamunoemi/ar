@@ -1,13 +1,13 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
-<?php include('../reports/main.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
+<?php include('includes/reports/main.php');?>
 <?php 
 	//POST variables
 	$id = isset($_POST['id']) && is_numeric($_POST['id']) ? mysqli_real_escape_string($mysqli, (int)$_POST['id']) : exit;
 	$app = isset($_POST['app']) && is_numeric($_POST['app']) ? mysqli_real_escape_string($mysqli, (int)$_POST['app']) : exit;
 
 	//get subscriber data
-	$q = 'SELECT * FROM subscribers WHERE id = '.$id;
+	$q = 'SELECT * FROM '.SUBSCRIBERS.' WHERE id = '.$id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
@@ -71,7 +71,7 @@
 	}
 	
 	//get list name
-	$q = 'SELECT name FROM lists WHERE id = '.$list_id;
+	$q = 'SELECT name FROM '.LISTS.' WHERE id = '.$list_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r) while($row = mysqli_fetch_array($r)) $list = $row['name'];
 ?>
@@ -110,7 +110,7 @@
 				{
 					$("#edit-name").show(0, function(){
 						if($("#name").val() != $(this).text())
-						$.post("<?php echo get_app_info('path')?>/includes/subscribers/edit.php", { sid: <?php echo $id;?>, name: $("#name").val() },
+						$.post("<?php echo get_app_info('path')?>/index.php/site/subscribers/edit", { sid: <?php echo $id;?>, name: $("#name").val() },
 						  function(data) {
 						      if(data != 1)
 						      {
@@ -155,7 +155,7 @@
 				{			
 					$("#edit-email").show(0, function(){
 						if($("#email").val() != $(this).text())
-						$.post("<?php echo get_app_info('path')?>/includes/subscribers/edit.php", { sid: <?php echo $id;?>, email: $("#email").val(), app: <?php echo $app;?> },
+						$.post("<?php echo get_app_info('path')?>/index.php/site/subscribers/edit", { sid: <?php echo $id;?>, email: $("#email").val(), app: <?php echo $app;?> },
 						  function(data) {
 						      if(data != 1)
 						      {
@@ -296,7 +296,7 @@
 								{			
 									$("#edit-<?php echo $cf_field_without_dash;?>").show(0, function(){
 										if($("#<?php echo $cf_field_without_dash;?>").val() != $(this).text())
-										$.post("<?php echo get_app_info('path')?>/includes/subscribers/edit.php", { sid: <?php echo $id;?>, <?php echo $cf_field_without_dash;?>: $("#<?php echo $cf_field_without_dash;?>").val() },
+										$.post("<?php echo get_app_info('path')?>/index.php/site/subscribers/edit", { sid: <?php echo $id;?>, <?php echo $cf_field_without_dash;?>: $("#<?php echo $cf_field_without_dash;?>").val() },
 										  function(data) {
 										      if(data != 1)
 										      {
@@ -355,7 +355,7 @@
 			{
 				$("#edit-note").show(1, function(){
 					if($("#note").val() != $(this).text())
-					$.post("<?php echo get_app_info('path')?>/includes/subscribers/edit.php", { sid: <?php echo $id;?>, note: $("#note").val() },
+					$.post("<?php echo get_app_info('path')?>/index.php/site/subscribers/edit", { sid: <?php echo $id;?>, note: $("#note").val() },
 					  function(data) {
 					      if(data != 1)
 					      {
@@ -394,7 +394,7 @@
   </thead>
   <tbody>
   	<?php 
-	  	$q = 'SELECT * FROM campaigns WHERE userID = '.get_app_info('main_userID').' AND app = '.$app.' ORDER BY sent DESC LIMIT 20';
+	  	$q = 'SELECT * FROM '.CAMPAIGNS.' WHERE userID = '.get_app_info('main_userID').' AND app = '.$app.' ORDER BY sent DESC LIMIT 20';
 	  	$r = mysqli_query($mysqli, $q);
 	  	if ($r && mysqli_num_rows($r) > 0)
 	  	{
@@ -423,7 +423,7 @@
 		  		}
 		  		
 		  		//get links data
-		  		$q2 = 'SELECT link, clicks FROM links WHERE campaign_id = '.$campaign_id;
+		  		$q2 = 'SELECT link, clicks FROM '.LINKS.' WHERE campaign_id = '.$campaign_id;
 		  		$r2 = mysqli_query($mysqli, $q2);
 		  		if ($r2 && mysqli_num_rows($r2) > 0)
 		  		{

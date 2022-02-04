@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 
 /********************************/
@@ -11,19 +11,19 @@ $segID = isset($_GET['s']) && is_numeric($_GET['s']) ? mysqli_real_escape_string
 //Check if sub user is trying to download CSVs from other brands
 if(get_app_info('is_sub_user')) 
 {
-	$q = 'SELECT app FROM lists WHERE id = '.$listID;
+	$q = 'SELECT app FROM '.LISTS.' WHERE id = '.$listID;
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $app_attached_to_listID = $row['app'];
 
 	if(get_app_info('app')!=get_app_info('restricted_to_app') || $app_attached_to_listID!=get_app_info('restricted_to_app'))
 	{
-		echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/list?i='.get_app_info('restricted_to_app').'"</script>';
+		echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/list?i='.get_app_info('restricted_to_app').'"</script>';
 		exit;
 	}
 }
 
 //Get seg name to populate $filename
-$q = 'SELECT name FROM seg WHERE id = '.$segID;
+$q = 'SELECT name FROM '.SEG.' WHERE id = '.$segID;
 $r = mysqli_query($mysqli, $q);
 if ($r && mysqli_num_rows($r) > 0)
 {
@@ -34,7 +34,7 @@ if ($r && mysqli_num_rows($r) > 0)
     }  
 }
 
-$q = 'SELECT name, custom_fields FROM lists WHERE id = '.$listID.' AND userID = '.$userID;
+$q = 'SELECT name, custom_fields FROM '.LISTS.' WHERE id = '.$listID.' AND userID = '.$userID;
 $r = mysqli_query($mysqli, $q);
 if ($r && mysqli_num_rows($r) > 0)
 {
@@ -45,10 +45,10 @@ if ($r && mysqli_num_rows($r) > 0)
     }  
 }
 
-$q2 = 'SELECT subscribers.name, subscribers.email, subscribers.custom_fields FROM subscribers, subscribers_seg 
-		WHERE subscribers.list = '.$listID.' AND subscribers_seg.seg_id = '.$segID.' AND subscribers.userID = '.$userID.' 
-		AND subscribers_seg.subscriber_id = subscribers.id 
-		ORDER BY subscribers.timestamp DESC';
+$q2 = 'SELECT '.SUBSCRIBERS.'.name, '.SUBSCRIBERS.'.email, '.SUBSCRIBERS.'.custom_fields FROM '.SUBSCRIBERS.', '.SUBSCRIBERS_SEG.' 
+		WHERE '.SUBSCRIBERS.'.list = '.$listID.' AND '.SUBSCRIBERS_SEG.'.seg_id = '.$segID.' AND '.SUBSCRIBERS.'.userID = '.$userID.' 
+		AND '.SUBSCRIBERS_SEG.'.subscriber_id = '.SUBSCRIBERS.'.id 
+		ORDER BY '.SUBSCRIBERS.'.timestamp DESC';
 $r2 = mysqli_query($mysqli, $q2);
 if ($r2 && mysqli_num_rows($r2) > 0)
 {

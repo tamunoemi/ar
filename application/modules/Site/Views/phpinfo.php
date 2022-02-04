@@ -37,7 +37,7 @@
 	$l = mysqli_real_escape_string($mysqli, $_GET['l']);
 	
 	//Retreive license
-	$q = 'SELECT license FROM login LIMIT 1';
+	$q = 'SELECT license FROM '.LOGIN.' LIMIT 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $license = $row['license'];
 	

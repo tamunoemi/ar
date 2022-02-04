@@ -1,9 +1,9 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php
 
 /********************************/
-$databasetable = "subscribers";
+$databasetable = SUBSCRIBERS;
 $fieldseparator = ",";
 $lineseparator = "\n";
 $csvfile = $_FILES['csv_file']['tmp_name'];
@@ -13,7 +13,7 @@ $listID = isset($_POST['list_id']) && is_numeric($_POST['list_id']) ? mysqli_rea
 /********************************/
 
 if(!file_exists($csvfile)) {
-	header("Location: ".get_app_info('path').'/unsubscribe-from-list?i='.$app.'&l='.$listID.'&e=3'); 
+	header("Location: ".get_app_info('path').'/index.php/site/unsubscribe-from-list?i='.$app.'&l='.$listID.'&e=3'); 
 	exit;
 }
 
@@ -54,12 +54,12 @@ foreach(explode($lineseparator,$csvcontent) as $line)
 	//check if there's more than 1 column
 	if($columns>1)
 	{
-		header("Location: ".get_app_info('path').'/unsubscribe-from-list?i='.$app.'&l='.$listID.'&e=1'); 
+		header("Location: ".get_app_info('path').'/index.php/site/unsubscribe-from-list?i='.$app.'&l='.$listID.'&e=1'); 
 		exit;
 	}
 	
 	//check if email exists to be unsubscribed
-	$q = 'SELECT email FROM subscribers WHERE list = '.$listID.' AND email = "'.$line.'" AND userID = '.$userID;
+	$q = 'SELECT email FROM '.SUBSCRIBERS.' WHERE list = '.$listID.' AND email = "'.$line.'" AND userID = '.$userID;
 	$r = mysqli_query($mysqli, $q);
 	if (mysqli_num_rows($r) > 0)
 	{
@@ -70,6 +70,6 @@ foreach(explode($lineseparator,$csvcontent) as $line)
 }
 
 //return
-header("Location: ".get_app_info('path').'/subscribers?i='.$app.'&l='.$listID); 
+header("Location: ".get_app_info('path').'/index.php/site/subscribers?i='.$app.'&l='.$listID); 
 
 ?>

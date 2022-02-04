@@ -1,11 +1,11 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	$campaign_id = isset($_GET['c']) && is_numeric($_GET['c']) ? mysqli_real_escape_string($mysqli, (int)$_GET['c']) : exit;
 	$filename = 'campaign-errors.csv';
 	$lines = "Name,Email,Error code\n";
 	
-	$q = 'SELECT errors FROM campaigns WHERE id = '.$campaign_id;
+	$q = 'SELECT errors FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
@@ -23,7 +23,7 @@
 		$subscriber_id = $errs_array[0];
 		$error_code = $errs_array[1];
 		
-		$q2 = 'SELECT name, email FROM subscribers WHERE id = '.$subscriber_id;
+		$q2 = 'SELECT name, email FROM '.SUBSCRIBERS.' WHERE id = '.$subscriber_id;
 		$r2 = mysqli_query($mysqli, $q2);
 		if ($r2 && mysqli_num_rows($r2) > 0)
 		{

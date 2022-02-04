@@ -75,12 +75,18 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
     
     //LOCAL SETTINGS
-	'username' => 'root',
-	'password' => '',
-	'database' => 'sendy_igniter',
+	// 'hostname' => 'localhost',
+	// 'username' => 'root',
+	// 'password' => '',
+	// 'database' => 'sendy_igniter',
+
+	//TEST REMOTE SETTINGS
+	'hostname' => 'db4free.net',
+	'username' => 'tegotestdb',
+	'password' => 'PPVnkjFwLsHm',
+	'database' => 'tegotestdb',
     
 //    REMOTE SETTINGS
 //       'username'=>'viraleng_site',
@@ -103,3 +109,6 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+
+

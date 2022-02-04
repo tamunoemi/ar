@@ -11,7 +11,7 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/autoresponders-emails?i='.get_app_info('restricted_to_app').'&a='.$aid.'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/autoresponders-emails?i='.get_app_info('restricted_to_app').'&a='.$aid.'"</script>';
 			exit;
 		}
 	}
@@ -47,7 +47,7 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
 		    	</div>
@@ -57,7 +57,7 @@
 	    
 	    <br/><br/>
 	    
-	    <a href="<?php echo get_app_info('path')?>/autoresponders-create?i=<?php echo get_app_info('app')?>&a=<?php echo $aid?>" title="" class="btn btn-inverse"><i class="icon icon-plus"></i> <?php echo _('Add a new email to this autoresponder');?></a>
+	    <a href="<?php echo get_app_info('path')?>/index.php/site/autoresponders-create?i=<?php echo get_app_info('app')?>&a=<?php echo $aid?>" title="" class="btn btn-inverse"><i class="icon icon-plus"></i> <?php echo _('Add a new email to this autoresponder');?></a>
 	    
 	    <br/><br/>
 	    
@@ -76,7 +76,7 @@
 		          </thead>
 		          <tbody>
 		          	<?php 
-			          	$q = 'SELECT * FROM ares_emails WHERE ares_id = '.$aid;
+			          	$q = 'SELECT * FROM '.ARES_EMAILS.' WHERE ares_id = '.$aid;
 			          	$r = mysqli_query($mysqli, $q);
 			          	if ($r && mysqli_num_rows($r) > 0)
 			          	{
@@ -196,10 +196,10 @@
 		              	<div class="btns">
 		              	
 		              		<ul class="ares_email_options">
-					            <li><a href="<?php echo get_app_info('path')?>/autoresponders-edit?i=<?php echo get_app_info('app')?>&a=<?php echo $aid?>&ae=<?php echo $ares_email_id?>" title=""><?php echo _('Edit');?></a></li>
-					            <li><a href="<?php echo get_app_info('path');?>/w/<?php echo short($ares_email_id);?>/a?<?php echo time();?>" title="" class="iframe-preview"><?php echo _('Preview');?></a></li>
+					            <li><a href="<?php echo get_app_info('path')?>/index.php/site/autoresponders-edit?i=<?php echo get_app_info('app')?>&a=<?php echo $aid?>&ae=<?php echo $ares_email_id?>" title=""><?php echo _('Edit');?></a></li>
+					            <li><a href="<?php echo get_app_info('path');?>/index.php/site/w/<?php echo short($ares_email_id);?>/a?<?php echo time();?>" title="" class="iframe-preview"><?php echo _('Preview');?></a></li>
 					            <li><a href="javascript:void(0)" title="" id="delete-<?php echo $ares_email_id;?>" data-id="<?php echo $ares_email_id;?>"><?php echo _('Delete');?></a></li>
-					            <li><a href="<?php echo get_app_info('path');?>/autoresponders-report.php?i=<?php echo get_app_info('app')?>&a=<?php echo $aid;?>&ae=<?php echo $ares_email_id; ?>" title=""><?php echo _('View report');?></a></li>
+					            <li><a href="<?php echo get_app_info('path');?>/index.php/site/autoresponders-report.php?i=<?php echo get_app_info('app')?>&a=<?php echo $aid;?>&ae=<?php echo $ares_email_id; ?>" title=""><?php echo _('View report');?></a></li>
 					        </ul>
 				            
 				            <script type="text/javascript">
@@ -208,7 +208,7 @@
 									c = confirm("<?php echo _('Confirm delete');?> '<?php echo $title;?>'?");
 									if(c)
 									{
-						            	$.post("<?php echo get_app_info('path')?>/includes/ares/delete-email.php", { id: $(this).data("id") },
+						            	$.post("<?php echo get_app_info('path')?>/index.php/site/ares/delete-email", { id: $(this).data("id") },
 					            		  function(data) {
 					            		      if(data)
 					            		      {
@@ -248,7 +248,7 @@
 								
 								$("#enabled-<?php echo $ares_email_id;?>").click(function(){
 									$(this).attr("disabled", true);
-									$.post("<?php echo get_app_info('path')?>/includes/ares/toggle-autoresponder.php", { ares_id: <?php echo $ares_email_id;?>, enable: 1 },
+									$.post("<?php echo get_app_info('path')?>/index.php/site/ares/toggle-autoresponder", { ares_id: <?php echo $ares_email_id;?>, enable: 1 },
 									  function(data) {
 									      if(data)
 									      {
@@ -269,7 +269,7 @@
 								});
 								$("#disabled-<?php echo $ares_email_id;?>").click(function(){
 									$(this).attr("disabled", true);
-									$.post("<?php echo get_app_info('path')?>/includes/ares/toggle-autoresponder.php", { ares_id: <?php echo $ares_email_id;?>, enable: 0 },
+									$.post("<?php echo get_app_info('path')?>/index.php/site/ares/toggle-autoresponder", { ares_id: <?php echo $ares_email_id;?>, enable: 0 },
 									  function(data) {
 									      if(data)
 									      {
@@ -307,7 +307,7 @@
 		          </tbody>
 		        </table>
 		        <br/>
-		        <a href="<?php echo get_app_info('path');?>/autoresponders-list?i=<?php echo $_GET['i']?>&l=<?php echo get_ares_data('list');?>" title=""><i class="icon icon-chevron-left"></i> <?php echo _('Back to autoresponders list');?></a>
+		        <a href="<?php echo get_app_info('path');?>/index.php/site/autoresponders-list?i=<?php echo $_GET['i']?>&l=<?php echo get_ares_data('list');?>" title=""><i class="icon icon-chevron-left"></i> <?php echo _('Back to autoresponders list');?></a>
 			</div>
 	    </div>
 	    

@@ -8,7 +8,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM apps WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -24,7 +24,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM ares_emails WHERE id = '.mysqli_real_escape_string($mysqli, $_GET['ae']);
+		$q = 'SELECT '.$val.' FROM '.ARES_EMAILS.' WHERE id = '.mysqli_real_escape_string($mysqli, $_GET['ae']);
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -82,7 +82,7 @@
 		$clicks_array = array();
 		$clicks_unique = 0;
 		
-		$q = 'SELECT * FROM links WHERE ares_emails_id = '.mysqli_real_escape_string($mysqli, $cid);
+		$q = 'SELECT * FROM '.LINKS.' WHERE ares_emails_id = '.mysqli_real_escape_string($mysqli, $cid);
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -107,7 +107,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT last_ares FROM subscribers WHERE last_ares = '.mysqli_real_escape_string($mysqli, $_GET['ae']).' AND unsubscribed = 1';
+		$q = 'SELECT last_ares FROM '.SUBSCRIBERS.' WHERE last_ares = '.mysqli_real_escape_string($mysqli, $_GET['ae']).' AND unsubscribed = 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -124,7 +124,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT last_ares FROM subscribers WHERE last_ares = '.mysqli_real_escape_string($mysqli, $_GET['ae']).' AND bounced = 1';
+		$q = 'SELECT last_ares FROM '.SUBSCRIBERS.' WHERE last_ares = '.mysqli_real_escape_string($mysqli, $_GET['ae']).' AND bounced = 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -141,7 +141,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT last_ares FROM subscribers WHERE last_ares = '.mysqli_real_escape_string($mysqli, $_GET['ae']).' AND complaint = 1';
+		$q = 'SELECT last_ares FROM '.SUBSCRIBERS.' WHERE last_ares = '.mysqli_real_escape_string($mysqli, $_GET['ae']).' AND complaint = 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -158,7 +158,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM ares WHERE id = '.mysqli_real_escape_string($mysqli, $_GET['a']);
+		$q = 'SELECT '.$val.' FROM '.ARES.' WHERE id = '.mysqli_real_escape_string($mysqli, $_GET['a']);
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{

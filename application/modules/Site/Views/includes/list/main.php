@@ -8,7 +8,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM apps WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.APPS.' WHERE id = "'.get_app_info('app').'" AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -24,7 +24,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT '.$val.' FROM lists WHERE app = "'.get_app_info('app').'" AND id = '.$lid.' AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT '.$val.' FROM '.LISTS.' WHERE app = "'.get_app_info('app').'" AND id = '.$lid.' AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -42,7 +42,7 @@
 		global $mysqli;
 		
 		//Check if the list has a pending CSV for importing via cron
-		$server_path_array = explode('list.php', $_SERVER['SCRIPT_FILENAME']);
+		$server_path_array = explode('index.php/site/list', $_SERVER['SCRIPT_FILENAME']);
 		$server_path = $server_path_array[0];
 		
 		if (file_exists($server_path.'uploads/csvs') && $handle = opendir($server_path.'uploads/csvs')) 
@@ -65,7 +65,7 @@
 						    			function get_list_count(lid)
 						    			{
 						    				clearInterval(list_interval);
-							    			$.post("includes/list/progress.php", { list_id: lid, user_id: '.get_app_info('main_userID').' },
+							    			$.post("'.get_app_info("path").'/index.php/site/list/progress", { list_id: lid, user_id: '.get_app_info('main_userID').' },
 											  function(data) {
 											      if(data)
 											      {
@@ -91,7 +91,7 @@
 		}
 		
 		//if not, just return the subscriber count
-		$q = 'SELECT COUNT(list) FROM subscribers use index (s_list) WHERE list = '.$lid.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
+		$q = 'SELECT COUNT(list) FROM '.SUBSCRIBERS.' use index (s_list) WHERE list = '.$lid.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
@@ -107,7 +107,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(list) FROM subscribers use index (s_list) WHERE list = '.$lid.' AND unsubscribed = 1 AND bounced = 0';
+		$q = 'SELECT COUNT(list) FROM '.SUBSCRIBERS.' use index (s_list) WHERE list = '.$lid.' AND unsubscribed = 1 AND bounced = 0';
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) return number_format($row['COUNT(list)']);
 	}
@@ -128,7 +128,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(list) FROM subscribers use index (s_list) WHERE list = '.$lid.' AND bounced = 1';
+		$q = 'SELECT COUNT(list) FROM '.SUBSCRIBERS.' use index (s_list) WHERE list = '.$lid.' AND bounced = 1';
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) return number_format($row['COUNT(list)']);
 	}
@@ -149,7 +149,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(id) FROM seg WHERE list = '.$lid;
+		$q = 'SELECT COUNT(id) FROM '.SEG.' WHERE list = '.$lid;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) return $row['COUNT(id)'];
 	}
@@ -159,7 +159,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(id) FROM ares WHERE list = '.$lid;
+		$q = 'SELECT COUNT(id) FROM '.ARES.' WHERE list = '.$lid;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) return $row['COUNT(id)'];
 	}
@@ -169,7 +169,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(id) FROM subscribers use index (s_list) WHERE unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1 AND gdpr = 1 AND list = '.$lid;
+		$q = 'SELECT COUNT(id) FROM '.SUBSCRIBERS.' use index (s_list) WHERE unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1 AND gdpr = 1 AND list = '.$lid;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) return number_format($row['COUNT(id)']);
 	}
@@ -181,7 +181,7 @@
 		global $mysqli;
 		
 		//Get subscriber count
-		$q = "SELECT COUNT(*) FROM subscribers WHERE list = '$lid' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1";
+		$q = "SELECT COUNT(*) FROM ".SUBSCRIBERS." WHERE list = '$lid' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1";
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) $subscribers = $row['COUNT(*)'];
 		
@@ -196,7 +196,7 @@
 	//------------------------------------------------------//
 	{
 		global $mysqli;
-		$q = 'SELECT COUNT(subscribers.gdpr) as gdpr_subs_no FROM subscribers, lists, apps WHERE subscribers.list = lists.id AND lists.app = apps.id AND subscribers.gdpr = 1 AND apps.id = '.get_app_info('app');
+		$q = 'SELECT COUNT(subscribers.gdpr) as gdpr_subs_no FROM '.SUBSCRIBERS.', lists, apps WHERE subscribers.list = lists.id AND lists.app = apps.id AND subscribers.gdpr = 1 AND apps.id = '.get_app_info('app');
 		$r = mysqli_query($mysqli, $q);
 		if ($r) while($row = mysqli_fetch_array($r)) $gdpr_subs_no = $row['gdpr_subs_no'];
 		if($gdpr_subs_no > 0) return true;
@@ -209,7 +209,7 @@
 	{
 		global $mysqli;
 			
-		$q = 'SELECT id FROM lists WHERE app = '.$app.' AND userID = '.get_app_info('main_userID');
+		$q = 'SELECT id FROM '.LISTS.' WHERE app = '.$app.' AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r) return mysqli_num_rows($r);
 	}
@@ -245,9 +245,9 @@
 			//Prev btn
 			if($curpage>=2)
 				if($prev_page_num==1)
-					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/list?i='.get_app_info('app').'\'"><span class="icon icon icon-arrow-left"></span></button>';
+					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site/list?i='.get_app_info('app').'\'"><span class="icon icon icon-arrow-left"></span></button>';
 				else
-					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/list?i='.get_app_info('app').'&p='.$prev_page_num.'\'"><span class="icon icon icon-arrow-left"></span></button>';
+					echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site/list?i='.get_app_info('app').'&p='.$prev_page_num.'\'"><span class="icon icon icon-arrow-left"></span></button>';
 			else
 				echo '<button class="btn disabled"><span class="icon icon icon-arrow-left"></span></button>';
 			
@@ -255,7 +255,7 @@
 			if($curpage==$total_pages)
 				echo '<button class="btn disabled"><span class="icon icon icon-arrow-right"></span></button>';
 			else
-				echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/list?i='.get_app_info('app').'&p='.$next_page_num.'\'"><span class="icon icon icon-arrow-right"></span></button>';
+				echo '<button class="btn" onclick="window.location=\''.get_app_info('path').'/index.php/site/list?i='.get_app_info('app').'&p='.$next_page_num.'\'"><span class="icon icon icon-arrow-right"></span></button>';
 					
 			echo '</div>';
 		}

@@ -52,7 +52,7 @@
 	}
 	
 	//Check if brand id and list id is valid and matching
-	$q = 'SELECT * FROM lists WHERE app = '.$brand.' AND id = '.short($lid, true);
+	$q = 'SELECT * FROM '.LISTS.' WHERE app = '.$brand.' AND id = '.short($lid, true);
 	$r = mysqli_query($mysqli, $q);
 	if (mysqli_num_rows($r) == 0)
 	{
@@ -61,7 +61,7 @@
 	}
 	
 	//Get brand logo
-	$q = "SELECT app_name, from_email, brand_logo_filename, recaptcha_sitekey, recaptcha_secretkey, custom_domain, custom_domain_protocol, custom_domain_enabled FROM apps WHERE id = '$brand'";
+	$q = "SELECT app_name, from_email, brand_logo_filename, recaptcha_sitekey, recaptcha_secretkey, custom_domain, custom_domain_protocol, custom_domain_enabled FROM ".APPS." WHERE id = '$brand'";
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -95,7 +95,7 @@
 	}
 	
 	//Set language
-	$q_l = 'SELECT login.language FROM lists, login WHERE lists.id = '.short($lid, true).' AND login.app = lists.app';
+	$q_l = 'SELECT '.LOGIN.'.language FROM '.LISTS.', '.LOGIN.' WHERE '.LISTS.'.id = '.short($lid, true).' AND '.LOGIN.'.app = '.LISTS.'.app';
 	$r_l = mysqli_query($mysqli, $q_l);
 	if ($r_l && mysqli_num_rows($r_l) > 0) while($row = mysqli_fetch_array($r_l)) $language = $row['language'];
 	set_locale($language);
@@ -147,7 +147,7 @@
 					</div>
 					
 					<?php 
-						$q = 'SELECT custom_fields, gdpr_enabled, marketing_permission, what_to_expect FROM lists WHERE id = '.short($lid,true);
+						$q = 'SELECT custom_fields, gdpr_enabled, marketing_permission, what_to_expect FROM '.LISTS.' WHERE id = '.short($lid,true);
 						$r = mysqli_query($mysqli, $q);
 						if ($r)
 						{

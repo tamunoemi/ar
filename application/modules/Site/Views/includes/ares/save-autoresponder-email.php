@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      	INIT                       //
@@ -31,7 +31,7 @@
 	if(isset($_POST['save-only'])) $save_only = is_numeric($_POST['save-only']) ? $_POST['save-only'] : 0;
 	
 	//get allowed attachments
-	$q = 'SELECT allowed_attachments FROM apps WHERE id = '.get_app_info('app');
+	$q = 'SELECT allowed_attachments FROM '.APPS.' WHERE id = '.get_app_info('app');
 	$r = mysqli_query($mysqli, $q);
 	if ($r) while($row = mysqli_fetch_array($r)) $allowed = array_map('trim', explode(',', $row['allowed_attachments']));
 	$allow_attachments = $row['allowed_attachments']='' ? 0 : 1;
@@ -58,25 +58,25 @@
 	//------------------------------------------------------//
 	
 	//make attachments directory if it don't exist
-	if(!file_exists("../../uploads/attachments")) mkdir("../../uploads/attachments", 0777); 
+	if(!file_exists("uploads/attachments")) mkdir("uploads/attachments", 0777); 
 	
 	if($edit)
 	{
-		$q = 'UPDATE ares_emails SET from_name="'.$from_name.'", from_email="'.$from_email.'", reply_to="'.$reply_to.'", title="'.$subject.'", plain_text="'.$plain.'", html_text="'.addslashes($html).'", query_string="'.$query_string.'", time_condition="'.$time_condition.'", opens_tracking = '.$track_opens.', links_tracking = '.$track_clicks.' WHERE id='.$ae.' AND ares_id='.$ares_id;
+		$q = 'UPDATE '.ARES_EMAILS.' SET from_name="'.$from_name.'", from_email="'.$from_email.'", reply_to="'.$reply_to.'", title="'.$subject.'", plain_text="'.$plain.'", html_text="'.addslashes($html).'", query_string="'.$query_string.'", time_condition="'.$time_condition.'", opens_tracking = '.$track_opens.', links_tracking = '.$track_clicks.' WHERE id='.$ae.' AND ares_id='.$ares_id;
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
 			//Upload attachment(s)
 			if($allow_attachments && $file[0]!='') //check if user uploaded any attachments
 			{
-				if(!file_exists("../../uploads/attachments/a$ae")) mkdir("../../uploads/attachments/a$ae", 0777);
+				if(!file_exists("uploads/attachments/a$ae")) mkdir("uploads/attachments/a$ae", 0777);
 				for($i=0;$i<count($file);$i++)
 				{
 					$extension_explode = explode('.', $filename[$i]);
 					$extension = $extension_explode[count($extension_explode)-1];
 					if(in_array(strtolower($extension), $allowed))
 					{
-						if(!move_uploaded_file($file[$i], "../../uploads/attachments/a$ae/".$filename[$i]))
+						if(!move_uploaded_file($file[$i], "uploads/attachments/a$ae/".$filename[$i]))
 						{
 							show_error(_('Unable to upload attachment'), '<p>'._('Please ensure the /uploads/ folder permission is set to 777.').'</p>');
 							exit;
@@ -86,9 +86,9 @@
 			}
 			
 			if($w_clicked || $save_only)
-				header('Location: '.get_app_info('path').'/autoresponders-edit?i='.get_app_info('app').'&a='.$ares_id.'&ae='.$ae);
+				header('Location: '.get_app_info('path').'/index.php/site/autoresponders-edit?i='.get_app_info('app').'&a='.$ares_id.'&ae='.$ae);
 			else
-				header('Location: '.get_app_info('path').'/autoresponders-emails?i='.get_app_info('app').'&a='.$ares_id);
+				header('Location: '.get_app_info('path').'/index.php/site/autoresponders-emails?i='.get_app_info('app').'&a='.$ares_id);
 		}
 		else
 		{
@@ -99,7 +99,7 @@
 	else
 	{
 		//Insert into campaigns
-		$q = 'INSERT INTO ares_emails (ares_id, from_name, from_email, reply_to, title, plain_text, html_text, query_string, time_condition, created, wysiwyg, opens_tracking, links_tracking) VALUES ('.$ares_id.', "'.$from_name.'", "'.$from_email.'", "'.$reply_to.'", "'.$subject.'", "'.$plain.'", "'.addslashes($html).'", "'.$query_string.'", "'.$time_condition.'", "'.time().'", '.$wysiwyg.', '.$track_opens.', '.$track_clicks.')';
+		$q = 'INSERT INTO '.ARES_EMAILS.' (ares_id, from_name, from_email, reply_to, title, plain_text, html_text, query_string, time_condition, created, wysiwyg, opens_tracking, links_tracking) VALUES ('.$ares_id.', "'.$from_name.'", "'.$from_email.'", "'.$reply_to.'", "'.$subject.'", "'.$plain.'", "'.addslashes($html).'", "'.$query_string.'", "'.$time_condition.'", "'.time().'", '.$wysiwyg.', '.$track_opens.', '.$track_clicks.')';
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
@@ -109,14 +109,14 @@
 			//Upload attachment(s)
 			if($allow_attachments && $file[0]!='') //check if user uploaded any attachments
 			{
-				if(!file_exists("../../uploads/attachments/a$ae")) mkdir("../../uploads/attachments/a$ae", 0777);
+				if(!file_exists("uploads/attachments/a$ae")) mkdir("uploads/attachments/a$ae", 0777);
 				for($i=0;$i<count($file);$i++)
 				{
 					$extension_explode = explode('.', $filename[$i]);
 					$extension = $extension_explode[count($extension_explode)-1];
 					if(in_array(strtolower($extension), $allowed))
 					{
-						if(!move_uploaded_file($file[$i], "../../uploads/attachments/a$ae/".$filename[$i]))
+						if(!move_uploaded_file($file[$i], "uploads/attachments/a$ae/".$filename[$i]))
 						{
 							show_error(_('Unable to upload attachment'), '<p>'._('Please ensure the /uploads/ folder permission is set to 777.').'</p>');
 							exit;
@@ -126,9 +126,9 @@
 			}
 			
 			if($w_clicked || $save_only)
-				header('Location: '.get_app_info('path').'/autoresponders-edit?i='.get_app_info('app').'&a='.$ares_id.'&ae='.$ae);
+				header('Location: '.get_app_info('path').'/index.php/site/autoresponders-edit?i='.get_app_info('app').'&a='.$ares_id.'&ae='.$ae);
 			else
-				header('Location: '.get_app_info('path').'/autoresponders-emails?i='.get_app_info('app').'&a='.$ares_id);
+				header('Location: '.get_app_info('path').'/index.php/site/autoresponders-emails?i='.get_app_info('app').'&a='.$ares_id);
 		}
 		else
 		{

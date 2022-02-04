@@ -40,7 +40,7 @@
 	if($t=='') exit;
 	
 	//get html text from campaign
-	$q = "SELECT html_text FROM template WHERE id = '$t'";
+	$q = "SELECT html_text FROM ".TEMPLATE." WHERE id = '$t'";
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -68,11 +68,11 @@
 			}
 
 			//set web version links
-			$html = str_replace('<webversion', '<a href="'.APP_PATH.'/template-preview?t='.$t.'"', $html);
+			$html = str_replace('<webversion', '<a href="'.APP_PATH.'/index.php/site/template-preview?t='.$t.'"', $html);
 			$html = str_replace('</webversion>', '</a>', $html);
 			
 			//set unsubscribe links
-			$html = str_replace('<unsubscribe', '<a href="'.APP_PATH.'/template-preview?t='.$t.'"', $html);
+			$html = str_replace('<unsubscribe', '<a href="'.APP_PATH.'/index.php/site/template-preview?t='.$t.'"', $html);
 			$html = str_replace('</unsubscribe>', '</a>', $html);
 			
 			//convert date tags

@@ -7,7 +7,7 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/list?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/list?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 	}
@@ -25,7 +25,7 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
     	</div>
@@ -51,7 +51,7 @@
 		  </thead>
 		  <tbody>		  	
 		  	<?php		  		
-		  		$q = 'SELECT subscribers.id, subscribers.name, subscribers.email, subscribers.unsubscribed, subscribers.bounced, subscribers.complaint, subscribers.confirmed, subscribers.list, subscribers.timestamp FROM subscribers, lists WHERE (subscribers.name LIKE "%'.$s.'%" OR subscribers.email LIKE "%'.$s.'%" OR subscribers.custom_fields LIKE "%'.$s.'%" OR subscribers.notes LIKE "%'.$s.'%") AND lists.app = '.get_app_info('app').' AND lists.id = subscribers.list ORDER BY subscribers.timestamp DESC';
+		  		$q = 'SELECT '.SUBSCRIBERS.'.id, '.SUBSCRIBERS.'.name, '.SUBSCRIBERS.'.email, '.SUBSCRIBERS.'.unsubscribed, '.SUBSCRIBERS.'.bounced, '.SUBSCRIBERS.'.complaint, '.SUBSCRIBERS.'.confirmed, '.SUBSCRIBERS.'.list, '.SUBSCRIBERS.'.timestamp FROM '.SUBSCRIBERS.', '.LISTS.' WHERE ('.SUBSCRIBERS.'.name LIKE "%'.$s.'%" OR '.SUBSCRIBERS.'.email LIKE "%'.$s.'%" OR '.SUBSCRIBERS.'.custom_fields LIKE "%'.$s.'%" OR '.SUBSCRIBERS.'.notes LIKE "%'.$s.'%") AND '.LISTS.'.app = '.get_app_info('app').' AND '.LISTS.'.id = '.SUBSCRIBERS.'.list ORDER BY '.SUBSCRIBERS.'.timestamp DESC';
 			  	$r = mysqli_query($mysqli, $q);
 			  	$number_of_results = mysqli_num_rows($r);
 			  	echo '
@@ -94,7 +94,7 @@
 			  			<tr id="'.$id.'">
 			  			  <td><a href="#subscriber-info" data-id="'.$id.'" data-toggle="modal" class="subscriber-info">'.$name.'</a></td>
 					      <td><a href="#subscriber-info" data-id="'.$id.'" data-toggle="modal" class="subscriber-info">'.$email.'</a></td>
-					      <td><a href="'.get_app_info('path').'/subscribers?i='.get_app_info('app').'&l='.$list.'">'.get_list_name($list).'</a></td>
+					      <td><a href="'.get_app_info('path').'/index.php/site/subscribers?i='.get_app_info('app').'&l='.$list.'">'.get_list_name($list).'</a></td>
 					      <td>'.$timestamp.'</td>
 					      <td id="unsubscribe-label-'.$id.'">'.$unsubscribed.'</td>
 					      <td>
@@ -226,7 +226,7 @@
 <script type="text/javascript">
 	$("#delete-subscriber-1").click(function(e){
 		e.preventDefault(); 
-		$.post("includes/subscribers/delete.php", { subscriber_id: $(this).attr("data-id"), option: 1, app: <?php echo get_app_info('app')?> },
+		$.post("<?php echo get_app_info('app')?>/index.php/site/subscribers/delete", { subscriber_id: $(this).attr("data-id"), option: 1, app: <?php echo get_app_info('app')?> },
 		  function(data) {
 		      if(data) 
 		      {
@@ -239,7 +239,7 @@
 	});
 	$("#delete-subscriber-2").click(function(e){
 		e.preventDefault(); 
-		$.post("includes/subscribers/delete.php", { subscriber_id: $(this).attr("data-id"), option: 2, app: <?php echo get_app_info('app')?> },
+		$.post("<?php echo get_app_info('app')?>/index.php/site/subscribers/delete", { subscriber_id: $(this).attr("data-id"), option: 2, app: <?php echo get_app_info('app')?> },
 		  function(data) {
 		      if(data) 
 		      {
@@ -254,7 +254,7 @@
 		s_id = $(this).data("id");
 		$("#subscriber-text").html("<?php echo _('Fetching');?>..");
 		
-		$.post("<?php echo get_app_info('path');?>/includes/subscribers/subscriber-info.php", { id: s_id, app:<?php echo get_app_info('app');?> },
+		$.post("<?php echo get_app_info('path');?>/index.php/site/subscribers/subscriber-info", { id: s_id, app:<?php echo get_app_info('app');?> },
 		  function(data) {
 		      if(data)
 		      {

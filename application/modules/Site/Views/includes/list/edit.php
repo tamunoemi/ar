@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      VARIABLES                       //
@@ -48,10 +48,10 @@
 	//                      FUNCTIONS                       //
 	//------------------------------------------------------//
 	
-	$q = 'UPDATE lists SET name = "'.$list_name.'", opt_in = '.$opt_in.', subscribed_url = "'.$subscribed_url.'", confirm_url = "'.$confirm_url.'", '.$gdpr_line.' already_subscribed_url = "'.$already_subscribed_url.'", thankyou = '.$thankyou.', thankyou_subject = "'.$thankyou_subject.'", thankyou_message = "'.$thankyou_message.'", unsubscribe_all_list = '.$unsubscribe_all_list.', unsubscribed_url = "'.$unsubscribed_url.'", goodbye = '.$goodbye.', goodbye_subject = "'.$goodbye_subject.'", goodbye_message = "'.$goodbye_message.'", confirmation_subject = "'.$confirmation_subject.'", confirmation_email = "'.$confirmation_email.'", unsubscribe_confirm = '.$opt_out.', notify_new_signups = '.$notify_new_signups.', notification_email = "'.$notification_email.'" WHERE id = '.$list_id;
+	$q = 'UPDATE '.LISTS.' SET name = "'.$list_name.'", opt_in = '.$opt_in.', subscribed_url = "'.$subscribed_url.'", confirm_url = "'.$confirm_url.'", '.$gdpr_line.' already_subscribed_url = "'.$already_subscribed_url.'", thankyou = '.$thankyou.', thankyou_subject = "'.$thankyou_subject.'", thankyou_message = "'.$thankyou_message.'", unsubscribe_all_list = '.$unsubscribe_all_list.', unsubscribed_url = "'.$unsubscribed_url.'", goodbye = '.$goodbye.', goodbye_subject = "'.$goodbye_subject.'", goodbye_message = "'.$goodbye_message.'", confirmation_subject = "'.$confirmation_subject.'", confirmation_email = "'.$confirmation_email.'", unsubscribe_confirm = '.$opt_out.', notify_new_signups = '.$notify_new_signups.', notification_email = "'.$notification_email.'" WHERE id = '.$list_id;
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
-		header("Location: ".get_app_info('path')."/list?i=".$app);
+		header("Location: ".get_app_info('path')."/index.php/site/list?i=".$app);
 	}
 ?>

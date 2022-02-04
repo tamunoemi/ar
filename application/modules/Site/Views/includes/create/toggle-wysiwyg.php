@@ -1,6 +1,6 @@
 <?php 
-	include('../functions.php');
-	include('../login/auth.php');
+	include('includes/functions.php');
+	include('includes/login/auth.php');
 	
 	$toggle = mysqli_real_escape_string($mysqli, $_POST['toggle']);
 	$app = isset($_POST['i']) && is_numeric($_POST['i']) ? mysqli_real_escape_string($mysqli, (int)$_POST['i']) : exit;
@@ -11,7 +11,7 @@
 	else
 		$toggle = 1;
 	
-	$q = 'UPDATE campaigns SET wysiwyg='.$toggle.' WHERE app = '.$app.' AND id='.$c;
+	$q = 'UPDATE '.CAMPAIGNS.' SET wysiwyg='.$toggle.' WHERE app = '.$app.' AND id='.$c;
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 		echo true;

@@ -1,6 +1,6 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
-<?php include('../helpers/short.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
+<?php include('includes/helpers/short.php');?>
 <?php
 
 	//get POST variables
@@ -20,7 +20,7 @@
 	$the_date = strtotime("$send_date $hour.$min$ampm");
 	
 	//Check if monthly quota needs to be updated
-	$q = 'SELECT allocated_quota, current_quota FROM apps WHERE id = '.$app;
+	$q = 'SELECT allocated_quota, current_quota FROM '.APPS.' WHERE id = '.$app;
 	$r = mysqli_query($mysqli, $q);
 	if($r) 
 	{
@@ -34,7 +34,7 @@
 	if($allocated_quota!=-1)
 	{
 		//Get the existing number of quota_deducted
-		$q = 'SELECT quota_deducted FROM campaigns WHERE id = '.$campaign_id;
+		$q = 'SELECT quota_deducted FROM '.CAMPAIGNS.' WHERE id = '.$campaign_id;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) 
 		{
@@ -46,13 +46,13 @@
 		}
 		
 		//if so, update quota
-		$q = 'UPDATE apps SET current_quota = '.$updated_quota.' WHERE id = '.$app;
+		$q = 'UPDATE '.APPS.' SET current_quota = '.$updated_quota.' WHERE id = '.$app;
 		mysqli_query($mysqli, $q);
 	}
 	
 	//Schedule the campaign
-	$q = 'UPDATE campaigns SET send_date = "'.$the_date.'", lists = "'.$email_lists.'", lists_excl = "'.$email_lists_excl.'", segs = "'.$email_lists_segs.'", segs_excl = "'.$email_lists_segs_excl.'", timezone = "'.$timezone.'", quota_deducted = '.$total_recipients.' WHERE id = '.$campaign_id;
+	$q = 'UPDATE '.CAMPAIGNS.' SET send_date = "'.$the_date.'", lists = "'.$email_lists.'", lists_excl = "'.$email_lists_excl.'", segs = "'.$email_lists_segs.'", segs_excl = "'.$email_lists_segs_excl.'", timezone = "'.$timezone.'", quota_deducted = '.$total_recipients.' WHERE id = '.$campaign_id;
 	$r = mysqli_query($mysqli, $q);
-	if ($r) header("Location: ".get_app_info('path')."/app?i=".$app);
+	if ($r) header("Location: ".get_app_info('path')."/index.php/site/app?i=".$app);
 	else echo 'Error: Unable to schedule campaign.';
 ?>

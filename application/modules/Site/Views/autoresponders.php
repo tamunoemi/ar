@@ -37,7 +37,7 @@
 <?php include('includes/helpers/short.php');?>
 <?php 	
 	//setup cron
-	$q = 'SELECT id, cron_ares, timezone FROM login LIMIT 1';
+	$q = 'SELECT id, cron_ares, timezone FROM '.LOGIN.' LIMIT 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r)
 	{
@@ -49,7 +49,7 @@
 			
 			if($cron==0)
 			{
-				$q2 = 'UPDATE login SET cron_ares=1 WHERE id = '.$userid;
+				$q2 = 'UPDATE '.LOGIN.' SET cron_ares=1 WHERE id = '.$userid;
 				$r2 = mysqli_query($mysqli, $q2);
 				if ($r2) exit;
 			}
@@ -78,7 +78,7 @@
 	$converted_date = array($currentdaynumber, $currentday, $currentmonthnumber, $currentmonth, $currentyear);
 	
 	//get user details
-	$q2 = 'SELECT s3_key, s3_secret FROM login ORDER BY id ASC LIMIT 1';
+	$q2 = 'SELECT s3_key, s3_secret FROM '.LOGIN.' ORDER BY id ASC LIMIT 1';
 	$r2 = mysqli_query($mysqli, $q2);
 	if ($r2)
 	{
@@ -90,7 +90,7 @@
 	}
 	
 	//Process Type 1 autoresponders (new subscriber)
-	$q = 'SELECT ares_emails.id, ares_emails.from_name, ares_emails.from_email, ares_emails.reply_to, ares_emails.title, ares_emails.plain_text, ares_emails.html_text, ares_emails.query_string, ares_emails.time_condition, ares_emails.timezone, ares_emails.opens_tracking, ares_emails.links_tracking, ares.list FROM ares, ares_emails WHERE ares_emails.ares_id = ares.id AND ares.type = 1 AND ares_emails.enabled = 1';
+	$q = 'SELECT ares_emails.id, ares_emails.from_name, ares_emails.from_email, ares_emails.reply_to, ares_emails.title, ares_emails.plain_text, ares_emails.html_text, ares_emails.query_string, ares_emails.time_condition, ares_emails.timezone, ares_emails.opens_tracking, ares_emails.links_tracking, ares.list FROM '.ARES.', '.ARES_EMAILS.' WHERE ares_emails.ares_id = ares.id AND ares.type = 1 AND ares_emails.enabled = 1';
 	$r = mysqli_query($mysqli, $q);
 	if ($r && mysqli_num_rows($r) > 0)
 	{
@@ -113,7 +113,7 @@
 				$time_condition = '+1 minutes';
 			
 			//get smtp settings & monthly limit
-			$q3 = 'SELECT apps.smtp_host, apps.smtp_port, apps.smtp_ssl, apps.smtp_username, apps.smtp_password, apps.allocated_quota, apps.current_quota, apps.id, apps.gdpr_only_ar, apps.custom_domain, apps.custom_domain_protocol, apps.custom_domain_enabled FROM lists, apps WHERE apps.id = lists.app AND lists.id = '.$list;
+			$q3 = 'SELECT apps.smtp_host, apps.smtp_port, apps.smtp_ssl, apps.smtp_username, apps.smtp_password, apps.allocated_quota, apps.current_quota, apps.id, apps.gdpr_only_ar, apps.custom_domain, apps.custom_domain_protocol, apps.custom_domain_enabled FROM '.LISTS.', '.APPS.' WHERE apps.id = lists.app AND lists.id = '.$list;
 			$r3 = mysqli_query($mysqli, $q3);
 			if ($r3 && mysqli_num_rows($r3) > 0)
 			{
@@ -149,11 +149,11 @@
 				//Insert web version link
 				if(strpos($html, '</webversion>')==true)
 				{
-					mysqli_query($mysqli, 'INSERT INTO links (ares_emails_id, link) 
-									SELECT '.$ares_id.', "'.$app_path.'/w/'.short($ares_id).'/a"
+					mysqli_query($mysqli, 'INSERT INTO '.LINKS.' (ares_emails_id, link) 
+									SELECT '.$ares_id.', "'.$app_path.'/index.php/site/w/'.short($ares_id).'/a"
 									        FROM dual
 									        WHERE NOT EXISTS
-									        	(SELECT ares_emails_id, link FROM links WHERE ares_emails_id = '.$ares_id.' AND link = "'.$app_path.'/w/'.short($ares_id).'/a")');
+									        	(SELECT ares_emails_id, link FROM '.LINKS.' WHERE ares_emails_id = '.$ares_id.' AND link = "'.$app_path.'/index.php/site/w/'.short($ares_id).'/a")');
 				}
 			
 				//Insert into links
@@ -173,7 +173,7 @@
 				//extract unique links
 				for($i=0;$i<count($links);$i++)
 				{
-				    mysqli_query($mysqli, 'INSERT INTO links (ares_emails_id, link) 
+				    mysqli_query($mysqli, 'INSERT INTO '.LINKS.' (ares_emails_id, link) 
 							SELECT '.$ares_id.', "'.$links[$i].'"
 							        FROM dual
 							        WHERE NOT EXISTS
@@ -182,7 +182,7 @@
 			}
 			
 			//select subscribers
-			$q2 = 'SELECT id, name, email, custom_fields, join_date FROM subscribers WHERE list = '.$list.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1 '.$gdpr_line.' AND join_date is not NULL ORDER BY id ASC';
+			$q2 = 'SELECT id, name, email, custom_fields, join_date FROM '.SUBSCRIBERS.' WHERE list = '.$list.' AND unsubscribed = 0 AND bounced = 0 AND complaint = 0 AND confirmed = 1 '.$gdpr_line.' AND join_date is not NULL ORDER BY id ASC';
 			$r2 = mysqli_query($mysqli, $q2);
 			if ($r2 && mysqli_num_rows($r2) > 0)
 			{
@@ -214,7 +214,7 @@
 							$title_treated = str_replace($unconverted_date, $converted_date, $title);
 							
 							//replace new links on HTML code
-							$ql = 'SELECT id, link FROM links WHERE ares_emails_id = '.$ares_id.' ORDER BY id DESC';
+							$ql = 'SELECT id, link FROM '.LINKS.' WHERE ares_emails_id = '.$ares_id.' ORDER BY id DESC';
 							$rl = mysqli_query($mysqli, $ql);
 							if ($rl && mysqli_num_rows($rl) > 0)
 							{			
@@ -272,7 +272,7 @@
 									//otherwise, replace custom field tag
 									else
 									{					
-										$q5 = 'SELECT custom_fields FROM lists WHERE id = '.$list;
+										$q5 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$list;
 										$r5 = mysqli_query($mysqli, $q5);
 										if ($r5)
 										{
@@ -346,7 +346,7 @@
 									//otherwise, replace custom field tag
 									else
 									{					
-										$q5 = 'SELECT custom_fields FROM lists WHERE id = '.$list;
+										$q5 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$list;
 										$r5 = mysqli_query($mysqli, $q5);
 										if ($r5)
 										{
@@ -419,7 +419,7 @@
 									//otherwise, replace custom field tag
 									else
 									{					
-										$q5 = 'SELECT custom_fields FROM lists WHERE id = '.$list;
+										$q5 = 'SELECT custom_fields FROM '.LISTS.' WHERE id = '.$list;
 										$r5 = mysqli_query($mysqli, $q5);
 										if ($r5)
 										{
@@ -462,10 +462,10 @@
 							}
 							
 							//set web version links
-					    	$html_treated = str_replace('<webversion', '<a href="'.$app_path.'/w/'.short($subscriber_id).'/'.short($list).'/'.short($ares_id).'/a" ', $html_treated);
+					    	$html_treated = str_replace('<webversion', '<a href="'.$app_path.'/index.php/site/w/'.short($subscriber_id).'/'.short($list).'/'.short($ares_id).'/a" ', $html_treated);
 					    	$html_treated = str_replace('</webversion>', '</a>', $html_treated);
-					    	$html_treated = str_replace('[webversion]', $app_path.'/w/'.short($subscriber_id).'/'.short($list).'/'.short($ares_id).'/a', $html_treated);
-					    	$plain_treated = str_replace('[webversion]', $app_path.'/w/'.short($subscriber_id).'/'.short($list).'/'.short($ares_id).'/a', $plain_treated);
+					    	$html_treated = str_replace('[webversion]', $app_path.'/index.php/site/w/'.short($subscriber_id).'/'.short($list).'/'.short($ares_id).'/a', $html_treated);
+					    	$plain_treated = str_replace('[webversion]', $app_path.'/index.php/site/w/'.short($subscriber_id).'/'.short($list).'/'.short($ares_id).'/a', $plain_treated);
 					    	
 					    	//set unsubscribe links
 					    	$html_treated = str_replace('<unsubscribe', '<a href="'.$app_path.'/unsubscribe/'.short($email).'/'.short($list).'/'.short($ares_id).'/a" ', $html_treated);

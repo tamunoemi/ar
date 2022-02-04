@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	//------------------------------------------------------//
 	//                      	INIT                       //
@@ -13,10 +13,10 @@
 	//------------------------------------------------------//
 	
 	//delete file
-	if(unlink('../../uploads/logos/'.basename($filename)))
+	if(unlink('uploads/logos/'.basename($filename)))
 	{
 		//Remove filename from database
-		$q = 'UPDATE apps SET brand_logo_filename = \'\' WHERE id = '.$app_id;
+		$q = 'UPDATE '.APPS.' SET brand_logo_filename = \'\' WHERE id = '.$app_id;
 		$r = mysqli_query($mysqli, $q);
 		if ($r) echo true;
 	}

@@ -117,7 +117,8 @@ switch (ENVIRONMENT)
 	       $allowed_hosts =  
                  [
                      //MAIN APP DOMAINS
-               'localhost'
+               'localhost',
+			   'sendy-igniter.herokuapp.com'
                      ];
    define('ALLOWED_HOST', $allowed_hosts);
    

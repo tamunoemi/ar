@@ -58,21 +58,151 @@ $route['translate_uri_dashes'] = FALSE;
 
 
 //AUTH
-$route['auth/login'] = "auth/login";
+$route['Auth/login'] = "Auth/login";
 $route['auth/auth/login'] = "auth/login";
+$route['auth/two-factor'] = "auth/two_factor";
 $route['auth/forgot_password'] = "auth/forgot_password";
 $route['auth/reset_password/(:any)'] = "auth/reset_password/$1";
 $route['auth/reset_password_form'] = "auth/reset_password_form";
 $route['auth/logout'] = "auth/logout";
 
 //SITE
-$route['site'] = "site/index";
-$route['site/includes/login/main'] = "site/main";
+$route['Site'] = "Site/index";
+
+$route['site/app'] = "site/app_view";
+$route['site/app/edit'] = "site/app_edit";
+$route['site/app/progress'] = "site/app_progress";
+$route['site/app/check-email-verification'] = "site/app_check_email_verification";
+$route['site/app/verify-email'] = "site/app_verify_email";
+$route['site/app/delete-logo'] = "site/app_delete_logo";
+$route['site/app/generate-password'] = "site/app_generate_password";
+$route['site/app/verify-login-email'] = "site/app_verify_login_email";
+
 $route['site/new-brand'] = "site/new_brand";
 $route['site/create-brand'] = "site/create_brand";
 $route['site/edit-brand'] = "site/edit_brand";
+$route['site/modify-brand'] = "site/modify_brand";
 $route['site/delete-brand'] = "site/delete_brand";
 
+$route['site/templates'] = "site/templates";
+$route['site/template-preview'] = "site/template_preview";
+$route['site/templates/use-template'] = "site/template_use_template";
+$route['site/create-template'] = "site/create_template";
+$route['site/templates/save-template'] = "site/save_template";
+$route['site/templates/delete'] = "site/templates_delete";
+$route['site/edit-template'] = "site/edit_template";
+
+$route['site/includes/create/calculate-totals'] = "site/calculate_totals";
+$route['site/send-to'] = "site/send_to";
+$route['site/create/send-now'] = "site/send_now";
+$route['site/create/send-later'] = "site/send_later";
+$route['site/create/test-send'] = "site/test_send";
+$route['site/app/duplicate'] = "site/app_duplicate";
+$route['site/app/delete'] = "site/app_delete";
+$route['site/app/download-errors-csv'] = "site/app_download_errors_csv";
+$route['site/reconsent-success'] = "site/reconsent_success";
+$route['site/w/(:any)/(:any)'] = "site/w/$1/$2";
+$route['site/l/(:any)/(:any)/(:any)'] = "site/w/$1/$2/$3";
+
+$route['site/create'] = "site/create_campaign";
+$route['site/create/save-campaign'] = "site/create_save_campaign";
+$route['site/create/delete-attachment'] = "site/create_delete_attachment";
+$route['site/create/toggle-wysiwyg'] = "site/create_toggle_wysiwyg";
+$route['site/edit'] = "site/edit_campaign";
+$route['site/campaigns/delete'] = "site/campaigns_delete";
+$route['site/campaigns/bounces'] = "site/campaigns_bounces";
+$route['site/campaigns/complaints'] = "site/campaigns_complaints";
+
+$route['site/list'] = "site/list";
+$route['site/edit-list'] = "site/edit_list";
+$route['site/list/edit'] = "site/list_edit";
+$route['site/delete-from-list'] = "site/delete_from_list";
+$route['site/list/dismiss'] = "site/list_dismiss";
+$route['site/list/progress'] = "site/list_progress";
+$route['site/list/export-skipped-emails'] = "site/list_export_skipped_emails";
+$route['site/search-all-lists'] = "site/search_all_lists";
+$route['site/search-all-brands'] = "site/search_all_brands";
+
+$route['site/segment'] = "site/segment";
+$route['site/segments-list'] = "site/segments_list";
+$route['site/segments/segmentate'] = "site/segments_segmentate";
+$route['site/segments/export-csv'] = "site/segments_export_csv";
+$route['site/segments/delete'] = "site/segments_delete";
+
+$route['site/housekeeping-unconfirmed'] = "site/housekeeping_unconfirmed";
+$route['site/housekeeping-inactive'] = "site/housekeeping_inactive";
+
+$route['site/report'] = "site/report";
+$route['site/reports'] = "site/reports";
+$route['site/reports/update-campaign-title'] = "site/reports_update_campaign_title";
+$route['site/reports/export-csv'] = "site/reports_export_csv";
+$route['site/update-list'] = "site/update_list";
+$route['site/unsubscribe-from-list'] = "site/unsubscribe_from_list";
+
+$route['site/subscribers'] = "site/subscribers";
+$route['site/subscribe'] = "site/subscribe";
+$route['site/unsubscribe'] = "site/unsubscribe";
+$route['site/subscribe/import-unsubscribe'] = "site/subscribers_import_unsubscribe";
+$route['site/subscribe/line-unsubscribe'] = "site/subscribers_line_unsubscribe";
+$route['site/subscribers/import-add'] = "site/subscribers_import_add";
+$route['site/subscribers/import-delete'] = "site/subscribers_import_delete";
+$route['site/subscribers/import-update'] = "site/subscribers_import_update";
+$route['site/subscribers/import-blocked-domain-list'] = "site/subscribers_import_blocked_domain_list";
+$route['site/subscribers/import-blocked-domain-list2'] = "site/subscribers_import_blocked_domain_list2";
+$route['site/subscribers/import-suppression-list'] = "site/subscribers_import_suppression_list";
+$route['site/subscribers/import-suppression-list2'] = "site/subscribers_import_suppression_list2";
+$route['site/subscribers/delete-suppressed-email'] = "site/subscribers_delete_suppressed_email";
+$route['site/subscribers/delete-blocked-domain'] = "site/subscribers_delete_blocked_domain";
+$route['site/subscribers/delete-unconfirmed'] = "site/subscribers_delete_unconfirmed";
+$route['site/subscribers/edit'] = "site/subscribers_edit";
+$route['site/subscribers/line-update'] = "site/subscribers_line_update";
+$route['site/subscribers/line-delete'] = "site/subscribers_line_delete";
+$route['site/subscribers/subscribe-form'] = "site/subscribers_subscribe_form";
+$route['site/subscribers/subscribe-info'] = "site/subscribers_subscribe_info";
+$route['site/subscribers/unsubscribe'] = "site/subscribers_unsubscribe";
+$route['site/subscribers/delete'] = "site/subscribers_delete";
+$route['site/subscribers/save-gdpr'] = "site/subscribers_save_gdpr";
+$route['site/subscribers/housekeeping-no-opens'] = "site/subscribers_housekeeping_no_opens";
+$route['site/subscribers/delete-inactive'] = "site/subscribers_delete_inactive";
+$route['site/subscribers/housekeeping-no-clicks'] = "site/subscribers_housekeeping_no_clicks";
+$route['site/subscribers/export-csv'] = "site/subscribers_export_csv";
+$route['site/subscribers/subscriber-info'] = "site/subscribers_subscriber_info";
+$route['site/subscription'] = "site/subscription";
+
+$route['site/autoresponders-list'] = "site/autoresponders_list";
+$route['site/autoresponders-create'] = "site/autoresponders_create";
+$route['site/autoresponders-edit'] = "site/autoresponders_edit";
+$route['site/autoresponders-emails'] = "site/autoresponders_emails";
+$route['site/autoresponders-report'] = "site/autoresponders_report";
+$route['site/ares/add-autoresponder'] = "site/ares_add_autoresponder";
+$route['site/ares/save-autoresponder-email'] = "site/ares_save_autoresponder_email";
+$route['site/ares/delete-attachment'] = "site/ares_delete_attachment";
+$route['site/ares/toggle-wysiwyg'] = "site/ares_toggle_wysiwyg";
+$route['site/ares/delete-email'] = "site/ares_delete_email";
+$route['site/ares/delete-ares'] = "site/ares_delete_ares";
+$route['site/ares/toggle-autoresponder'] = "site/ares_toggle_autoresponder";
+$route['site/ares-reports/export-csv'] = "site/ares_reports_export_csv";
+
+$route['site/custom-fields'] = "site/custom_fields";
+$route['site/list/add-custom-field'] = "site/list_add_custom_field";
+$route['site/list/edit-custom-field'] = "site/list_edit_custom_field";
+$route['site/list/delete-custom-field'] = "site/list_delete_custom_field";
+$route['site/list/delete'] = "site/list_delete";
+
+$route['site/blacklist-blocked-domains'] = "site/blacklist_blocked_domains";
+$route['site/blacklist-suppression'] = "site/blacklist_suppression";
+
+$route['site/clear-queue'] = "site/clear_queue";
+$route['site/sending'] = "site/sending";
+$route['site/confirm'] = "site/confirm";
+$route['site/payment'] = "site/payment";
+$route['site/detect-table-conflicts'] = "site/detect_table_conflicts";
+$route['site/settings'] = "site/settings";
+$route['site/settings/save'] = "site/settings_save";
+$route['site/settings/two-factor'] = "site/settings_two_factor";
+$route['site/remove-duplicates'] = "site/remove_duplicates";
+$route['site/reset-cron'] = "site/reset_cron";
+$route['site/import-csv'] = "site/import_csv";
 
 
 $route['tools(:any)'] = 'tools';

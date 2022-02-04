@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php
 
 /********************************/
@@ -13,7 +13,7 @@ $line = $_POST['line'];
 if($line=='')
 {
 	//show error msg
-	header("Location: ".get_app_info('path').'/delete-from-list?i='.$app.'&l='.$listID.'&e=2'); 
+	header("Location: ".get_app_info('path').'/index.php/site/delete-from-list?i='.$app.'&l='.$listID.'&e=2'); 
 	exit;
 }
 
@@ -21,11 +21,11 @@ $line_array = explode("\r\n", $line);
 
 for($i=0;$i<count($line_array);$i++)
 {
-	$q = 'DELETE FROM subscribers WHERE email = "'.mysqli_real_escape_string($mysqli, trim($line_array[$i])).'" AND list = '.$listID.' AND userID = '.$userID;
+	$q = 'DELETE FROM '.SUBSCRIBERS.' WHERE email = "'.mysqli_real_escape_string($mysqli, trim($line_array[$i])).'" AND list = '.$listID.' AND userID = '.$userID;
 	$r = mysqli_query($mysqli, $q);
 	if ($r){}
 }
 
-header("Location: ".get_app_info('path').'/subscribers?i='.$app.'&l='.$listID); 
+header("Location: ".get_app_info('path').'/index.php/site/subscribers?i='.$app.'&l='.$listID); 
 
 ?>

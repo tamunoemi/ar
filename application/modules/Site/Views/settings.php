@@ -43,7 +43,7 @@
 		  <strong><?php echo _('Sorry, unable to save. Please try again later!');?></strong>
 		</div>
 		
-	    <form action="<?php echo get_app_info('path')?>/includes/settings/save.php" method="POST" accept-charset="utf-8" class="form-vertical" id="settings-form">
+	    <form action="<?php echo get_app_info('path')?>/index.php/site/settings/save" method="POST" accept-charset="utf-8" class="form-vertical" id="settings-form">
 	    	
 	    	<label class="control-label" for="company"><?php echo _('Company');?></label>
 	    	<div class="control-group">
@@ -174,7 +174,7 @@
 					e.preventDefault(); 
 					if(confirm("Are you sure you want to disable two-factor authentication?"))
 					{
-						$.post("<?php echo get_app_info("path");?>/includes/settings/two-factor.php", { enable: 0, otp: 0, uid: <?php echo get_app_info('userID');?> },
+						$.post("<?php echo get_app_info("path");?>/index.php/site/settings/two-factor", { enable: 0, otp: 0, uid: <?php echo get_app_info('userID');?> },
 						  function(data) {
 						      if(data)
 						      {
@@ -195,7 +195,7 @@
 				});
 				function confirm_otp()
 				{
-					$.post("<?php echo get_app_info("path");?>/includes/settings/two-factor.php", { enable: 1, key: "<?php echo $secret_key;?>", otp: $("#otp").val(), uid: <?php echo get_app_info('userID');?> },
+					$.post("<?php echo get_app_info("path");?>/index.php/site/settings/two-factor", { enable: 1, key: "<?php echo $secret_key;?>", otp: $("#otp").val(), uid: <?php echo get_app_info('userID');?> },
 					  function(data) {
 					      if(data)
 					      {
@@ -553,7 +553,7 @@
 	        <input type="hidden" name="uid" value="<?php echo get_app_info('userID');?>">
 	        
 	        <?php $ii = get_app_info('is_sub_user') ? '?i='.get_app_info('app') : ''?>
-	        <input type="hidden" name="redirect" id="redirect" value="<?php echo get_app_info('path').'/settings'.$ii;?>">
+	        <input type="hidden" name="redirect" id="redirect" value="<?php echo get_app_info('path').'/index.php/site/settings'.$ii;?>">
 	        
 	        <button type="submit" class="btn btn-inverse"><i class="icon-ok icon-white"></i> <?php echo _('Save');?></button>
 	    </form>
@@ -601,14 +601,14 @@
 				});
 	    	});
 	    </script>
-	    <p>Visit the <a href="https://sendy.co/api?app_path=<?php echo get_app_info('path');?>" target="_blank" style="text-decoration:underline">API page</a> to view Sendy's API documentation or explore <a href="https://sendy.co/api#third-party-resources-integrations" target="_blank" style="text-decoration:underline">third party resources and integrations</a>.</p>
+	    <p>Visit the <a href="https://sendy.co/api?app_path=<?php echo get_app_info('path');?>/index.php/site" target="_blank" style="text-decoration:underline">API page</a> to view Sendy's API documentation or explore <a href="https://sendy.co/api#third-party-resources-integrations" target="_blank" style="text-decoration:underline">third party resources and integrations</a>.</p>
 	    
 	    <br/><br/>
 	    
 	    <h3><?php echo _('Zapier integration');?></h3><br/>
 	    <p class="alert"><span class="icon icon-info-sign"></span> <?php echo _('<a href="https://zapier.com" target="_blank" style="text-decoration:underline">Zapier</a>\'s integration with <a href="https://zapier.com/zapbook/sendy/" target="_blank" style="text-decoration:underline">Sendy</a> opens up a whole world of automation! You can integrate Sendy with over 1,000 apps available in <a href="https://zapier.com/zapbook/" target="_blank" style="text-decoration:underline">Zapier\'s app directory</a>. The following are a few ready to use "Zaps" to get you started. Alternatively you can visit Zapier and create your own "Zaps" to integrate Sendy with any other apps. You\'d be prompted to <a href="https://zapier.com/app/signup" target="_blank" style="text-decoration:underline">signup for a free Zapier account</a> if you don\'t have one.');?></p>
 	    <div>
-		    <script src="https://zapier.com/zapbook/embed/widget.js?guided_zaps=<?php echo get_app_info('zaps');?>&container=false">
+		    <script src="https://zapier.com/zapbook/embed/widget.js?guided_zaps=<?php echo get_app_info('zaps');?>&container=false"></script>
 	    </div>
     </div>
     

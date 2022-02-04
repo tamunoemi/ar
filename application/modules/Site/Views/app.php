@@ -6,12 +6,12 @@
 	{
 		if(get_app_info('app')!=get_app_info('restricted_to_app'))
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/app?i='.get_app_info('restricted_to_app').'"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/site/app?i='.get_app_info('restricted_to_app').'"</script>';
 			exit;
 		}
 		else if(get_app_info('campaigns_only')==1 && get_app_info('templates_only')==1 && get_app_info('lists_only')==1 && get_app_info('reports_only')==1)
 		{
-			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/logout"</script>';
+			echo '<script type="text/javascript">window.location="'.addslashes(get_app_info('path')).'/index.php/auth/logout"</script>';
 			exit;
 		}
 		else if(get_app_info('campaigns_only')==1)
@@ -47,25 +47,25 @@
 		    	<?php if(get_app_info('is_sub_user')):?>
 			    	<?php echo get_app_data('app_name');?>
 		    	<?php else:?>
-			    	<a href="<?php echo get_app_info('path'); ?>/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
+			    	<a href="<?php echo get_app_info('path'); ?>/index.php/site/edit-brand?i=<?php echo get_app_info('app');?>" data-placement="right" title="<?php echo _('Edit brand settings');?>"><?php echo get_app_data('app_name');?></a>
 		    	<?php endif;?>
 		    </p>
     	</div>
     	<h2><?php echo _('All campaigns');?></h2><br/>
     	<div style="clear:both;">
 	    	<?php if(!have_templates()):?>
-	    		<a href="<?php echo get_app_info('path');?>/create?i=<?php echo get_app_info('app');?>" class="btn"><i class="icon-plus-sign"></i> <?php echo _('Create & send new campaign');?></a>
+	    		<a href="<?php echo get_app_info('path');?>/index.php/site/create?i=<?php echo get_app_info('app');?>" class="btn"><i class="icon-plus-sign"></i> <?php echo _('Create & send new campaign');?></a>
     		<?php else:?>
 	    		<div class="dropdown">
 				  <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" style="float:left; margin-bottom: 20px;"><i class="icon-plus-sign"></i> <?php echo _('Create & send new campaign');?>
 				  <span class="caret"></span></button>
 				  <ul class="dropdown-menu" style="margin-top: 35px;">
 					  <li class="dropdown-header"><?php echo _('New campaign');?></li>
-					  <li><a href="<?php echo get_app_info('path');?>/create?i=<?php echo get_app_info('app');?>"><?php echo _('Create a new campaign');?></a></li>
+					  <li><a href="<?php echo get_app_info('path');?>/index.php/site/create?i=<?php echo get_app_info('app');?>"><?php echo _('Create a new campaign');?></a></li>
 					  <li class="divider"></li>
 					  <li class="dropdown-header"><?php echo _('Or use a template');?></li>
 					  <?php 
-						  $q = 'SELECT id, template_name FROM template WHERE app = '.get_app_info('app').' ORDER BY id DESC';
+						  $q = 'SELECT id, template_name FROM '.TEMPLATE.' WHERE app = '.get_app_info('app').' ORDER BY id DESC';
 						  $r = mysqli_query($mysqli, $q);
 						  if ($r && mysqli_num_rows($r) > 0)
 						  {
@@ -74,7 +74,7 @@
 						  		$template_id = $row['id'];
 						  		$template_name = stripslashes($row['template_name']);
 						  		
-						  		echo '<li><a href="'.get_app_info('path').'/includes/templates/use-template.php?i='.get_app_info('app').'&t='.$template_id.'">'.$template_name.'</a></li>';
+						  		echo '<li><a href="'.get_app_info('path').'/index.php/site/templates/use-template?i='.get_app_info('app').'&t='.$template_id.'">'.$template_name.'</a></li>';
 						      }  
 						  }
 					  ?>
@@ -89,7 +89,7 @@
             </div>
             <div class="modal-body">
 				<p><?php echo _('The following is the link to your campaigns RSS feed. This RSS feed displays an archive of the last 100 campaigns previously sent.');?></p>
-				<p class="well" id="feed-url"><?php echo get_app_info('path');?>/campaigns-rss?a=<?php echo get_app_data('app_key');?>&i=<?php echo get_app_info('app');?></p>
+				<p class="well" id="feed-url"><?php echo get_app_info('path');?>/index.php/site/campaigns-rss?a=<?php echo get_app_data('app_key');?>&i=<?php echo get_app_info('app');?></p>
 				<p><strong><?php echo _('Some ways to use your RSS feed');?></strong></p>
 				<ul>
 					<li><?php echo _('Integrate your campaigns feed with your website or application anyway you like');?></li>
@@ -135,7 +135,7 @@
 				$p = isset($_GET['p']) ? $_GET['p'] : null;
 				$offset = $p!=null ? ($p-1) * $limit : 0;
 				
-			  	$q = 'SELECT * FROM campaigns WHERE userID = '.get_app_info('main_userID').' AND app='.get_app_info('app').' ORDER BY id DESC LIMIT '.$offset.','.$limit;
+			  	$q = 'SELECT * FROM '.CAMPAIGNS.' WHERE userID = '.get_app_info('main_userID').' AND app='.get_app_info('app').' ORDER BY id DESC LIMIT '.$offset.','.$limit;
 			  	$r = mysqli_query($mysqli, $q);
 			  	if ($r && mysqli_num_rows($r) > 0)
 			  	{
@@ -266,11 +266,11 @@
 				  					{
 					  					echo '
 					  						<tr id="'.$id.'">
-										      <td id="label'.$id.'"><span class="label label-warning">'._('Sending').'</span> <a href="'.get_app_info('path').'/report?i='.get_app_info('app').'&c='.$id.'" title="'._('Currently sending your campaign to').' '.number_format($to_send).' '._('recipients').'" style="margin-left:5px;">'.$campaign_title.'</a> ';
+										      <td id="label'.$id.'"><span class="label label-warning">'._('Sending').'</span> <a href="'.get_app_info('path').'/index.php/site/report?i='.get_app_info('app').'&c='.$id.'" title="'._('Currently sending your campaign to').' '.number_format($to_send).' '._('recipients').'" style="margin-left:5px;">'.$campaign_title.'</a> ';
 										      
 										if(!get_app_info('cron_sending')) 
 										echo '
-									    <span id="separator'.$id.'">|</span> <span id="continue-sending-text"><a href="javascript:void(0)" id="continue-sending-btn-'.$id.'" class="btn" style="padding:3px 5px; font-size: 12px;" title="'._('If sending has stopped, the send was probably timed out by the server, click to resume sending.').'" data-url="'.get_app_info('path').'/includes/create/send-now.php" data-id="'.$id.'" data-email_list="'.$to_send_lists.'" data-app="'.get_app_info('app').'" data-offset="'.$recipients.'">'._('Resume').'</a></span>
+									    <span id="separator'.$id.'">|</span> <span id="continue-sending-text"><a href="javascript:void(0)" id="continue-sending-btn-'.$id.'" class="btn" style="padding:3px 5px; font-size: 12px;" title="'._('If sending has stopped, the send was probably timed out by the server, click to resume sending.').'" data-url="'.get_app_info('path').'/index.php/site/create/send-now" data-id="'.$id.'" data-email_list="'.$to_send_lists.'" data-app="'.get_app_info('app').'" data-offset="'.$recipients.'">'._('Resume').'</a></span>
 									    ';
 										      
 										echo ' </td>
@@ -283,7 +283,7 @@
 									    if(get_app_info('is_sub_user'))
 										{
 										    echo '
-										    <form action="'.get_app_info('path').'/includes/app/duplicate.php" method="POST" accept-charset="utf-8" class="form-vertical" name="duplicate-form" id="duplicate-form-direct-'.$id.'" style="margin-bottom:0px;">
+										    <form action="'.get_app_info('path').'/index.php/site/app/duplicate" method="POST" accept-charset="utf-8" class="form-vertical" name="duplicate-form" id="duplicate-form-direct-'.$id.'" style="margin-bottom:0px;">
 										    <input type="hidden" name="campaign_id" value="'.$id.'"/>
 										    <input type="hidden" name="on-brand" value="'.get_app_info('app').'"/>
 										    <a href="javascript:void(0)" id="duplicate-btn-direct-'.$id.'"><i class="icon icon-copy"></i></a>
@@ -306,7 +306,7 @@
 												c = confirm(\''._('Confirm delete').' '.addslashes($title).'?\');
 												if(c)
 												{
-													$.post("includes/campaigns/delete.php", { campaign_id: '.$id.' },
+													$.post("'.get_app_info('path').'/index.php/site/campaigns/delete", { campaign_id: '.$id.' },
 													  function(data) {
 													      if(data)
 													      {
@@ -354,7 +354,7 @@
 									    			{
 									    				clearInterval(refresh_interval);
 									    				
-										    			$.post("includes/app/progress.php", { campaign_id: cid },
+										    			$.post("'.get_app_info('path').'/index.php/site/app/progress", { campaign_id: cid },
 														  function(data) {
 														      if(data)
 														      {
@@ -402,7 +402,7 @@
 									if(get_app_info('is_sub_user'))
 									{
 									    echo '
-									    <form action="'.get_app_info('path').'/includes/app/duplicate.php" method="POST" accept-charset="utf-8" class="form-vertical" name="duplicate-form" id="duplicate-form-direct-'.$id.'" style="margin-bottom:0px;">
+									    <form action="'.get_app_info('path').'/index.php/site/app/duplicate" method="POST" accept-charset="utf-8" class="form-vertical" name="duplicate-form" id="duplicate-form-direct-'.$id.'" style="margin-bottom:0px;">
 									    <input type="hidden" name="campaign_id" value="'.$id.'"/>
 									    <input type="hidden" name="on-brand" value="'.get_app_info('app').'"/>
 									    <a href="javascript:void(0)" id="duplicate-btn-direct-'.$id.'"><i class="icon icon-copy"></i></a>
@@ -425,7 +425,7 @@
 												c = confirm(\''._('Confirm delete').' '.addslashes($title).'?\');
 												if(c)
 												{
-													$.post("includes/campaigns/delete.php", { campaign_id: '.$id.' },
+													$.post("'.get_app_info('path').'/index.php/site/campaigns/delete", { campaign_id: '.$id.' },
 													  function(data) {
 													      if(data)
 													      {
@@ -448,7 +448,7 @@
 									    			{
 									    				clearInterval(refresh_interval);
 									    				
-										    			$.post("includes/app/progress.php", { campaign_id: cid },
+										    			$.post("'.get_app_info('path').'/index.php/site/app/progress", { campaign_id: cid },
 														  function(data) {
 														      if(data)
 														      {
@@ -459,7 +459,7 @@
 														      	
 														      	if(data != "0 <span style=\"color:#488846;\">(0%)</span> <img src=\"'.get_app_info('path').'/img/loader.gif\" style=\"width:16px;\"/>")
 															    {
-															    	window.location = "'.get_app_info('path').'/app?i='.get_app_info('app').'";
+															    	window.location = "'.get_app_info('path').'/index.php/site/app?i='.get_app_info('app').'";
 															    }
 														      }
 														      else
@@ -494,7 +494,7 @@
 				  			{
 				  				echo '
 					  				<tr id="'.$id.'">
-								      <td>'.$label.' <a href="'.get_app_info('path').'/send-to?i='.get_app_info('app').'&c='.$id.'" title="'.$scheduled_title.'" style="margin-left:5px;">'.$campaign_title.'</a> <span style="color:#737373;font-size:12px;">|</span> <a href="'.get_app_info('path').'/edit?i='.get_app_info('app').'&c='.$id.'" title="'._('Edit this campaign').'" style="color:#737373;font-size:12px;"> '._('Edit').'</a></td>
+								      <td>'.$label.' <a href="'.get_app_info('path').'/index.php/site/send-to?i='.get_app_info('app').'&c='.$id.'" title="'.$scheduled_title.'" style="margin-left:5px;">'.$campaign_title.'</a> <span style="color:#737373;font-size:12px;">|</span> <a href="'.get_app_info('path').'/index.php/site/edit?i='.get_app_info('app').'&c='.$id.'" title="'._('Edit this campaign').'" style="color:#737373;font-size:12px;"> '._('Edit').'</a></td>
 								      <td>-</td>
 								      <td>-</td>
 								      <td>-</td>
@@ -504,7 +504,7 @@
 								if(get_app_info('is_sub_user'))
 								{
 								    echo '
-								    <form action="'.get_app_info('path').'/includes/app/duplicate.php" method="POST" accept-charset="utf-8" class="form-vertical" name="duplicate-form" id="duplicate-form-direct-'.$id.'" style="margin-bottom:0px;">
+								    <form action="'.get_app_info('path').'/index.php/site/app/duplicate" method="POST" accept-charset="utf-8" class="form-vertical" name="duplicate-form" id="duplicate-form-direct-'.$id.'" style="margin-bottom:0px;">
 								    <input type="hidden" name="campaign_id" value="'.$id.'"/>
 								    <input type="hidden" name="on-brand" value="'.get_app_info('app').'"/>
 								    <a href="javascript:void(0)" id="duplicate-btn-direct-'.$id.'"><i class="icon icon-copy"></i></a>
@@ -527,7 +527,7 @@
 										c = confirm(\''._('Confirm delete').' '.addslashes($title).'?\');
 										if(c)
 										{
-											$.post("includes/campaigns/delete.php", { campaign_id: '.$id.' },
+											$.post("'.get_app_info('path').'/index.php/site/campaigns/delete", { campaign_id: '.$id.' },
 											  function(data) {
 											      if(data)
 											      {
@@ -549,7 +549,7 @@
 			  			else
 			  			{
 			  				if($error_stack != '')
-				  				$download_errors = ' <span style="color:#737373;font-size:12px;">|</span> <a href="'.get_app_info('path').'/includes/app/download-errors-csv.php?c='.$id.'" title="'._('Download CSV of emails that were not delivered to even after retrying').'" style="color:#737373;font-size:12px;">'.$no_of_errors.' '._('not delivered').'</a>';
+				  				$download_errors = ' <span style="color:#737373;font-size:12px;">|</span> <a href="'.get_app_info('path').'/index.php/site/app/download-errors-csv?c='.$id.'" title="'._('Download CSV of emails that were not delivered to even after retrying').'" style="color:#737373;font-size:12px;">'.$no_of_errors.' '._('not delivered').'</a>';
 				  			else
 				  				$download_errors = '';
 			  				
@@ -558,7 +558,7 @@
 							      '; 
 							
 							if(!get_app_info('is_sub_user') || (get_app_info('is_sub_user') && get_app_info('reports_only')==0))
-								echo '<td><span class="label label-success">'._('Sent').'</span></a> <a href="'.get_app_info('path').'/report?i='.get_app_info('app').'&c='.$id.'" title="'._('View report for this campaign').'" style="margin-left:5px;">'.$campaign_title.'</a>'.$download_errors.'</td>'; 
+								echo '<td><span class="label label-success">'._('Sent').'</span></a> <a href="'.get_app_info('path').'/index.php/site/report?i='.get_app_info('app').'&c='.$id.'" title="'._('View report for this campaign').'" style="margin-left:5px;">'.$campaign_title.'</a>'.$download_errors.'</td>'; 
 							else
 								echo '<td><span class="label label-success">'._('Sent').'</span></a> '.$campaign_title.''.$download_errors.'</td>'; 
 							
@@ -572,7 +572,7 @@
 							if(get_app_info('is_sub_user'))
 							{
 							    echo '
-							    <form action="'.get_app_info('path').'/includes/app/duplicate.php" method="POST" accept-charset="utf-8" class="form-vertical" name="duplicate-form" id="duplicate-form-direct-'.$id.'" style="margin-bottom:0px;">
+							    <form action="'.get_app_info('path').'/index.php/site/app/duplicate" method="POST" accept-charset="utf-8" class="form-vertical" name="duplicate-form" id="duplicate-form-direct-'.$id.'" style="margin-bottom:0px;">
 							    <input type="hidden" name="campaign_id" value="'.$id.'"/>
 							    <input type="hidden" name="on-brand" value="'.get_app_info('app').'"/>
 							    <a href="javascript:void(0)" id="duplicate-btn-direct-'.$id.'"><i class="icon icon-copy"></i></a>
@@ -595,7 +595,7 @@
 									c = confirm(\''._('Confirm delete').' '.addslashes($title).'?\');
 									if(c)
 									{
-										$.post("includes/campaigns/delete.php", { campaign_id: '.$id.' },
+										$.post("'.get_app_info('path').'/index.php/site/campaigns/delete", { campaign_id: '.$id.' },
 										  function(data) {
 										      if(data)
 										      {
@@ -643,7 +643,7 @@
 		      <h3><?php echo _('Duplicate on which brand?');?></h3>
 		    </div>
 		    <div class="modal-body">
-		    	<form action="<?php echo get_app_info('path')?>/includes/app/duplicate.php" method="POST" accept-charset="utf-8" class="form-vertical" name="duplicate-form" id="duplicate-form">
+		    	<form action="<?php echo get_app_info('path')?>/index.php/site/app/duplicate" method="POST" accept-charset="utf-8" class="form-vertical" name="duplicate-form" id="duplicate-form">
 		    	<div class="control-group">
 		            <label class="control-label" for="on-brand"><?php echo _('Choose a brand you\'d like to duplicate this campaign on');?>:</label><br/>
 		            <div class="controls">
@@ -651,7 +651,7 @@
 		              	<?php 
 		              		echo '<option value="'.get_app_info('app').'" id="brand-'.get_app_info('app').'">'.get_app_data('app_name').'</option>';
 		              	
-			              	$q = 'SELECT id, app_name FROM apps WHERE userID = '.get_app_info('main_userID');
+			              	$q = 'SELECT id, app_name FROM '.APPS.' WHERE userID = '.get_app_info('main_userID');
 			              	$r = mysqli_query($mysqli, $q);
 			              	if ($r && mysqli_num_rows($r) > 0)
 			              	{

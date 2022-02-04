@@ -1,5 +1,5 @@
-<?php include('../functions.php');?>
-<?php include('../login/auth.php');?>
+<?php include('includes/functions.php');?>
+<?php include('includes/login/auth.php');?>
 <?php 
 	$subscriber_id = isset($_POST['subscriber_id']) && is_numeric($_POST['subscriber_id']) ? mysqli_real_escape_string($mysqli, (int)$_POST['subscriber_id']) : exit;
 	$option = is_numeric($_POST['option']) ? mysqli_real_escape_string($mysqli, $_POST['option']) : exit;
@@ -8,7 +8,7 @@
 	//Delete from this list only
 	if($option==1)
 	{
-		$q = 'DELETE FROM subscribers WHERE id = '.$subscriber_id.' AND userID = '.get_app_info('main_userID');
+		$q = 'DELETE FROM '.SUBSCRIBERS.' WHERE id = '.$subscriber_id.' AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{
@@ -18,12 +18,12 @@
 	//Delete from ALL lists
 	else if($option==2)
 	{
-		$q = 'SELECT email FROM subscribers WHERE id = '.$subscriber_id;
+		$q = 'SELECT email FROM '.SUBSCRIBERS.' WHERE id = '.$subscriber_id;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0) while($row = mysqli_fetch_array($r)) $email = $row['email'];
 		
 		$list_array = array();
-		$q = 'SELECT id FROM lists WHERE app = '.$app;
+		$q = 'SELECT id FROM '.LISTS.' WHERE app = '.$app;
 		$r = mysqli_query($mysqli, $q);
 		if ($r && mysqli_num_rows($r) > 0)
 		{
@@ -34,7 +34,7 @@
 		}
 		$lists = implode(',', $list_array);
 		
-		$q = 'DELETE FROM subscribers WHERE email = "'.$email.'" AND list IN ('.$lists.') AND userID = '.get_app_info('main_userID');
+		$q = 'DELETE FROM '.SUBSCRIBERS.' WHERE email = "'.$email.'" AND list IN ('.$lists.') AND userID = '.get_app_info('main_userID');
 		$r = mysqli_query($mysqli, $q);
 		if ($r)
 		{

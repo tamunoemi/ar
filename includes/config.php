@@ -6,6 +6,7 @@
 	/*  Set the URL to your Sendy installation (without the trailing slash) */
 	//define('APP_PATH', 'http://convertbot.de/sendy');
 	define('APP_PATH', 'http://localhost/sendy_igniter');
+	//define('IGNITER_PATH', 'index.php');
 
 	global $mysqli;
     global $dbHost;
