@@ -113,8 +113,8 @@
 	}
 	if(!$opened) 
 	{
-		if($ares_emails_id=='') file_get_contents_curl(APP_PATH.'/t/'.$i_array[2].'/'.$i_array[0]);
-		else file_get_contents_curl(APP_PATH.'/t/'.$i_array[2].'/'.$i_array[0].'/a');
+		if($ares_emails_id=='') file_get_contents_curl(APP_PATH.'/index.php/site/t/'.$i_array[2].'/'.$i_array[0]);
+		else file_get_contents_curl(APP_PATH.'/index.php/site/t/'.$i_array[2].'/'.$i_array[0].'/a');
 	}
 	
 	//tags for links
