@@ -101,8 +101,12 @@ $route['site/app/duplicate'] = "site/app_duplicate";
 $route['site/app/delete'] = "site/app_delete";
 $route['site/app/download-errors-csv'] = "site/app_download_errors_csv";
 $route['site/reconsent-success'] = "site/reconsent_success";
+$route['site/l/(:any)'] = "site/l/$1";
+$route['site/r/(:any)/(:any)/(:any)'] = "site/r/$1/$2/$3";
+$route['site/subscribe/(:any)/(:any)/(:any)'] = "site/subscribe/$1/$2/$3";
+$route['site/t/(:any)/(:any)/(:any)'] = "site/t/$1/$2/$3";
+$route['site/unsubscribe/(:any)/(:any)/(:any)'] = "site/unsubscribe/$1/$2/$3";
 $route['site/w/(:any)/(:any)'] = "site/w/$1/$2";
-$route['site/l/(:any)/(:any)/(:any)'] = "site/w/$1/$2/$3";
 
 $route['site/create'] = "site/create_campaign";
 $route['site/create/save-campaign'] = "site/create_save_campaign";
@@ -138,6 +142,7 @@ $route['site/reports/update-campaign-title'] = "site/reports_update_campaign_tit
 $route['site/reports/export-csv'] = "site/reports_export_csv";
 $route['site/update-list'] = "site/update_list";
 $route['site/unsubscribe-from-list'] = "site/unsubscribe_from_list";
+$route['site/unsubscribe-success'] = "site/unsubscribe_success";
 
 $route['site/subscribers'] = "site/subscribers";
 $route['site/subscribe'] = "site/subscribe";

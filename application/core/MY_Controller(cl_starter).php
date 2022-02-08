@@ -147,11 +147,11 @@ class MY_Controller extends CI_Controller {
 
     public function mailBySwiftmailer($email, $password) {
         include_once $this->base_dir . "/swiftmailer/lib/swift_required.php";
-        $host = "smtp.mailgun.org";
-        $user = 'app@mailgun.dotcombuzz.com';
-        $pass = 'adsmartly123456';
+        $host = "";
+        $user = '';
+        $pass = '';
         $port = 587;
-        $site_title = "1kproduct";
+        $site_title = "";
         $supportEmail = 'info@potterzhouse.com';
         $website_url = 'http://localhost/ecw';
 

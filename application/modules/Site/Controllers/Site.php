@@ -205,6 +205,10 @@ class Site extends MY_Controller
 		$this->load->view("site/unsubscribe-from-list");
 	}
 
+	public function unsubscribe_success(){
+		$this->load->view("site/unsubscribe-success");
+	}
+
 	public function edit_list(){
 		$this->load->view("site/edit-list");
 	}
@@ -592,7 +596,12 @@ class Site extends MY_Controller
 		$this->load->view("site/w", $data);
 	}
 
-	public function l($id, $link_id = null, $ares_id = null){
+	public function l($i){
+		if($i == null) $data = array('i' => $i);
+		$this->load->view("site/l", $data);
+	}
+
+	public function r($id, $link_id = null, $ares_id = null){
 		if($link_id == null) $data = array('i' => $id);
 		else $data = array('i' => $id . '/' . $link_id);
 

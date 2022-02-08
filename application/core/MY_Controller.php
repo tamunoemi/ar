@@ -157,12 +157,12 @@ class MY_Controller extends MX_Controller {
 
     public function mailBySwiftmailer($email, $password) {
         include_once $this->base_dir . "/swiftmailer/lib/swift_required.php";
-        $host = "smtp.mailgun.org";
-        $user = 'app@mailgun.dotcombuzz.com';
-        $pass = 'adsmartly123456';
+        $host = "";
+        $user = '';
+        $pass = '';
         $port = 587;
-        $site_title = "1kproduct";
-        $supportEmail = 'info@potterzhouse.com';
+        $site_title = "";
+        $supportEmail = '';
         $website_url = 'http://localhost/ecw';
 
 
